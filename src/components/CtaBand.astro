@@ -1,0 +1,22 @@
+---
+import { firm } from '../data/firm';
+interface Props { heading?: string; text?: string }
+const {
+  heading = 'The first conversation is <em>free</em>.',
+  text = `Tell us briefly what's going on. A partner, not an intake service, responds ${firm.responsePromise}.`,
+} = Astro.props;
+---
+
+<section class="cta-band" aria-labelledby="cta-h">
+  <div class="wrap">
+    <div>
+      <h2 id="cta-h" set:html={heading} />
+      <p>{text}</p>
+    </div>
+    <div class="actions">
+      <a class="btn btn-solid" href="/contact/">Request a free consultation</a>
+      <a class="btn btn-ghost" href={`tel:${firm.phoneTel}`}>Call {firm.phoneDisplay}</a>
+      <span class="micro">Confidential · No obligation · Response within 1 business day</span>
+    </div>
+  </div>
+</section>

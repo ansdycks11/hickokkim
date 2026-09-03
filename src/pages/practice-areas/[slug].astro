@@ -1,0 +1,66 @@
+---
+/**
+ * Practice-area page template (×8 here; Outside General Counsel has its own top-level route).
+ * Phase 1: structural stub with verified facts only. Phase 3 supplies the full
+ * 1,500–2,500-word content per page via src/data/practice/<slug>.ts.
+ */
+import Base from '../../layouts/Base.astro';
+import PageHero from '../../components/PageHero.astro';
+import CtaBand from '../../components/CtaBand.astro';
+import { practiceAreas, partners, firm, SITE_URL, FIRM_ID } from '../../data/firm';
+
+export function getStaticPaths() {
+  return practiceAreas
+    .filter((a) => a.path.startsWith('/practice-areas/'))
+    .map((a) => ({ params: { slug: a.slug }, props: { area: a } }));
+}
+
+const { area } = Astro.props;
+const leads = area.partners.map((s) => partners[s]);
+const title = `${area.name} | Hickok & Kim Inc. — Los Angeles`;
+const description = `${area.name} attorney in Los Angeles. ${area.blurb} Free initial consultation with Hickok & Kim, Inc.`;
+const crumbs = [
+  { name: 'Practice areas', href: '/practice-areas/' },
+  { name: area.name, href: area.path },
+];
+
+const serviceSchema = {
+  '@type': 'Service',
+  '@id': `${SITE_URL}${area.path}#service`,
+  name: `${area.name} — Los Angeles`,
+  serviceType: area.schemaName,
+  description: area.blurb,
+  provider: { '@id': FIRM_ID },
+  areaServed: { '@type': 'State', name: 'California' },
+  url: `${SITE_URL}${area.path}`,
+  offers: { '@type': 'Offer', description: 'Free initial consultation', price: '0', priceCurrency: 'USD' },
+};
+---
+
+<Base title={title} description={description} path={area.path} breadcrumbs={crumbs} schema={[serviceSchema]}>
+  <PageHero kicker={`${area.ref} · ${leads.map((p) => p.name).join(' and ')}`} breadcrumbs={crumbs} cta>
+    {area.name} <em>in Los Angeles</em>
+  </PageHero>
+
+  <section class="block">
+    <div class="wrap-narrow prose">
+      <!-- Definition lead + Quick Answer: written in Phase 3 from real substance. -->
+      <div class="quick-answer">
+        <span class="mono-label">Quick answer</span>
+        <p>{area.blurb}</p>
+        <p>At Hickok &amp; Kim, {area.shortName.toLowerCase()} matters are handled by {leads.map((p) => p.name).join(' and ')} for individuals and businesses in Los Angeles and across California. Every matter begins with a free initial consultation.</p>
+      </div>
+
+      <p class="placeholder">Full page content (definition lead, how we help, common situations, question-formatted sections, page FAQ) is written in Phase 3. Firm-specific example matters remain <code>TODO:REAL-DATA</code> until the partners supply them.</p>
+
+      <h2>Who handles {area.shortName.toLowerCase()} at Hickok &amp; Kim</h2>
+      {leads.map((p) => (
+        <p><a href={p.path}>{p.name}</a>, Partner. {p.focusSummary} California State Bar #{p.barNumber}.</p>
+      ))}
+
+      <p class="reviewed">Last reviewed {firm.lastReviewed}</p>
+    </div>
+  </section>
+
+  <CtaBand />
+</Base>

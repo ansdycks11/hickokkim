@@ -1,0 +1,25 @@
+---
+import Base from '../layouts/Base.astro';
+import PageHero from '../components/PageHero.astro';
+import { practiceAreas, firm } from '../data/firm';
+---
+
+<Base title="Page Not Found | Hickok & Kim Inc. — Los Angeles" description="That page does not exist. Find practice areas, attorneys, and contact information for Hickok & Kim, Inc." path="/404/" noindex>
+  <PageHero kicker="404" lead="The page you asked for isn't here. The links below cover most of what people are looking for.">
+    Not <em>found</em>.
+  </PageHero>
+  <section class="block">
+    <div class="wrap-narrow prose">
+      <h2>Practice areas</h2>
+      <ul>{practiceAreas.map((a) => <li><a href={a.path}>{a.name}</a></li>)}</ul>
+      <h2>Firm</h2>
+      <ul>
+        <li><a href="/attorneys/">Attorneys</a></li>
+        <li><a href="/how-we-work/">How we work</a></li>
+        <li><a href="/faq/">FAQ</a></li>
+        <li><a href="/contact/">Contact and free consultation</a></li>
+      </ul>
+      <p>Or call <a href={`tel:${firm.phoneTel}`}>{firm.phoneDisplay}</a>.</p>
+    </div>
+  </section>
+</Base>

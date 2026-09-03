@@ -1,0 +1,214 @@
+---
+/**
+ * Base layout: every page on the site renders through this.
+ * Provides <head> metadata, the site-wide JSON-LD @graph, header, footer,
+ * sticky mobile CTA, skip link, and the reveal-on-scroll helper.
+ */
+import '../styles/global.css';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import StickyCta from '../components/StickyCta.astro';
+import { firm, partnerList, practiceAreas, SITE_URL, FIRM_ID, WEBSITE_ID } from '../data/firm';
+
+export interface Crumb { name: string; href: string }
+
+interface Props {
+  title: string;
+  description: string;
+  /** Site-relative path with trailing slash, e.g. "/faq/". Used for canonical + og:url. */
+  path: string;
+  ogImage?: string;
+  ogType?: 'website' | 'article';
+  /** Extra JSON-LD nodes merged into the @graph (Service, FAQPage, Article, Attorney…). */
+  schema?: Record<string, unknown>[];
+  breadcrumbs?: Crumb[];
+  noindex?: boolean;
+  hideStickyCta?: boolean;
+  datePublished?: string;
+  dateModified?: string;
+  bodyClass?: string;
+  /** Home only: header is rendered by the page after the intro experience. */
+  hideHeader?: boolean;
+}
+
+const {
+  title,
+  description,
+  path,
+  ogImage = firm.ogImage,
+  ogType = 'website',
+  schema = [],
+  breadcrumbs,
+  noindex = false,
+  hideStickyCta = false,
+  datePublished = firm.lastReviewed,
+  dateModified = firm.lastReviewed,
+  bodyClass = '',
+  hideHeader = false,
+} = Astro.props;
+
+const canonical = `${SITE_URL}${path}`;
+const pageId = `${canonical}#webpage`;
+
+const firmNode = {
+  '@type': 'LegalService',
+  '@id': FIRM_ID,
+  name: firm.name,
+  legalName: firm.legalName,
+  url: `${SITE_URL}/`,
+  telephone: firm.phoneSchema,
+  email: firm.email,
+  foundingDate: firm.founded,
+  description: firm.description,
+  image: firm.ogImage,
+  priceRange: 'Free initial consultation',
+  address: {
+    '@type': 'PostalAddress',
+    streetAddress: firm.address.street,
+    addressLocality: firm.address.city,
+    addressRegion: firm.address.region,
+    postalCode: firm.address.postal,
+    addressCountry: firm.address.country,
+  },
+  geo: { '@type': 'GeoCoordinates', latitude: firm.geo.lat, longitude: firm.geo.lng },
+  areaServed: { '@type': 'State', name: firm.areaServed },
+  openingHoursSpecification: [
+    {
+      '@type': 'OpeningHoursSpecification',
+      dayOfWeek: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'],
+      opens: '09:00',
+      closes: '17:00',
+    },
+  ],
+  knowsLanguage: firm.languageCodes,
+  knowsAbout: practiceAreas.map((a) => a.schemaName),
+  employee: partnerList.map((p) => ({ '@id': p.id })),
+  ...(firm.sameAs.length ? { sameAs: firm.sameAs } : {}),
+};
+
+const attorneyNodes = partnerList.map((p) => ({
+  '@type': 'Attorney',
+  '@id': p.id,
+  name: p.name,
+  url: p.url,
+  jobTitle: p.title,
+  image: `${SITE_URL}${p.image}`,
+  worksFor: { '@id': FIRM_ID },
+  alumniOf: p.education.map((e) => e.split(',')[0]),
+  knowsLanguage: p.languageCodes,
+  knowsAbout: practiceAreas.filter((a) => a.partners.includes(p.slug)).map((a) => a.schemaName),
+  memberOf: [
+    { '@type': 'Organization', name: 'State Bar of California', identifier: p.barNumber },
+    ...p.memberships.map((m) => ({ '@type': 'Organization', name: m })),
+  ],
+  sameAs: p.sameAs,
+}));
+
+const websiteNode = {
+  '@type': 'WebSite',
+  '@id': WEBSITE_ID,
+  url: `${SITE_URL}/`,
+  name: firm.name,
+  publisher: { '@id': FIRM_ID },
+  inLanguage: 'en-US',
+};
+
+const webPageNode = {
+  '@type': ogType === 'article' ? 'WebPage' : 'WebPage',
+  '@id': pageId,
+  url: canonical,
+  name: title,
+  description,
+  isPartOf: { '@id': WEBSITE_ID },
+  about: { '@id': FIRM_ID },
+  inLanguage: 'en-US',
+  datePublished,
+  dateModified,
+  ...(breadcrumbs ? { breadcrumb: { '@id': `${canonical}#breadcrumb` } } : {}),
+};
+
+const breadcrumbNode = breadcrumbs
+  ? {
+      '@type': 'BreadcrumbList',
+      '@id': `${canonical}#breadcrumb`,
+      itemListElement: [{ name: 'Home', href: '/' }, ...breadcrumbs].map((c, i) => ({
+        '@type': 'ListItem',
+        position: i + 1,
+        name: c.name,
+        item: `${SITE_URL}${c.href}`,
+      })),
+    }
+  : null;
+
+const graph = {
+  '@context': 'https://schema.org',
+  '@graph': [firmNode, ...attorneyNodes, websiteNode, webPageNode, ...(breadcrumbNode ? [breadcrumbNode] : []), ...schema],
+};
+---
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    {noindex ? <meta name="robots" content="noindex, nofollow" /> : <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large" />}
+    <link rel="canonical" href={canonical} />
+    <meta name="theme-color" content="#0E131B" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <meta property="og:type" content={ogType} />
+    <meta property="og:site_name" content={firm.name} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:locale" content="en_US" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImage} />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Libre+Caslon+Text:ital,wght@0,400;0,700;1,400&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+    <script is:inline>document.documentElement.classList.remove('no-js');</script>
+    <script type="application/ld+json" set:html={JSON.stringify(graph)} />
+    <slot name="head" />
+    <!-- Analytics: intentionally empty until the partners choose a provider (Plausible recommended). -->
+  </head>
+  <body class={bodyClass}>
+    <a class="skip" href="#main">Skip to content</a>
+    {!hideHeader && <Header currentPath={path} />}
+    <main id="main" tabindex="-1">
+      <slot />
+    </main>
+    <Footer />
+    {!hideStickyCta && <StickyCta />}
+    <script>
+      // Reveal-on-scroll: opacity + <=24px translate, once. Respects reduced motion (CSS).
+      const items = document.querySelectorAll('.reveal');
+      if ('IntersectionObserver' in window && items.length) {
+        const io = new IntersectionObserver(
+          (entries) => {
+            for (const e of entries) {
+              if (e.isIntersecting) {
+                e.target.classList.add('in');
+                io.unobserve(e.target);
+              }
+            }
+          },
+          { rootMargin: '0px 0px -8% 0px', threshold: 0.08 }
+        );
+        items.forEach((el) => io.observe(el));
+      } else {
+        items.forEach((el) => el.classList.add('in'));
+      }
+    </script>
+  </body>
+</html>

@@ -1,0 +1,46 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import PageHero from '../../components/PageHero.astro';
+import CtaBand from '../../components/CtaBand.astro';
+import { partners } from '../../data/firm';
+
+const posts = (await getCollection('insights', ({ data }) => !data.draft)).sort(
+  (a, b) => b.data.published.valueOf() - a.data.published.valueOf()
+);
+const fmt = (d: Date) => d.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+
+const title = 'Insights | Hickok & Kim Inc. — Los Angeles';
+const description =
+  'Plain-language articles from the partners of Hickok & Kim, Inc. on California business, cannabis, trademark, injury, estate, and real-estate law. Reviewed quarterly.';
+const crumbs = [{ name: 'Insights', href: '/insights/' }];
+---
+
+<Base title={title} description={description} path="/insights/" breadcrumbs={crumbs}>
+  <PageHero kicker="Insights" breadcrumbs={crumbs} lead="Articles written by the partners, cited to the statute or agency, and reviewed every quarter.">
+    Plain answers to the questions clients <em>actually</em> ask.
+  </PageHero>
+
+  <section class="block">
+    <div class="wrap">
+      {posts.length === 0 ? (
+        <p class="placeholder">Three seed articles are written in Phase 5. The index lists them here automatically.</p>
+      ) : (
+        <ul class="ledger">
+          {posts.map((post) => (
+            <li>
+              <a class="row" href={`/insights/${post.id}/`}>
+                <span class="ref">{fmt(post.data.published)}</span>
+                <h2 class="title" style="font-size:1.3rem">{post.data.title}<small>{partners[post.data.author].name}</small></h2>
+                <p>{post.data.description}</p>
+                <span class="arrow" aria-hidden="true">→</span>
+              </a>
+            </li>
+          ))}
+        </ul>
+      )}
+    </div>
+  </section>
+
+  <CtaBand />
+</Base>

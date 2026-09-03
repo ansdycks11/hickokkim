@@ -1,0 +1,34 @@
+---
+/** Lightweight static brass scales motif for non-home pages (continuity with the 3D hero). */
+interface Props { class?: string; title?: string }
+const { class: cls = '', title } = Astro.props;
+---
+
+<svg
+  class={`scales-mark ${cls}`.trim()}
+  viewBox="0 0 200 200"
+  xmlns="http://www.w3.org/2000/svg"
+  aria-hidden={title ? undefined : 'true'}
+  role={title ? 'img' : undefined}
+  fill="none"
+  stroke="#C9A86A"
+  stroke-width="1.5"
+  stroke-linecap="round"
+>
+  {title && <title>{title}</title>}
+  <!-- base -->
+  <path d="M70 178h60M100 178v-12" />
+  <path d="M88 166h24" />
+  <!-- column -->
+  <path d="M100 166V40" />
+  <!-- finial -->
+  <circle cx="100" cy="36" r="4" />
+  <!-- beam -->
+  <path d="M28 46h144" />
+  <!-- left pan -->
+  <path d="M28 46l-14 62M28 46l14 62" />
+  <path d="M8 108q20 14 40 0" />
+  <!-- right pan -->
+  <path d="M172 46l-14 62M172 46l14 62" />
+  <path d="M152 108q20 14 40 0" />
+</svg>

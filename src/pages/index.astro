@@ -1,0 +1,202 @@
+---
+/**
+ * Home. Phase 1: static hero + full conventional page.
+ * Phase 2 replaces the static hero with the "Paper in Ink" scroll experience
+ * (docs/website-architecture.md §13) while keeping this hero as the LCP/fallback.
+ */
+import Base from '../layouts/Base.astro';
+import IntakeForm from '../components/IntakeForm.astro';
+import { firm, moments, areasByMoment, partnerList, partners } from '../data/firm';
+
+const title = 'Hickok & Kim, Inc. — Los Angeles Attorneys for Individuals and Businesses';
+const description =
+  'Hickok & Kim, Inc. is a Los Angeles law firm serving individuals and businesses across California: personal injury, civil litigation, business and corporate law, outside general counsel, trademarks, cannabis law, wills and trusts, real estate. Free consultation.';
+
+const faqs = [
+  { q: 'Is the initial consultation free?', a: 'Yes. Every matter begins with a free initial consultation by phone or video, so we can understand your situation and tell you plainly whether and how we can help.' },
+  { q: 'How are fees structured?', a: 'Hourly, flat-fee, or contingency depending on the matter. Personal injury cases are handled on contingency, so you pay nothing unless we recover for you. Every engagement starts with a written retainer agreement and conflict check, and invoices are itemized.' },
+  { q: 'Do you meet clients in person?', a: 'Yes, by appointment. Our Los Angeles office at 2202 S. Figueroa St. is used for scheduled meetings, and we work with clients throughout California by phone and video.' },
+  { q: 'Do you offer services in Korean?', a: 'Yes. Partner Daniel Kim speaks Korean and can handle consultations and matters in Korean.' },
+];
+
+const faqSchema = {
+  '@type': 'FAQPage',
+  mainEntity: faqs.map((f) => ({ '@type': 'Question', name: f.q, acceptedAnswer: { '@type': 'Answer', text: f.a } })),
+};
+---
+
+<Base title={title} description={description} path="/" schema={[faqSchema]}>
+  <!-- Static hero: LCP element. Phase 2 layers the scroll experience above this. -->
+  <section id="hero" class="home-hero dark" data-hero aria-label="Introduction">
+    <div class="wrap">
+      <h1>Counsel built on <em>balance</em>, not bluster.</h1>
+      <p class="lead">Hickok &amp; Kim is a Los Angeles law firm for individuals and businesses across California. Two partners, nine practice areas, and a free initial consultation, whether something has gone wrong, you're building something, or you're planning ahead.</p>
+      <div class="hero-actions">
+        <a class="btn btn-solid" href="/contact/">Free consultation</a>
+        <a class="btn btn-ghost" href="/practice-areas/">See practice areas</a>
+      </div>
+      <div class="acts">
+        {moments.map((m) => (
+          <div>
+            <h2>{m.heading}</h2>
+            <p>{areasByMoment(m.id).map((a) => a.shortName).join(', ')}.</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- Quick answer + trust facts -->
+  <section class="block" aria-labelledby="intro-h">
+    <div class="wrap intro">
+      <div>
+        <p class="big" id="intro-h">Hickok &amp; Kim, Inc. is a Los Angeles law firm founded in 2019 by two partners who answer their own phones. We represent individuals and businesses across California, in English and Korean, and every matter begins with a free consultation.</p>
+      </div>
+      <div class="facts">
+        <div><b>2019</b><span>Founded in Los Angeles</span></div>
+        <div><b>18+ years</b><span>Combined experience</span></div>
+        <div><b>9</b><span>Practice areas</span></div>
+        <div><b>California</b><span>Statewide, by video or in person</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Practice ledger -->
+  <section class="block tight" id="practice" aria-labelledby="practice-h">
+    <div class="wrap">
+      <h2 id="practice-h">Nine practice areas, organized by the moment you're in.</h2>
+      {moments.map((m) => (
+        <div class="group reveal">
+          <div class="group-head"><h3>{m.heading}</h3><p>{m.tagline}</p></div>
+          <ul class="ledger">
+            {areasByMoment(m.id).map((a) => (
+              <li>
+                <a class="row" href={a.path}>
+                  <span class="ref">{a.ref}</span>
+                  <h4>{a.shortName}<small>{a.ledgerNote}</small></h4>
+                  <p>{a.blurb}</p>
+                  <span class="arrow" aria-hidden="true">→</span>
+                </a>
+              </li>
+            ))}
+          </ul>
+        </div>
+      ))}
+      <p class="fee-note">We do not handle criminal matters. If your situation falls outside what we do, we'll tell you and connect you with someone who can help.</p>
+    </div>
+  </section>
+
+  <!-- Testimonials: TODO:REAL-DATA — replace with client-approved quotes; add Review schema only when real. -->
+  <section class="block tight" id="testimonials" aria-labelledby="testimonials-h">
+    <div class="wrap">
+      <h2 id="testimonials-h">What clients say</h2>
+      <p class="sample">Sample quotes for layout only. To be replaced with client-approved testimonials before launch.</p>
+      <div class="quotes reveal">
+        <figure class="quote"><blockquote>Every invoice matched what we agreed, and I never wondered what my lawyer was doing.</blockquote><figcaption>Business client</figcaption></figure>
+        <figure class="quote"><blockquote>Our license application felt impossible. Chris knew the regulators' questions before they asked them.</blockquote><figcaption>Cannabis operator</figcaption></figure>
+        <figure class="quote"><blockquote>Daniel explained the whole process to my parents in Korean and handled the case himself, start to finish.</blockquote><figcaption>Injury client</figcaption></figure>
+      </div>
+    </div>
+  </section>
+
+  <!-- Partners -->
+  <section class="block dark" id="attorneys" aria-labelledby="attorneys-h">
+    <div class="wrap">
+      <h2 id="attorneys-h">Two partners. You work with the one who signs your engagement letter.</h2>
+      <div class="partners">
+        {partnerList.map((p) => (
+          <article class="partner reveal">
+            <div class="portrait"><img src={p.image} width={p.imageWidth} height={p.imageHeight} alt={p.imageAlt} loading="lazy" /></div>
+            <h3>{p.name}</h3>
+            <p class="role">{p.title}. {p.focusSummary}</p>
+            <p class="bio">{p.shortBio}</p>
+            <dl>
+              <div><dt>California Bar</dt><dd><a href={p.barProfile} rel="noopener">#{p.barNumber}, admitted {p.barAdmitted.replace('June ', '')}</a></dd></div>
+              {p.federalAdmissions.length > 0 && <div><dt>Federal courts</dt><dd>U.S. District Court, C.D. Cal.</dd></div>}
+              <div><dt>Education</dt><dd>{p.education.map((e) => e.split(',')[0]).join('; ')}</dd></div>
+              <div><dt>Languages</dt><dd>{p.languages.join(', ')}{p.languages.includes('Korean') ? ' (한국어)' : ''}</dd></div>
+            </dl>
+            <p class="more"><a href={p.path}>Full profile of {p.firstName} →</a></p>
+          </article>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- Process strip -->
+  <section class="block" id="process" aria-labelledby="process-h">
+    <div class="wrap">
+      <div class="section-head">
+        <h2 id="process-h">What working with us looks like, in order.</h2>
+        <a class="more" href="/how-we-work/">How we work and what it costs →</a>
+      </div>
+      <div class="steps reveal">
+        <article><h3>Free consultation</h3><p>A call or video meeting where we listen, ask questions, and tell you plainly whether we're the right firm. If we're not, we'll point you to someone who is.</p></article>
+        <article><h3>Retainer and conflict check</h3><p>A written retainer agreement and conflict waiver before any work begins, with the fee structure spelled out: hourly, flat, or contingency.</p></article>
+        <article><h3>Strategy and itemized invoices</h3><p>A clear plan, itemized invoices, and a partner who returns calls the same day in nearly every case.</p></article>
+        <article><h3>Resolution</h3><p>Settlement, signature, filing, or judgment. We drive matters to a defined end and hand you the complete file.</p></article>
+      </div>
+      <p class="fee-note">Personal injury matters are handled on contingency: no fee unless we recover for you. Other matters are billed hourly or at a flat fee agreed in advance.</p>
+    </div>
+  </section>
+
+  <!-- Latest insights (populated in Phase 5) -->
+  <section class="block tight" id="insights" aria-labelledby="insights-h">
+    <div class="wrap">
+      <div class="section-head">
+        <h2 id="insights-h">Insights</h2>
+        <a class="more" href="/insights/">All articles →</a>
+      </div>
+      <p class="placeholder">Latest three articles render here once the Insights collection has entries (Phase 5).</p>
+    </div>
+  </section>
+
+  <!-- FAQ preview -->
+  <section class="block tight" id="faq" aria-labelledby="faq-h">
+    <div class="wrap">
+      <div class="section-head">
+        <h2 id="faq-h">Questions we're asked most</h2>
+        <a class="more" href="/faq/">All questions →</a>
+      </div>
+      <div class="faq">
+        {faqs.map((f) => (
+          <details>
+            <summary>{f.q}</summary>
+            <div class="answer"><p>{f.a}</p></div>
+          </details>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- Contact band -->
+  <section class="block dark" id="contact" aria-labelledby="contact-h">
+    <div class="wrap contact-grid">
+      <div>
+        <h2 id="contact-h" style="margin-bottom:26px">The first conversation is <em>free</em>.</h2>
+        <address>
+          {firm.address.street}<br />
+          {firm.address.city}, {firm.address.region} {firm.address.postal}<br />
+          {firm.address.note}<br />
+          <a href={`tel:${firm.phoneTel}`}>{firm.phoneDisplay}</a><br />
+          <a href={`mailto:${firm.email}`}>{firm.email}</a><br />
+          {firm.hoursDisplay}<br />
+          {firm.hoursNote}
+        </address>
+      </div>
+      <IntakeForm />
+    </div>
+  </section>
+</Base>
+
+<style>
+  .home-hero { background: var(--ink); color: #fff; padding: clamp(96px, 12vw, 160px) 0 clamp(64px, 8vw, 104px); }
+  .home-hero h1 { max-width: 12ch; }
+  .home-hero .lead { max-width: 52ch; margin: 22px 0 30px; font-size: 1.08rem; color: rgba(255, 255, 255, .78); }
+  .home-hero .hero-actions { display: flex; gap: 12px; flex-wrap: wrap; }
+  .home-hero .acts { display: grid; gap: 18px; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); margin-top: 56px; }
+  .home-hero .acts div { border-top: 1px solid var(--hair-d); padding-top: 14px; }
+  .home-hero .acts h2 { font-size: 1.2rem; margin-bottom: 6px; }
+  .home-hero .acts p { font-size: .88rem; margin: 0; color: rgba(255, 255, 255, .62); }
+  @media (max-width: 760px) { .home-hero .hero-actions .btn { width: 100%; text-align: center; } }
+</style>

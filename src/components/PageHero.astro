@@ -1,0 +1,32 @@
+---
+import Breadcrumbs from './Breadcrumbs.astro';
+import ScalesMark from './ScalesMark.astro';
+import type { Crumb } from '../layouts/Base.astro';
+
+interface Props {
+  kicker?: string;
+  breadcrumbs?: Crumb[];
+  lead?: string;
+  /** Show the primary CTA pair (one solid, one ghost). */
+  cta?: boolean;
+  scales?: boolean;
+}
+const { kicker, breadcrumbs, lead, cta = false, scales = true } = Astro.props;
+---
+
+<section class="page-hero dark" data-hero>
+  <div class="wrap">
+    {breadcrumbs && <Breadcrumbs items={breadcrumbs} />}
+    {kicker && <p class="mono-label kicker">{kicker}</p>}
+    <h1><slot /></h1>
+    {lead && <p class="lead">{lead}</p>}
+    <slot name="after" />
+    {cta && (
+      <div class="hero-actions">
+        <a class="btn btn-solid" href="/contact/">Free consultation</a>
+        <a class="btn btn-ghost" href="/how-we-work/">How we work</a>
+      </div>
+    )}
+  </div>
+  {scales && <ScalesMark />}
+</section>

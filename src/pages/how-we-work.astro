@@ -1,0 +1,40 @@
+---
+/** Process + fees philosophy. Phase 1: verified facts. Phase 4: expanded with the consultation checklist. */
+import Base from '../layouts/Base.astro';
+import PageHero from '../components/PageHero.astro';
+import CtaBand from '../components/CtaBand.astro';
+import { firm } from '../data/firm';
+
+const title = 'How We Work & Fees | Hickok & Kim Inc. — Los Angeles';
+const description =
+  'How Hickok & Kim, Inc. works: free consultation, written retainer and conflict check, clear strategy with itemized invoices, and a defined resolution. Hourly, flat-fee, and contingency options in Los Angeles.';
+const crumbs = [{ name: 'How we work', href: '/how-we-work/' }];
+---
+
+<Base title={title} description={description} path="/how-we-work/" breadcrumbs={crumbs}>
+  <PageHero kicker="How we work" breadcrumbs={crumbs} lead="Four steps, a written agreement before any work begins, and a partner who returns calls the same day in nearly every case.">
+    What working with us looks like, <em>in order</em>.
+  </PageHero>
+
+  <section class="block">
+    <div class="wrap">
+      <div class="steps" style="margin-top:0">
+        <article><h2 style="font-size:1.2rem;margin-bottom:8px">Free consultation</h2><p>A call or video meeting where we listen, ask questions, and tell you plainly whether we're the right firm. If we're not, we'll point you to someone who is.</p></article>
+        <article><h2 style="font-size:1.2rem;margin-bottom:8px">Retainer and conflict check</h2><p>A written retainer agreement and conflict waiver before any work begins, with the fee structure spelled out: hourly, flat, or contingency.</p></article>
+        <article><h2 style="font-size:1.2rem;margin-bottom:8px">Strategy and itemized invoices</h2><p>A clear plan, itemized invoices, and a partner who returns calls the same day in nearly every case.</p></article>
+        <article><h2 style="font-size:1.2rem;margin-bottom:8px">Resolution</h2><p>Settlement, signature, filing, or judgment. We drive matters to a defined end and hand you the complete file.</p></article>
+      </div>
+    </div>
+  </section>
+
+  <section class="block tight">
+    <div class="wrap-narrow prose">
+      <h2>How fees work at Hickok &amp; Kim</h2>
+      <p>Hickok &amp; Kim, Inc. bills hourly, at a flat fee, or on contingency, depending on the matter. Personal injury cases are handled on contingency, which means no fee unless we recover for you. Business, corporate, trademark, cannabis, estate-planning, and real-estate work is billed hourly or at a flat fee agreed in advance. Every engagement starts with a written retainer agreement and a conflict check, and invoices are itemized.</p>
+      <p class="placeholder">Phase 4 adds the expanded fee explanation, the "what to bring to a first consultation" checklist, and communication promises.</p>
+      <p class="reviewed">Last reviewed {firm.lastReviewed}</p>
+    </div>
+  </section>
+
+  <CtaBand />
+</Base>

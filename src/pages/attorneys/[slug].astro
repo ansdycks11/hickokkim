@@ -1,0 +1,78 @@
+---
+/** Attorney bio page. Phase 1: verified credentials only. Phase 4: full 300–500-word bio. */
+import Base from '../../layouts/Base.astro';
+import PageHero from '../../components/PageHero.astro';
+import CtaBand from '../../components/CtaBand.astro';
+import { partnerList, areasForPartner, firm } from '../../data/firm';
+
+export function getStaticPaths() {
+  return partnerList.map((p) => ({ params: { slug: p.slug }, props: { p } }));
+}
+const { p } = Astro.props;
+const areas = areasForPartner(p.slug);
+const title = `${p.name}, Partner | Hickok & Kim Inc. — Los Angeles`;
+const description = `${p.name} is a Partner at Hickok & Kim, Inc. in Los Angeles. ${p.focusSummary} California State Bar #${p.barNumber}. Free initial consultation.`;
+const crumbs = [
+  { name: 'Attorneys', href: '/attorneys/' },
+  { name: p.name, href: p.path },
+];
+// The Attorney node itself is already in the site-wide graph; mark this page as its ProfilePage.
+const profileSchema = {
+  '@type': 'ProfilePage',
+  '@id': `${p.url}#profile`,
+  mainEntity: { '@id': p.id },
+  dateModified: firm.lastReviewed,
+};
+---
+
+<Base title={title} description={description} path={p.path} breadcrumbs={crumbs} schema={[profileSchema]} ogImage={`${firm.url}${p.image}`}>
+  <PageHero kicker={p.title} breadcrumbs={crumbs} lead={p.focusSummary} scales={false}>
+    {p.name}
+  </PageHero>
+
+  <section class="block">
+    <div class="wrap bio-grid">
+      <div class="bio-photo">
+        <!-- TODO:REAL-DATA — full-resolution headshot (>=1200px short edge), 3:4 crop. -->
+        <img src={p.image} width={p.imageWidth} height={p.imageHeight} alt={p.imageAlt} />
+      </div>
+      <div class="prose">
+        <p>{p.shortBio}</p>
+        {p.humanizing && <p>{p.humanizing}</p>}
+        <p class="placeholder">Full bio (300–500 words, client-outcome oriented) is written in Phase 4 for partner review.</p>
+
+        <h2>Credentials</h2>
+        <div class="table-scroll">
+          <table>
+            <tbody>
+              <tr><th scope="row">Bar admission</th><td>State Bar of California <a href={p.barProfile} rel="noopener">#{p.barNumber}</a>, admitted {p.barAdmitted}, Active</td></tr>
+              {p.federalAdmissions.length > 0 && <tr><th scope="row">Federal courts</th><td>{p.federalAdmissions.join('; ')}</td></tr>}
+              <tr><th scope="row">Education</th><td>{p.education.join('; ')}</td></tr>
+              <tr><th scope="row">Experience</th><td>{p.experience.join('; ')}</td></tr>
+              {p.memberships.length > 0 && <tr><th scope="row">Leadership</th><td>{p.memberships.join('; ')}</td></tr>}
+              <tr><th scope="row">Languages</th><td>{p.languages.join(', ')}</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <h2>Practice areas {p.firstName} handles</h2>
+        <ul>
+          {areas.map((a) => <li><a href={a.path}>{a.name}</a> — {a.blurb}</li>)}
+        </ul>
+
+        <h2>Contact</h2>
+        <p>Call the firm at <a href={`tel:${firm.phoneTel}`}>{firm.phoneDisplay}</a> or write to <a href={`mailto:${firm.email}`}>{firm.email}</a>. Every matter begins with a free initial consultation.</p>
+        <p class="reviewed">Last reviewed {firm.lastReviewed}</p>
+      </div>
+    </div>
+  </section>
+
+  <CtaBand heading={`Talk to ${p.firstName}. The first conversation is <em>free</em>.`} />
+</Base>
+
+<style>
+  .bio-grid { display: grid; gap: clamp(28px, 5vw, 64px); grid-template-columns: 1fr; }
+  @media (min-width: 880px) { .bio-grid { grid-template-columns: 320px 1fr; align-items: start; } }
+  .bio-photo img { width: 100%; aspect-ratio: 3 / 4; object-fit: cover; border: 1px solid var(--hair); background: var(--paper-2); }
+  @media (max-width: 879px) { .bio-photo { max-width: 320px; } }
+</style>

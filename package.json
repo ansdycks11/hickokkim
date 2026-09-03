@@ -1,0 +1,19 @@
+{
+  "name": "hickokkim",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "check": "astro check"
+  },
+  "dependencies": {
+    "@astrojs/sitemap": "latest",
+    "astro": "latest",
+    "three": "latest"
+  },
+  "devDependencies": {
+    "sharp": "^0.35.4"
+  }
+}

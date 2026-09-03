@@ -1,0 +1,27 @@
+---
+import Base from '../../layouts/Base.astro';
+import PageHero from '../../components/PageHero.astro';
+import { firm } from '../../data/firm';
+
+const title = 'Message Received | Hickok & Kim Inc. — Los Angeles';
+const description = 'Thank you. A partner at Hickok & Kim, Inc. will respond within one business day, usually the same day.';
+const crumbs = [{ name: 'Contact', href: '/contact/' }, { name: 'Message received', href: '/contact/thanks/' }];
+---
+
+<Base title={title} description={description} path="/contact/thanks/" breadcrumbs={crumbs} noindex hideStickyCta>
+  <PageHero kicker="Message received" breadcrumbs={crumbs} lead={`Thank you. A partner will respond ${firm.responsePromise}.`} scales={false}>
+    We have your <em>message</em>.
+  </PageHero>
+  <section class="block">
+    <div class="wrap-narrow prose">
+      <h2>What happens next</h2>
+      <ol>
+        <li>A partner, not an intake service, reads your message and replies by phone or email {firm.responsePromise}.</li>
+        <li>We schedule a free consultation by phone or video, or in person by appointment at our Los Angeles office.</li>
+        <li>If we can help, you receive a written retainer agreement that spells out the fee structure before any work begins.</li>
+      </ol>
+      <p>Need to reach us sooner? Call <a href={`tel:${firm.phoneTel}`}>{firm.phoneDisplay}</a>, {firm.hoursDisplay}.</p>
+      <p><small>Contacting us does not create an attorney-client relationship until a retainer agreement is signed.</small></p>
+    </div>
+  </section>
+</Base>

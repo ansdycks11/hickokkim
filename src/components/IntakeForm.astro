@@ -1,0 +1,89 @@
+---
+/**
+ * Netlify Forms intake. Four required fields plus two optional dropdowns.
+ * Standard HTML form; inline validation on blur; honeypot; custom success page.
+ */
+import { firm, practiceAreas } from '../data/firm';
+interface Props { heading?: string; compact?: boolean }
+const { heading = 'Request a free consultation', compact = false } = Astro.props;
+---
+
+<div class="contact-card">
+  <h3>{heading}</h3>
+  <p>Tell us briefly what's going on. A partner, not an intake service, will respond {firm.responsePromise}.</p>
+  <form class="form-grid" name="consultation" method="POST" action="/contact/thanks/" data-netlify="true" netlify-honeypot="bot-field" novalidate>
+    <input type="hidden" name="form-name" value="consultation" />
+    <p class="visually-hidden" aria-hidden="true"><label>Leave this field empty: <input name="bot-field" tabindex="-1" autocomplete="off" /></label></p>
+    <div class="field">
+      <label for="f-name">Name</label>
+      <input id="f-name" name="name" type="text" autocomplete="name" required aria-describedby="f-name-err" />
+      <span class="err-msg" id="f-name-err">Enter your name.</span>
+    </div>
+    <div class="field">
+      <label for="f-phone">Phone</label>
+      <input id="f-phone" name="phone" type="tel" autocomplete="tel" inputmode="tel" required aria-describedby="f-phone-err" />
+      <span class="err-msg" id="f-phone-err">Enter a phone number.</span>
+    </div>
+    <div class="field">
+      <label for="f-email">Email</label>
+      <input id="f-email" name="email" type="email" autocomplete="email" inputmode="email" required aria-describedby="f-email-err" />
+      <span class="err-msg" id="f-email-err">Enter a valid email address.</span>
+    </div>
+    {!compact && (
+      <div class="field">
+        <label for="f-area">What is this about? (optional)</label>
+        <select id="f-area" name="practice_area">
+          <option value="">Choose one</option>
+          {practiceAreas.map((a) => <option>{a.name}</option>)}
+          <option>Not sure</option>
+        </select>
+      </div>
+    )}
+    {!compact && (
+      <div class="field">
+        <label for="f-heard">How did you hear about us? (optional)</label>
+        <select id="f-heard" name="how_heard">
+          <option value="">Choose one</option>
+          <option>AI assistant (ChatGPT, Claude, Gemini, Perplexity)</option>
+          <option>Google or Bing search</option>
+          <option>Referral from a person</option>
+          <option>Social media or podcast</option>
+          <option>Other</option>
+        </select>
+      </div>
+    )}
+    <div class="field">
+      <label for="f-msg">Briefly, what's going on?</label>
+      <textarea id="f-msg" name="message" required aria-describedby="f-msg-err"></textarea>
+      <span class="err-msg" id="f-msg-err">A sentence or two helps us route you to the right partner.</span>
+    </div>
+    <button class="btn btn-solid" type="submit">Request free consultation</button>
+    <p class="form-micro">Confidential · No obligation · Response within 1 business day</p>
+    <p class="form-alt">Prefer email? <a href={`mailto:${firm.email}`}>{firm.email}</a></p>
+  </form>
+  <p class="note">Contacting us through this site does not create an attorney-client relationship until a retainer agreement is signed. Please do not include confidential details until we confirm we can take your matter.</p>
+</div>
+
+<script>
+  // Inline validation on blur, never only on submit.
+  const form = document.querySelector('form[name="consultation"]') as HTMLFormElement | null;
+  if (form) {
+    const fields = form.querySelectorAll<HTMLInputElement | HTMLTextAreaElement>('[required]');
+    const check = (el: HTMLInputElement | HTMLTextAreaElement) => {
+      const wrap = el.closest('.field');
+      const ok = el.checkValidity() && el.value.trim().length > 0;
+      wrap?.classList.toggle('err', !ok);
+      el.setAttribute('aria-invalid', String(!ok));
+      return ok;
+    };
+    fields.forEach((el) => {
+      el.addEventListener('blur', () => check(el));
+      el.addEventListener('input', () => { if (el.closest('.field')?.classList.contains('err')) check(el); });
+    });
+    form.addEventListener('submit', (e) => {
+      let first: HTMLElement | null = null;
+      fields.forEach((el) => { if (!check(el) && !first) first = el; });
+      if (first) { e.preventDefault(); (first as HTMLElement).focus(); }
+    });
+  }
+</script>

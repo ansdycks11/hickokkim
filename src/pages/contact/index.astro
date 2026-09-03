@@ -1,0 +1,79 @@
+---
+import Base from '../../layouts/Base.astro';
+import PageHero from '../../components/PageHero.astro';
+import IntakeForm from '../../components/IntakeForm.astro';
+import { firm } from '../../data/firm';
+
+const title = 'Contact & Free Consultation | Hickok & Kim Inc. — LA';
+const description =
+  'Request a free consultation with Hickok & Kim, Inc. in Los Angeles. Call (213) 373-7188, email info@hickokkim.com, or send a short message. Response within one business day.';
+const crumbs = [{ name: 'Contact', href: '/contact/' }];
+
+// OpenStreetMap embed (no API key). Bounding box around the office coordinates.
+const d = 0.006;
+const bbox = [firm.geo.lng - d, firm.geo.lat - d, firm.geo.lng + d, firm.geo.lat + d].join('%2C');
+const mapSrc = `https://www.openstreetmap.org/export/embed.html?bbox=${bbox}&layer=mapnik&marker=${firm.geo.lat}%2C${firm.geo.lng}`;
+const mapLink = `https://www.openstreetmap.org/?mlat=${firm.geo.lat}&mlon=${firm.geo.lng}#map=17/${firm.geo.lat}/${firm.geo.lng}`;
+
+const contactSchema = {
+  '@type': 'ContactPage',
+  '@id': `${firm.url}/contact/#contactpage`,
+  mainEntity: { '@id': `${firm.url}/#firm` },
+};
+---
+
+<Base title={title} description={description} path="/contact/" breadcrumbs={crumbs} schema={[contactSchema]} hideStickyCta>
+  <PageHero kicker="Contact" breadcrumbs={crumbs} lead={`Call, email, or send a short message. A partner responds ${firm.responsePromise}.`} scales={false}>
+    The first conversation is <em>free</em>.
+  </PageHero>
+
+  <section class="block dark" style="background:var(--ink-2)">
+    <div class="wrap contact-grid">
+      <div>
+        <h2 style="font-size:1.45rem;margin-bottom:22px">Hickok &amp; Kim, Inc.</h2>
+        <address>
+          {firm.address.street}<br />
+          {firm.address.city}, {firm.address.region} {firm.address.postal}<br />
+          {firm.address.note} (virtual office; in-person meetings scheduled in advance)<br />
+          <a href={`tel:${firm.phoneTel}`}>{firm.phoneDisplay}</a><br />
+          <a href={`mailto:${firm.email}`}>{firm.email}</a><br />
+          {firm.hoursDisplay}<br />
+          {firm.hoursNote}<br />
+          English · 한국어 상담 가능
+        </address>
+        <div class="map">
+          <iframe
+            src={mapSrc}
+            title="Map showing the Hickok & Kim office at 2202 S. Figueroa St., Los Angeles"
+            loading="lazy"
+            referrerpolicy="no-referrer-when-downgrade"
+            width="100%"
+            height="300"
+          ></iframe>
+          <p class="map-link"><a href={mapLink} rel="noopener">Open in OpenStreetMap</a></p>
+        </div>
+        <!-- TODO:REAL-DATA — parking / transit note (partners reported none). -->
+      </div>
+      <IntakeForm />
+    </div>
+  </section>
+
+  <section class="block">
+    <div class="wrap-narrow prose">
+      <h2>What happens after you reach out</h2>
+      <ol>
+        <li>A partner reads your message and responds {firm.responsePromise}.</li>
+        <li>We schedule a free consultation by phone or video, or in person by appointment.</li>
+        <li>If we can help, we send a written retainer agreement that spells out the fee structure before any work begins.</li>
+      </ol>
+      <p><strong>No attorney-client relationship is formed by using this site.</strong> Sending a message, calling, or emailing does not make Hickok &amp; Kim your lawyers and does not obligate the firm to represent you. Please do not send confidential details until we have confirmed in writing that we can take your matter. See our <a href="/disclaimer/">disclaimer</a>.</p>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .map { margin-top: 26px; border: 1px solid var(--hair-d); background: var(--ink-3); aspect-ratio: 16 / 9; }
+  .map iframe { display: block; width: 100%; height: 100%; border: 0; filter: grayscale(.4) contrast(.95); }
+  .map-link { font-size: .78rem; margin-top: 8px; }
+  .map-link a { color: var(--brass-2); }
+</style>

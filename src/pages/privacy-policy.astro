@@ -1,0 +1,35 @@
+---
+/** Plain-language privacy policy. Marked for attorney review before launch. */
+import Base from '../layouts/Base.astro';
+import PageHero from '../components/PageHero.astro';
+import { firm } from '../data/firm';
+
+const title = 'Privacy Policy | Hickok & Kim Inc. — Los Angeles';
+const description = 'How Hickok & Kim, Inc. handles information submitted through hickokkim.com, including the consultation form and any analytics.';
+const crumbs = [{ name: 'Privacy policy', href: '/privacy-policy/' }];
+---
+
+<Base title={title} description={description} path="/privacy-policy/" breadcrumbs={crumbs}>
+  <PageHero kicker="Privacy policy" breadcrumbs={crumbs} scales={false}>Privacy policy</PageHero>
+  <section class="block">
+    <div class="wrap-narrow prose">
+      <p class="meta">Effective {firm.lastReviewed}. <!-- TODO:REAL-DATA — attorney review before launch. --></p>
+      <p>This policy explains what information hickokkim.com collects, how Hickok &amp; Kim, Inc. uses it, and the choices you have. We keep it short because we collect very little.</p>
+
+      <h2>Information you send us</h2>
+      <p>If you use the consultation form, we receive the name, phone number, email address, and message you type, plus the optional practice-area and "how did you hear about us" selections. The form is processed by Netlify Forms and delivered to {firm.email}. We use this information only to respond to you and to evaluate whether we can take your matter. We do not sell it or share it with anyone outside the firm except service providers that help us run the site.</p>
+
+      <h2>Information collected automatically</h2>
+      <p>Our hosting provider, Netlify, keeps standard server logs (IP address, browser type, pages requested, timestamps) for security and reliability. <!-- TODO:REAL-DATA — if analytics are enabled, name the provider (Plausible recommended: cookieless, no personal data) and link its policy. --> We do not use advertising trackers.</p>
+
+      <h2>Cookies</h2>
+      <p>This site does not set cookies for tracking or advertising. Embedded maps from OpenStreetMap and fonts from Google Fonts may receive your IP address when they load.</p>
+
+      <h2>Your choices</h2>
+      <p>You may ask what information we hold about you and request that it be corrected or deleted by writing to <a href={`mailto:${firm.email}`}>{firm.email}</a>. California residents have additional rights under the California Consumer Privacy Act to the extent it applies.</p>
+
+      <h2>Contact</h2>
+      <p>Questions about this policy: <a href={`mailto:${firm.email}`}>{firm.email}</a>, or {firm.name}, {firm.address.street}, {firm.address.city}, {firm.address.region} {firm.address.postal}.</p>
+    </div>
+  </section>
+</Base>

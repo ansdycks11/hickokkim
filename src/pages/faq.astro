@@ -1,0 +1,78 @@
+---
+/** FAQ page. Phase 1: verified six. Phase 4: 15–20 grouped by topic. Schema mirrors visible text 1:1. */
+import Base from '../layouts/Base.astro';
+import PageHero from '../components/PageHero.astro';
+import CtaBand from '../components/CtaBand.astro';
+import { firm } from '../data/firm';
+
+const groups = [
+  {
+    heading: 'Fees and consultations',
+    items: [
+      { q: 'Is the initial consultation free?', a: 'Yes. Every matter at Hickok & Kim begins with a free initial consultation by phone or video, so we can understand your situation and tell you plainly whether and how we can help.' },
+      { q: 'How are fees structured?', a: 'Hourly, flat-fee, or contingency depending on the matter. Personal injury cases are handled on contingency, so you pay nothing unless we recover for you. Every engagement starts with a written retainer agreement and conflict check, and invoices are itemized.' },
+    ],
+  },
+  {
+    heading: 'Working with the firm',
+    items: [
+      { q: 'Do you meet clients in person?', a: 'Yes, by appointment. Our Los Angeles office at 2202 S. Figueroa St. is used for scheduled meetings, and we work with clients throughout California by phone and video.' },
+      { q: 'Do you offer services in Korean?', a: 'Yes. Partner Daniel Kim speaks Korean and can handle consultations and matters in Korean.' },
+      { q: 'What is outside general counsel?', a: "Outside general counsel is an ongoing arrangement where the firm acts as a company's legal department without the cost of an in-house lawyer: reviewing contracts, advising on decisions, handling disputes as they arise, and keeping the company's legal house in order." },
+      { q: 'What kinds of matters do you not handle?', a: 'We do not handle criminal law. For anything else, call us: if a matter is outside what we do, we will tell you and connect you with someone who can help.' },
+    ],
+  },
+];
+const all = groups.flatMap((g) => g.items);
+const faqSchema = {
+  '@type': 'FAQPage',
+  '@id': `${firm.url}/faq/#faq`,
+  mainEntity: all.map((f) => ({ '@type': 'Question', name: f.q, acceptedAnswer: { '@type': 'Answer', text: f.a } })),
+};
+
+const title = 'FAQ | Hickok & Kim Inc. — Los Angeles';
+const description =
+  'Answers about fees, free consultations, Korean-language service, in-person meetings, and the nine practice areas handled by Hickok & Kim, Inc. in Los Angeles.';
+const crumbs = [{ name: 'FAQ', href: '/faq/' }];
+---
+
+<Base title={title} description={description} path="/faq/" breadcrumbs={crumbs} schema={[faqSchema]}>
+  <PageHero kicker="Frequently asked questions" breadcrumbs={crumbs} lead="Short, self-contained answers. If yours isn't here, the consultation is free.">
+    Questions we're <em>asked</em> most.
+  </PageHero>
+
+  <section class="block">
+    <div class="wrap">
+      {groups.map((g) => (
+        <div class="group" style="margin-top:0;margin-bottom:clamp(36px,5vw,56px)">
+          <h2 style="font-size:1.55rem">{g.heading}</h2>
+          <div class="faq" style="margin-top:18px">
+            {g.items.map((f) => (
+              <details>
+                <summary>{f.q}</summary>
+                <div class="answer"><p>{f.a}</p></div>
+              </details>
+            ))}
+          </div>
+        </div>
+      ))}
+      <p class="placeholder">Phase 4 expands this to 15–20 questions grouped by fees, process, each practice area, and logistics.</p>
+      <p class="reviewed" style="margin-top:24px">Last reviewed {firm.lastReviewed}</p>
+    </div>
+  </section>
+
+  <CtaBand />
+</Base>
+
+<script>
+  // Arrow-key navigation between accordion summaries.
+  const summaries = Array.from(document.querySelectorAll<HTMLElement>('.faq summary'));
+  summaries.forEach((s, i) => {
+    s.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowDown') { e.preventDefault(); summaries[(i + 1) % summaries.length].focus(); }
+      if (e.key === 'ArrowUp') { e.preventDefault(); summaries[(i - 1 + summaries.length) % summaries.length].focus(); }
+      if (e.key === 'Home') { e.preventDefault(); summaries[0].focus(); }
+      if (e.key === 'End') { e.preventDefault(); summaries[summaries.length - 1].focus(); }
+    });
+  });
+</script>

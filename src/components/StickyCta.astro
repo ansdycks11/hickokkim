@@ -1,0 +1,43 @@
+---
+import { firm } from '../data/firm';
+---
+
+<div class="sticky-cta" id="stickyCta" role="complementary" aria-label="Quick contact">
+  <a class="btn btn-ghost" href={`tel:${firm.phoneTel}`}>Call</a>
+  <a class="btn btn-solid" href="/contact/">Free consultation</a>
+</div>
+
+<script>
+  // Appears after the user scrolls past the hero (or 360px), hides on downward scroll,
+  // reappears on upward scroll, and never overlaps the footer or a form.
+  const bar = document.getElementById('stickyCta');
+  if (bar) {
+    const hero = document.querySelector('[data-hero]') as HTMLElement | null;
+    const blockers = document.querySelectorAll('footer.site, form');
+    let blocked = false;
+    let lastY = window.scrollY;
+    let ticking = false;
+    const threshold = () => (hero ? hero.offsetTop + hero.offsetHeight - 80 : 360);
+    const update = () => {
+      const y = window.scrollY;
+      const past = y > threshold();
+      const goingUp = y < lastY - 2;
+      const goingDown = y > lastY + 2;
+      if (!past || blocked) bar.classList.remove('show');
+      else if (goingUp) bar.classList.add('show');
+      else if (goingDown) bar.classList.remove('show');
+      lastY = y;
+      ticking = false;
+    };
+    window.addEventListener('scroll', () => { if (!ticking) { ticking = true; requestAnimationFrame(update); } }, { passive: true });
+    if ('IntersectionObserver' in window && blockers.length) {
+      const seen = new Set<Element>();
+      const io = new IntersectionObserver((entries) => {
+        for (const e of entries) { if (e.isIntersecting) seen.add(e.target); else seen.delete(e.target); }
+        blocked = seen.size > 0;
+        update();
+      }, { threshold: 0.05 });
+      blockers.forEach((el) => io.observe(el));
+    }
+  }
+</script>

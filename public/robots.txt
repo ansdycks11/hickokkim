@@ -1,0 +1,32 @@
+# Hickok & Kim, Inc. — https://hickokkim.com
+# All content is server-rendered HTML. Crawlers of every kind are welcome.
+
+User-agent: *
+Allow: /
+Disallow: /contact/thanks/
+
+# AI search and assistant crawlers, explicitly allowed
+User-agent: GPTBot
+Allow: /
+User-agent: OAI-SearchBot
+Allow: /
+User-agent: ChatGPT-User
+Allow: /
+User-agent: ClaudeBot
+Allow: /
+User-agent: Claude-Web
+Allow: /
+User-agent: anthropic-ai
+Allow: /
+User-agent: PerplexityBot
+Allow: /
+User-agent: Google-Extended
+Allow: /
+User-agent: Bingbot
+Allow: /
+User-agent: CCBot
+Allow: /
+User-agent: Bytespider
+Allow: /
+
+Sitemap: https://hickokkim.com/sitemap-index.xml
