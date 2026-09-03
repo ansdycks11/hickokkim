@@ -173,14 +173,24 @@ const graph = {
     <meta name="twitter:image" content={ogImage} />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <!-- Fonts load without blocking first paint (display=swap; fallback stacks are set in global.css). -->
     <link
+      rel="preload"
+      as="style"
       href="https://fonts.googleapis.com/css2?family=Libre+Caslon+Text:ital,wght@0,400;0,700;1,400&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap"
-      rel="stylesheet"
+      onload="this.onload=null;this.rel='stylesheet'"
     />
+    <noscript>
+      <link
+        rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Libre+Caslon+Text:ital,wght@0,400;0,700;1,400&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap"
+      />
+    </noscript>
     <script is:inline>document.documentElement.classList.remove('no-js');</script>
     <script type="application/ld+json" set:html={JSON.stringify(graph)} />
     <slot name="head" />
-    <!-- Analytics: intentionally empty until the partners choose a provider (Plausible recommended). -->
+    <!-- Analytics: Plausible (cookieless, no consent banner needed). Create the site "hickokkim.com" at plausible.io before launch. -->
+    <script defer data-domain="hickokkim.com" src="https://plausible.io/js/script.outbound-links.js"></script>
   </head>
   <body class={bodyClass}>
     <a class="skip" href="#main">Skip to content</a>

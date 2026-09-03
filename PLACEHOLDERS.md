@@ -14,7 +14,7 @@ Everything below is marked `TODO:REAL-DATA` in the code or rendered as a dashed 
 8. **Named content reviewer** (a partner) and privacy-policy contact (recommend info@hickokkim.com).
 9. **Google Business Profile** access or URL, and the firm LinkedIn page URL (recommend creating one).
 10. **Written permission** before naming any client brand (Doja Pak, Alienlabs were mentioned; neither is used on the site).
-11. **Analytics decision:** Plausible (paid, cookieless, recommended), Cloudflare Web Analytics (free, cookieless), or GA4 (free, cookies). The layout has an empty slot.
+11. **Plausible account:** create a Plausible Analytics account and add the site `hickokkim.com` (the tracking script is already in the layout). Then set a goal for the consultation form's success page `/contact/thanks/` and, under Sources, filter for chatgpt.com, claude.ai, perplexity.ai, gemini.google.com, and copilot.microsoft.com to track AI referrals.
 12. **Attorney review** of the Privacy Policy and Disclaimer pages.
 
 ## Nice to have

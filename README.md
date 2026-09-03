@@ -53,6 +53,22 @@ Stale pages lose AI citations. Every quarter:
 4. Run the monthly citation audit from `docs/website-architecture.md` §12.4 and correct any inaccuracies at their source.
 5. Rebuild and deploy.
 
+## The homepage experience
+
+The home page opens with the "Paper in Ink" scroll journey (spec §13): three hanging documents revealed by an ink shader, then the brass scales settling into balance. Pieces:
+
+- `src/pages/index.astro` — markup for the stage and overlays (all chapter text is plain HTML for crawlers), the static fallback styles, and the loader. Three.js starts on the first scroll, wheel, touch, pointer, or key event, or 3.5 seconds after `load`, whichever comes first, so it never competes with the hero text for LCP.
+- `src/scripts/journey.ts` — the Three.js scene. Tuning constants at the top of the frame section: beam sway amplitude `SWAY_AMP` (0.02 rad ≈ 1.15°), close-chapter `BUMP_AMP` (≤0.8°), `SWAY_PERIOD` (7 s). The beam settles from 4° over the first 2.5 s after load and never exceeds 2° afterwards.
+- `scripts/make-documents.mjs` — regenerates the four document textures in `public/assets/docs/` from SVG (`node scripts/make-documents.mjs`). The body text is abstract line-work by design; never use a real client document.
+- Fallbacks: `prefers-reduced-motion`, no WebGL, or a failed module load add `html.no-journey`, which turns the same stage into a static composition of the three documents with captions. No layout shift.
+- QA hook: in the browser console, `__journey.jump(0.5)` drives progress, `__journey.tiltDegAt(seconds, closeAt)` samples the beam tilt, and `__journey.scalesScreenBox` reports the projected bounds for clipping checks.
+
+Lighthouse (mobile, built site, 2026-09-02): Home performance 98 / accessibility 100 / SEO 100; inner pages 100 / 100 / 100. Re-run with `npx lighthouse <url> --chrome-flags="--headless=new"` against `npx serve dist`.
+
+## Analytics
+
+Plausible Analytics (cookieless, so no consent banner). The script tag lives in `src/layouts/Base.astro` with `data-domain="hickokkim.com"`. Create the site in the Plausible dashboard before launch. Recommended setup: a goal on `/contact/thanks/` (form submissions), and a saved Sources view filtered to AI-assistant referrers (chatgpt.com, claude.ai, perplexity.ai, gemini.google.com, copilot.microsoft.com) to match the GEO measurement plan.
+
 ## Compliance notes
 
 - California attorney-advertising rules apply. No outcome guarantees anywhere.
