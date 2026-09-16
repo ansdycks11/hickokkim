@@ -5,6 +5,37 @@
    live in their pages. Design principles: docs/website-architecture.md §8.
    ========================================================= */
 
+/* ---------------------------------------------------------
+   Metric-matched fallbacks.
+
+   Google Fonts load asynchronously (see Base.astro), so the page paints in a
+   fallback face first and reflows when the web font arrives. On a long page a
+   single re-wrap of one heading pushes thousands of pixels of content down,
+   which showed up as CLS 0.17 on the longest practice page.
+
+   Line-heights here are always explicit, so line COUNT is what moves content,
+   and line count follows advance width. These size-adjust values were measured
+   in-browser against the real faces (Libre Caslon Text runs 7.72% wider than
+   Georgia, Inter 7.5% wider than Segoe UI) so the fallback wraps at the same
+   points as the web font. Re-measure if either family is ever swapped.
+   --------------------------------------------------------- */
+@font-face {
+  font-family: 'Caslon Fallback';
+  src: local('Georgia'), local('Times New Roman'), local('Times');
+  size-adjust: 107.72%;
+  ascent-override: 90%;
+  descent-override: 24%;
+  line-gap-override: 0%;
+}
+@font-face {
+  font-family: 'Inter Fallback';
+  src: local('Segoe UI'), local('Helvetica Neue'), local('Arial');
+  size-adjust: 107.5%;
+  ascent-override: 90%;
+  descent-override: 22%;
+  line-gap-override: 0%;
+}
+
 :root {
   --ink: #0E131B;
   --ink-2: #121821;
@@ -23,8 +54,8 @@
   --max: 1120px;
   --gutter: clamp(20px, 4vw, 48px);
   --ease-out: cubic-bezier(.22, 1, .36, 1);
-  --serif: 'Libre Caslon Text', Georgia, 'Times New Roman', serif;
-  --sans: 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --serif: 'Libre Caslon Text', 'Caslon Fallback', Georgia, 'Times New Roman', serif;
+  --sans: 'Inter', 'Inter Fallback', system-ui, -apple-system, 'Segoe UI', sans-serif;
   --mono: 'IBM Plex Mono', ui-monospace, 'SF Mono', Menlo, monospace;
 }
 
@@ -373,7 +404,8 @@ footer .legal .links { display: flex; gap: 16px; flex-wrap: wrap; }
 
 /* key takeaways box */
 .takeaways { border: 1px solid var(--hair); background: var(--paper-2); padding: clamp(20px, 3vw, 28px); }
-.takeaways .mono-label { display: block; margin-bottom: 12px; }
+/* --slate reaches only 4.49:1 on --paper-2, so labels on that ground go darker. */
+.takeaways .mono-label { display: block; margin-bottom: 12px; color: var(--ink-3); }
 .takeaways ul { padding-left: 1.2em; }
 
 /* placeholder (TODO:REAL-DATA) */

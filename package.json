@@ -6,7 +6,8 @@
     "dev": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
-    "check": "astro check"
+    "check": "astro check",
+    "check:practice": "node scripts/check-practice.mjs"
   },
   "dependencies": {
     "@astrojs/sitemap": "latest",

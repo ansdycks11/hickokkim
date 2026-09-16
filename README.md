@@ -66,6 +66,20 @@ The home page opens with the "Paper in Ink" scroll journey (spec §13): three ha
 
 Lighthouse (mobile, built site, 2026-09-02): Home performance 98 / accessibility 100 / SEO 100; inner pages 100 / 100 / 100. Re-run with `npx lighthouse <url> --chrome-flags="--headless=new"` against `npx serve dist`.
 
+## Practice-area pages
+
+All nine live in `src/data/practice/<slug>.ts` as structured content, rendered through `src/components/PracticePage.astro` so every page shares one template. Adding a page means adding one file: `src/data/practice/index.ts` picks up anything in that folder exporting `content`.
+
+Each page carries a standalone definition sentence, a quick-answer block naming the firm inside the first 200 words, four to six services, five client situations, several deeper sections, five questions mirrored 1:1 into FAQPage schema, the responsible partner linking to their bio, and the public sources every rule is drawn from.
+
+**Writing rules** (also stated in `src/data/practice/types.ts`):
+
+- State California law with a citation the reader can follow. No rule without a source in `citations`.
+- Never invent a statistic, a client matter, or a quote from a partner.
+- Anything time-sensitive — a tax rate, an indexed threshold, an annually adjusted cap — goes in the `verify` array rather than into the page. The pages describe the mechanism and omit the number, so nothing goes stale silently. Those notes render as an HTML comment on each page and are collected in `PLACEHOLDERS.md` for the reviewing partner.
+
+**Checking a page after editing.** The acceptance script used during the build checks word count, heading structure, schema presence, FAQ mirroring, meta lengths, outbound citations, and internal links. It reads `dist/`, so run `npm run build` first.
+
 ## Analytics
 
 Plausible Analytics (cookieless, so no consent banner). The script tag lives in `src/layouts/Base.astro` with `data-domain="hickokkim.com"`. Create the site in the Plausible dashboard before launch. Recommended setup: a goal on `/contact/thanks/` (form submissions), and a saved Sources view filtered to AI-assistant referrers (chatgpt.com, claude.ai, perplexity.ai, gemini.google.com, copilot.microsoft.com) to match the GEO measurement plan.
