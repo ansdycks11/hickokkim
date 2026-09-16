@@ -42,8 +42,15 @@ export const firm = {
   sameAs: [] as string[],
   // Generated branded OG image (ink background, brass scales mark, firm name).
   ogImage: `${SITE_URL}/assets/og-default.png`,
-  lastReviewed: '2026-09-02',
+  /** ISO date for schema dateModified. Bump only when content changes substantively (README, quarterly refresh). */
+  lastReviewed: '2026-09-15',
 } as const;
+
+/** Human-readable form of lastReviewed, e.g. "September 2026". Use this everywhere a date is shown. */
+export const lastReviewedDisplay = new Date(firm.lastReviewed + 'T12:00:00').toLocaleDateString('en-US', {
+  month: 'long',
+  year: 'numeric',
+});
 
 export type PartnerSlug = 'daniel-kim' | 'christopher-hickok';
 

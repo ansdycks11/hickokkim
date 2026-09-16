@@ -6,7 +6,7 @@
  */
 import CtaBand from './CtaBand.astro';
 import type { PracticeContent } from '../data/practice/types';
-import { partners, firm, practiceAreas, type PartnerSlug } from '../data/firm';
+import { partners, practiceAreas, lastReviewedDisplay as reviewed, type PartnerSlug } from '../data/firm';
 
 interface Props {
   content: PracticeContent;
@@ -18,10 +18,6 @@ const leadPartners = leads.map((s) => partners[s]);
 const related = content.related
   .map((slug) => practiceAreas.find((a) => a.slug === slug))
   .filter((a): a is NonNullable<typeof a> => !!a);
-const reviewed = new Date(firm.lastReviewed + 'T12:00:00').toLocaleDateString('en-US', {
-  month: 'long',
-  year: 'numeric',
-});
 ---
 
 {content.verify && content.verify.length > 0 && (

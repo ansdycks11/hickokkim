@@ -3,7 +3,7 @@
 import Base from '../layouts/Base.astro';
 import PageHero from '../components/PageHero.astro';
 import CtaBand from '../components/CtaBand.astro';
-import { firm } from '../data/firm';
+import { firm, lastReviewedDisplay } from '../data/firm';
 
 const groups = [
   {
@@ -32,7 +32,7 @@ const faqSchema = {
 
 const title = 'FAQ | Hickok & Kim Inc. — Los Angeles';
 const description =
-  'Answers about fees, free consultations, Korean-language service, in-person meetings, and the nine practice areas handled by Hickok & Kim, Inc. in Los Angeles.';
+  'Answers about fees, free consultations, Korean-language service, and the nine practice areas handled by Hickok & Kim in Los Angeles.';
 const crumbs = [{ name: 'FAQ', href: '/faq/' }];
 ---
 
@@ -57,7 +57,7 @@ const crumbs = [{ name: 'FAQ', href: '/faq/' }];
         </div>
       ))}
       <p class="placeholder">Phase 4 expands this to 15–20 questions grouped by fees, process, each practice area, and logistics.</p>
-      <p class="reviewed" style="margin-top:24px">Last reviewed {firm.lastReviewed}</p>
+      <p class="reviewed" style="margin-top:24px">Last reviewed {lastReviewedDisplay}</p>
     </div>
   </section>
 

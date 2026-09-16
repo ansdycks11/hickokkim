@@ -3,15 +3,15 @@
 import Base from '../../layouts/Base.astro';
 import PageHero from '../../components/PageHero.astro';
 import CtaBand from '../../components/CtaBand.astro';
-import { partnerList, areasForPartner, firm } from '../../data/firm';
+import { partnerList, areasForPartner, firm, lastReviewedDisplay } from '../../data/firm';
 
 export function getStaticPaths() {
   return partnerList.map((p) => ({ params: { slug: p.slug }, props: { p } }));
 }
 const { p } = Astro.props;
 const areas = areasForPartner(p.slug);
-const title = `${p.name}, Partner | Hickok & Kim Inc. — Los Angeles`;
-const description = `${p.name} is a Partner at Hickok & Kim, Inc. in Los Angeles. ${p.focusSummary} California State Bar #${p.barNumber}. Free initial consultation.`;
+const title = `${p.name} | Hickok & Kim — Los Angeles`;
+const description = `${p.name}, Partner at Hickok & Kim in Los Angeles. ${p.focusSummary} California State Bar #${p.barNumber}.`;
 const crumbs = [
   { name: 'Attorneys', href: '/attorneys/' },
   { name: p.name, href: p.path },
@@ -62,7 +62,7 @@ const profileSchema = {
 
         <h2>Contact</h2>
         <p>Call the firm at <a href={`tel:${firm.phoneTel}`}>{firm.phoneDisplay}</a> or write to <a href={`mailto:${firm.email}`}>{firm.email}</a>. Every matter begins with a free initial consultation.</p>
-        <p class="reviewed">Last reviewed {firm.lastReviewed}</p>
+        <p class="reviewed">Last reviewed {lastReviewedDisplay}</p>
       </div>
     </div>
   </section>
