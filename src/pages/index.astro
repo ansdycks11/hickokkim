@@ -34,7 +34,31 @@ const faqSchema = {
 ---
 
 <Base title={title} description={description} path="/" schema={[faqSchema]} hideHeader>
-  <link slot="head" rel="preload" as="image" href="/assets/docs/complaint.webp" fetchpriority="low" />
+  <script slot="head" is:inline>
+    /**
+     * Show-once decision, inline and render-blocking on purpose: it must land before
+     * first paint so a returning visitor never sees the journey layout flash into the
+     * static one (which would also cost CLS). The heavier checks (reduced motion,
+     * WebGL) stay in the deferred module below.
+     *
+     * The flag is per-browser and never leaves the device: no cookie, nothing sent
+     * anywhere, so the cookie-free privacy policy still holds. Crawlers run no
+     * JavaScript, so they always receive the full markup either way.
+     */
+    (function () {
+      try {
+        var KEY = 'hk:intro-seen';
+        var THIRTY_DAYS = 30 * 24 * 60 * 60 * 1000;
+        var at = Number(window.localStorage.getItem(KEY));
+        var seenRecently = isFinite(at) && at > 0 && Date.now() - at < THIRTY_DAYS;
+        // Arriving from another page on this site means mid-research: go straight to the page.
+        var internal = !!document.referrer && new URL(document.referrer).origin === location.origin;
+        if (seenRecently || internal) document.documentElement.classList.add('no-journey');
+      } catch (e) {
+        /* private window or blocked storage: treat as a first visit */
+      }
+    })();
+  </script>
 
   <!-- ================= JOURNEY ================= -->
   <section id="journey" class="journey" data-hero aria-label="Introduction">
@@ -295,8 +319,10 @@ const faqSchema = {
 
   /* ---------- static fallback (reduced motion / no WebGL / load failure): same stage, no layout shift ---------- */
   html.no-journey .journey { height: auto; }
-  html.no-journey .stage { position: relative; height: auto; min-height: 100svh; padding: 110px 0 clamp(64px, 8vw, 104px); }
-  html.no-journey #scene, html.no-journey .grain, html.no-journey .ov-close, html.no-journey .j-progress, html.no-journey .j-skip, html.no-journey .j-cta, html.no-journey .hint { display: none; }
+  /* Sized to its content, not the viewport, so the nav is reachable without a full screen of scrolling. */
+  html.no-journey .stage { position: relative; height: auto; padding: clamp(56px, 8vw, 84px) 0 clamp(56px, 7vw, 88px); }
+  /* .ov-open .hint needs the deeper selector to outrank its own two-class rule above. */
+  html.no-journey #scene, html.no-journey .grain, html.no-journey .ov-close, html.no-journey .j-progress, html.no-journey .j-skip, html.no-journey .j-cta, html.no-journey .ov-open .hint { display: none; }
   html.no-journey .j-ui { position: static; }
   html.no-journey .j-ui > * { pointer-events: auto; }
   html.no-journey .ov { opacity: 1 !important; pointer-events: auto !important; }
@@ -305,7 +331,10 @@ const faqSchema = {
   html.no-journey .cap {
     position: static; opacity: 1 !important; transform: none !important; width: auto; backdrop-filter: none; -webkit-backdrop-filter: none;
     background: rgba(255, 255, 255, .03); display: grid; grid-template-columns: 96px 1fr; gap: 6px 18px; align-content: start;
+    /* undo the overlay positioning the mobile media query sets for the live journey */
+    inset: auto; max-height: none; overflow: visible; padding: 20px 22px 18px;
   }
+  html.no-journey .cap p { display: block; }
   html.no-journey .cap-thumb { display: block; grid-row: 1 / span 5; width: 96px; height: auto; border: 1px solid rgba(255, 255, 255, .15); box-shadow: 0 10px 30px rgba(0, 0, 0, .5); }
   html.no-journey .j-ui { display: grid; grid-template-columns: 1fr; gap: 24px; max-width: var(--max); margin: 0 auto; padding: 0 var(--gutter); }
   html.no-journey .j-ui .ov-open { padding: 0; margin: 0 0 16px; }
@@ -328,13 +357,31 @@ const faqSchema = {
     try { const c = document.createElement('canvas'); return !!(c.getContext('webgl2') || c.getContext('webgl')); } catch { return false; }
   };
 
+  // The show-once decision already ran in the inline head script above, which sets
+  // `no-journey` before first paint. Here we only record that the intro was shown.
+  const markSeen = () => {
+    try { window.localStorage.setItem('hk:intro-seen', String(Date.now())); } catch { /* not fatal */ }
+  };
+
   document.getElementById('skipBtn')?.addEventListener('click', () => {
-    document.getElementById('site-start')?.scrollIntoView({ behavior: 'auto', block: 'start' });
+    markSeen(); // dismissing it counts as seeing it
+    // 'instant', not 'auto': 'auto' defers to the page's CSS smooth scrolling, which would
+    // animate the skip across several viewport heights instead of jumping (§13.6: under 300ms).
+    document.getElementById('site-start')?.scrollIntoView({ behavior: 'instant', block: 'start' });
   });
 
-  if (reduced || !hasWebGL()) {
+  if (reduced || !hasWebGL() || html.classList.contains('no-journey')) {
     bail();
   } else {
+    markSeen();
+    // Give the first document texture a head start, but only for visitors actually getting the intro.
+    const pre = document.createElement('link');
+    pre.rel = 'preload';
+    pre.as = 'image';
+    pre.href = '/assets/docs/complaint.webp';
+    pre.setAttribute('fetchpriority', 'low');
+    document.head.appendChild(pre);
+
     const opts: Omit<JourneyOptions, 'onFail'> = {
       journey, stage, canvas,
       textures: {
