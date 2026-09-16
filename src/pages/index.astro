@@ -47,13 +47,19 @@ const faqSchema = {
      */
     (function () {
       try {
+        // "?intro=1" (the Replay link) forces the intro regardless of history.
+        if (/[?&]intro=1(&|$)/.test(location.search)) return;
         var KEY = 'hk:intro-seen';
         var THIRTY_DAYS = 30 * 24 * 60 * 60 * 1000;
         var at = Number(window.localStorage.getItem(KEY));
         var seenRecently = isFinite(at) && at > 0 && Date.now() - at < THIRTY_DAYS;
         // Arriving from another page on this site means mid-research: go straight to the page.
         var internal = !!document.referrer && new URL(document.referrer).origin === location.origin;
-        if (seenRecently || internal) document.documentElement.classList.add('no-journey');
+        if (!seenRecently && !internal) return;
+        var html = document.documentElement;
+        html.classList.add('no-journey');
+        // Offer the replay link only where replaying would actually do something.
+        if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) html.classList.add('intro-replayable');
       } catch (e) {
         /* private window or blocked storage: treat as a first visit */
       }
@@ -79,21 +85,25 @@ const faqSchema = {
             <a class="btn btn-ghost" href="/practice-areas/">See practice areas</a>
           </div>
           <div class="hint" aria-hidden="true"><span></span>Scroll to explore</div>
+          <!-- Only shown once the intro has been seen, so a returning visitor can play it again. -->
+          <p class="replay"><a href="/?intro=1">Replay the intro</a></p>
         </div>
 
         <!-- Chapter cards: one line of text per moment; all practice areas reachable in one tap. -->
         {chapters.map((ch, i) => (
           <div class="ov cap" id={`cap${i}`} data-label={ch.moment.heading}>
             <img class="cap-thumb" src={`/assets/docs/${ch.doc}-sm.webp`} width="480" height="654" alt="" loading="lazy" decoding="async" />
-            <div class="act">{ch.moment.heading}</div>
-            <h2>{ch.moment.line}</h2>
-            <p>{ch.blurb}</p>
-            <ul>
-              {areasByMoment(ch.moment.id).map((a) => <li><a href={a.path}>{a.shortName}</a></li>)}
-            </ul>
-            <div class="who">
-              {ch.who.map((s) => <img src={partners[s].image} alt="" width="28" height="28" loading="lazy" />)}
-              {ch.who.map((s) => partners[s].name).join(' and ')}
+            <div class="cap-body">
+              <div class="act">{ch.moment.heading}</div>
+              <h2>{ch.moment.line}</h2>
+              <p>{ch.blurb}</p>
+              <ul>
+                {areasByMoment(ch.moment.id).map((a) => <li><a href={a.path}>{a.shortName}</a></li>)}
+              </ul>
+              <div class="who">
+                {ch.who.map((s) => <img src={partners[s].image} alt="" width="28" height="28" loading="lazy" />)}
+                {ch.who.map((s) => partners[s].name).join(' and ')}
+              </div>
             </div>
           </div>
         ))}
@@ -328,21 +338,42 @@ const faqSchema = {
   html.no-journey .ov { opacity: 1 !important; pointer-events: auto !important; }
   html.no-journey .ov-open { position: static; transform: none; max-width: var(--max); margin: 0 auto; padding: 0 var(--gutter); }
   html.no-journey .ov-open h1 { max-width: 12ch; }
-  html.no-journey .cap {
-    position: static; opacity: 1 !important; transform: none !important; width: auto; backdrop-filter: none; -webkit-backdrop-filter: none;
-    background: rgba(255, 255, 255, .03); display: grid; grid-template-columns: 96px 1fr; gap: 6px 18px; align-content: start;
-    /* undo the overlay positioning the mobile media query sets for the live journey */
-    inset: auto; max-height: none; overflow: visible; padding: 20px 22px 18px;
+  /* The card count per row follows the available width rather than a fixed breakpoint,
+     and min() keeps a single column from overflowing a narrow phone. */
+  html.no-journey .j-ui {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 290px), 1fr));
+    gap: clamp(16px, 2vw, 24px);
+    max-width: var(--max); margin: 0 auto; padding: 0 var(--gutter);
   }
-  html.no-journey .cap p { display: block; }
-  html.no-journey .cap-thumb { display: block; grid-row: 1 / span 5; width: 96px; height: auto; border: 1px solid rgba(255, 255, 255, .15); box-shadow: 0 10px 30px rgba(0, 0, 0, .5); }
-  html.no-journey .j-ui { display: grid; grid-template-columns: 1fr; gap: 24px; max-width: var(--max); margin: 0 auto; padding: 0 var(--gutter); }
+  html.no-journey .j-ui .ov-open, html.no-journey .j-ui .j-brand { grid-column: 1 / -1; }
   html.no-journey .j-ui .ov-open { padding: 0; margin: 0 0 16px; }
   html.no-journey .j-brand { position: static; display: inline-block; margin-bottom: 24px; }
-  @media (min-width: 880px) {
-    html.no-journey .j-ui { grid-template-columns: repeat(3, 1fr); }
-    html.no-journey .j-ui .ov-open, html.no-journey .j-ui .j-brand { grid-column: 1 / -1; }
+
+  /* The document sits above the text rather than beside it. A card is 290–420px at every
+     column count, and a side-by-side thumbnail was leaving the heading only ~220px to wrap in.
+     (A container query can't help here: an element cannot query its own width.) */
+  html.no-journey .cap {
+    position: static; opacity: 1 !important; transform: none !important; width: auto;
+    backdrop-filter: none; -webkit-backdrop-filter: none; background: rgba(255, 255, 255, .03);
+    /* undo the overlay positioning the mobile media query sets for the live journey */
+    inset: auto; max-height: none; overflow: visible; padding: clamp(18px, 2vw, 24px);
+    display: flex; flex-direction: column; gap: 14px;
   }
+  html.no-journey .cap p { display: block; }
+  html.no-journey .cap-thumb {
+    display: block; width: 96px; height: auto; flex: none;
+    border: 1px solid rgba(255, 255, 255, .15); box-shadow: 0 10px 30px rgba(0, 0, 0, .5);
+  }
+  html.no-journey .cap h2 { font-size: 1.2rem; }
+  /* The card's own children already carry bottom margins; no extra spacing needed here. */
+  html.no-journey .cap-body { min-width: 0; }
+
+  /* Replay link: hidden until the visitor has actually seen the intro. */
+  .replay { display: none; margin-top: 26px; font-size: .84rem; }
+  html.intro-replayable .replay { display: block; }
+  .replay a { color: var(--brass-2); text-decoration: none; border-bottom: 1px solid rgba(201, 168, 106, .4); padding-bottom: 2px; }
+  .replay a:hover { border-bottom-color: var(--brass-2); }
 </style>
 
 <script>
@@ -374,6 +405,8 @@ const faqSchema = {
     bail();
   } else {
     markSeen();
+    // Drop the ?intro=1 marker so the address bar, and anything the visitor copies, stays clean.
+    if (location.search) history.replaceState(null, '', location.pathname + location.hash);
     // Give the first document texture a head start, but only for visitors actually getting the intro.
     const pre = document.createElement('link');
     pre.rel = 'preload';
