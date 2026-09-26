@@ -53,19 +53,19 @@ Stale pages lose AI citations. Every quarter:
 4. Run the monthly citation audit from `docs/website-architecture.md` §12.4 and correct any inaccuracies at their source.
 5. Rebuild and deploy.
 
-## The homepage experience
+## Design system
 
-The home page opens with the "Paper in Ink" scroll journey (spec §13): three hanging documents revealed by an ink shader, then the brass scales settling into balance. Pieces:
+The site follows the structure and feel of large-firm editorial sites such as kirkland.com: charcoal page heroes, alternating white and light-gray sections, a serif label in a narrow left column with content on the right, navigation held in a full-screen MENU overlay, outlined square buttons, and angled artwork panels. It does not copy any other firm's code, imagery, or branding. The accent colour is Hickok & Kim brass.
 
-- `src/pages/index.astro` — markup for the stage and overlays (all chapter text is plain HTML for crawlers), the static fallback styles, and the loader. Three.js starts on the first scroll, wheel, touch, pointer, or key event, or 3.5 seconds after `load`, whichever comes first, so it never competes with the hero text for LCP.
-- `src/scripts/journey.ts` — the Three.js scene. Tuning constants at the top of the frame section: beam sway amplitude `SWAY_AMP` (0.02 rad ≈ 1.15°), close-chapter `BUMP_AMP` (≤0.8°), `SWAY_PERIOD` (7 s). The beam settles from 4° over the first 2.5 s after load and never exceeds 2° afterwards.
-- `scripts/make-documents.mjs` — regenerates the four document textures in `public/assets/docs/` from SVG (`node scripts/make-documents.mjs`). The body text is abstract line-work by design; never use a real client document.
-- Fallbacks: `prefers-reduced-motion`, no WebGL, or a failed module load add `html.no-journey`, which turns the same stage into a static composition of the three documents with captions. No layout shift.
-- **Shown once.** The intro is a first impression, not a toll booth. A visitor who has already seen it within the last thirty days lands on the conventional page instead, as does anyone arriving from another page on this site, who is mid-research. Dismissing it with "Skip intro" counts as having seen it. The decision runs in a small inline script in the page head so it lands before first paint and never flashes. The flag is `localStorage` under the key `hk:intro-seen`, holding the timestamp it was last shown; change `THIRTY_DAYS` in that inline script to adjust the window, or delete the whole block to show the intro every time. It is per-browser and never leaves the device, so there is still no cookie and no consent banner. Crawlers run no JavaScript and always receive the full markup either way.
-- **Replaying it.** The static hero carries a "Replay the intro" link pointing at `/?intro=1`, which forces the experience regardless of history and then strips the parameter from the address bar. The link only appears once the visitor has actually seen the intro, and never for someone who prefers reduced motion, since replaying would do nothing for them. Send `/?intro=1` to anyone who should see the full thing, such as the partners demoing the site.
-- QA hook: in the browser console, `__journey.jump(0.5)` drives progress, `__journey.tiltDegAt(seconds, closeAt)` samples the beam tilt, and `__journey.scalesScreenBox` reports the projected bounds for clipping checks.
+- **Tokens** live at the top of `src/styles/global.css`. To change the accent colour, edit `--accent`, `--accent-on-dark`, and `--accent-fill` only. Each was chosen to pass 4.5:1 contrast on its background.
+- **Type** is Playfair Display for headings and Rubik for body text, loaded asynchronously. Metric-matched fallbacks (`Playfair Fallback`, `Rubik Fallback`) keep layout shift at zero; the size-adjust values were measured in the browser. Re-measure if either family changes.
+- **Building blocks** in `src/components/`: `PageHero` (dark title band with rule and an optional link), `Section` (label-left layout; tones white, mist, dark), `Expandable` ("+ More" truncation that keeps every word in the HTML), `LawyerList`, `CtaBand` (angled art plus charcoal panel), `IntakeForm`, `Header` (with the menu overlay), `Footer`, `StickyCta`.
+- **Home page** opens with a split-screen showcase: angled artwork on the left, charcoal panel on the right, cycling through the three client moments. It auto-advances every eight seconds, pauses on hover or focus, supports arrow keys, and stays still for visitors who prefer reduced motion. All slide text is in the HTML for crawlers.
+- **Artwork** is generated, not photographed: `node scripts/make-art.mjs` renders the louvers, tower facade, contour lines, menu texture, and hero texture into `public/assets/art/`. Then `node scripts/make-og.mjs` rebuilds the share image and icons from that art.
+- **Testimonials** appear on the home page automatically once real, permitted quotes are added to `testimonials` in `src/data/firm.ts`.
+- **vCards** for each partner are generated at `/vcard/<slug>.vcf` from the firm's published phone and email.
 
-Lighthouse (mobile, built site, 2026-09-02): Home performance 98 / accessibility 100 / SEO 100; inner pages 100 / 100 / 100. Re-run with `npx lighthouse <url> --chrome-flags="--headless=new"` against `npx serve dist`.
+Lighthouse (mobile, built site): home 96 performance and 100 accessibility, SEO, and best practices; inner pages 99 to 100 across the board; layout shift 0.000 to 0.01.
 
 ## Practice-area pages
 

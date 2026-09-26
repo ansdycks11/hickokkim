@@ -1,32 +1,40 @@
 ---
+/**
+ * Inner-page hero: charcoal with texture, breadcrumbs, a large serif title
+ * followed by a hairline rule, and an optional link at the right end of it.
+ */
 import Breadcrumbs from './Breadcrumbs.astro';
-import ScalesMark from './ScalesMark.astro';
 import type { Crumb } from '../layouts/Base.astro';
 
 interface Props {
-  kicker?: string;
   breadcrumbs?: Crumb[];
+  aside?: { label: string; href: string };
   lead?: string;
-  /** Show the primary CTA pair (one solid, one ghost). */
-  cta?: boolean;
-  scales?: boolean;
+  /** Short items shown under the title, separated by slashes (e.g. title / practice). */
+  sub?: { label: string; href?: string }[];
 }
-const { kicker, breadcrumbs, lead, cta = false, scales = true } = Astro.props;
+const { breadcrumbs, aside, lead, sub } = Astro.props;
 ---
 
 <section class="page-hero dark" data-hero>
   <div class="wrap">
     {breadcrumbs && <Breadcrumbs items={breadcrumbs} />}
-    {kicker && <p class="mono-label kicker">{kicker}</p>}
-    <h1><slot /></h1>
-    {lead && <p class="lead">{lead}</p>}
-    <slot name="after" />
-    {cta && (
-      <div class="hero-actions">
-        <a class="btn btn-solid" href="/contact/">Free consultation</a>
-        <a class="btn btn-ghost" href="/how-we-work/">How we work</a>
-      </div>
+    <div class="hero-title-row">
+      <h1><slot /></h1>
+      <span class="hero-rule" aria-hidden="true"></span>
+      {aside && <a class="hero-aside chev" href={aside.href}>{aside.label}</a>}
+    </div>
+    {sub && sub.length > 0 && (
+      <p class="hero-sub">
+        {sub.map((s, i) => (
+          <Fragment>
+            {i > 0 && <span class="sep" aria-hidden="true">/</span>}
+            {s.href ? <a class="textlink" href={s.href}>{s.label}</a> : <span>{s.label}</span>}
+          </Fragment>
+        ))}
+      </p>
     )}
+    {lead && <p class="hero-lead">{lead}</p>}
+    <slot name="after" />
   </div>
-  {scales && <ScalesMark />}
 </section>

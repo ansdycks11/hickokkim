@@ -1,40 +1,27 @@
 ---
 import Base from '../../layouts/Base.astro';
 import PageHero from '../../components/PageHero.astro';
+import Section from '../../components/Section.astro';
+import LawyerList from '../../components/LawyerList.astro';
 import CtaBand from '../../components/CtaBand.astro';
 import { partnerList } from '../../data/firm';
 
-const title = 'Attorneys | Hickok & Kim Inc. — Los Angeles';
+const title = 'Attorneys | Hickok & Kim — Los Angeles';
 const description =
   'The two partners of Hickok & Kim in Los Angeles: Daniel J. Kim, litigation and estates, and Christopher D. Hickok, cannabis and trademarks.';
 const crumbs = [{ name: 'Attorneys', href: '/attorneys/' }];
 ---
 
 <Base title={title} description={description} path="/attorneys/" breadcrumbs={crumbs}>
-  <PageHero kicker="Attorneys" breadcrumbs={crumbs} lead="Hickok & Kim, Inc. has two partners and no associates. The partner who takes your consultation is the partner who does the work and signs your engagement letter.">
-    Two partners. You work with the one who <em>signs</em> your engagement letter.
-  </PageHero>
+  <PageHero breadcrumbs={crumbs} aside={{ label: 'Practice areas', href: '/practice-areas/' }}>Lawyers</PageHero>
 
-  <section class="block dark" style="background:var(--ink-2)">
-    <div class="wrap">
-      <div class="partners" style="margin-top:0">
-        {partnerList.map((p) => (
-          <article class="partner reveal">
-            <div class="portrait"><img src={p.image} width={p.imageWidth} height={p.imageHeight} alt={p.imageAlt} loading="lazy" /></div>
-            <h2 style="font-size:1.5rem;margin-bottom:4px">{p.name}</h2>
-            <p class="role">{p.title}. {p.focusSummary}</p>
-            <p class="bio">{p.shortBio}</p>
-            <dl>
-              <div><dt>California Bar</dt><dd><a href={p.barProfile} rel="noopener">#{p.barNumber}, admitted {p.barAdmitted.replace('June ', '')}</a></dd></div>
-              <div><dt>Education</dt><dd>{p.education.map((e) => e.split(',')[0]).join('; ')}</dd></div>
-              <div><dt>Languages</dt><dd>{p.languages.join(', ')}</dd></div>
-            </dl>
-            <p class="more"><a href={p.path}>Full profile of {p.firstName} →</a></p>
-          </article>
-        ))}
-      </div>
-    </div>
-  </section>
+  <Section label="Overview" tone="mist">
+    <p class="lead">Hickok &amp; Kim, Inc. has two partners and no associates. The partner who takes your consultation is the partner who does the work and signs your engagement letter.</p>
+  </Section>
+
+  <Section label="Partners" tone="white">
+    <LawyerList slugs={partnerList.map((p) => p.slug)} headingLevel="h3" />
+  </Section>
 
   <CtaBand />
 </Base>

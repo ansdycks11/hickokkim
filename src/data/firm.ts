@@ -339,6 +339,14 @@ export const nav = [
   { label: 'FAQ', href: '/faq/', children: false },
 ];
 
+/**
+ * Client testimonials. Add only real quotes with written client permission and
+ * partner-approved wording (California advertising rules). The home page shows
+ * the section automatically once this array has entries.
+ * TODO:REAL-DATA — none supplied yet.
+ */
+export const testimonials: { quote: string; attribution: string }[] = [];
+
 export const disclaimers = {
   advertising: 'Attorney advertising. Prior results do not guarantee a similar outcome.',
   noRelationship:

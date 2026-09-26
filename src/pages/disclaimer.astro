@@ -2,39 +2,37 @@
 /** Attorney-advertising disclaimer. Marked for attorney review before launch. */
 import Base from '../layouts/Base.astro';
 import PageHero from '../components/PageHero.astro';
-import { firm } from '../data/firm';
+import Section from '../components/Section.astro';
+import { firm, lastReviewedDisplay } from '../data/firm';
 
-const title = 'Disclaimer | Hickok & Kim Inc. — Los Angeles';
+const title = 'Disclaimer | Hickok & Kim — Los Angeles';
 const description = 'Attorney advertising disclaimer for Hickok & Kim, Los Angeles. No attorney-client relationship is formed by using this site.';
 const crumbs = [{ name: 'Disclaimer', href: '/disclaimer/' }];
 ---
 
 <Base title={title} description={description} path="/disclaimer/" breadcrumbs={crumbs}>
-  <PageHero kicker="Disclaimer" breadcrumbs={crumbs} scales={false}>Disclaimer</PageHero>
-  <section class="block">
-    <div class="wrap-narrow prose">
-      <p class="meta">Last reviewed {firm.lastReviewed}. <!-- TODO:REAL-DATA — attorney review before launch. --></p>
+  <PageHero breadcrumbs={crumbs}>Disclaimer</PageHero>
 
-      <h2>Attorney advertising</h2>
-      <p>This website is a communication from {firm.name}, a California law firm, and may be considered attorney advertising under the California Rules of Professional Conduct. Prior results do not guarantee a similar outcome. Every matter depends on its own facts.</p>
+  <!-- TODO:REAL-DATA — attorney review before launch. -->
+  <Section label="Attorney advertising" tone="mist">
+    <p class="lead">This website is a communication from {firm.name}, a California law firm, and may be considered attorney advertising under the California Rules of Professional Conduct. Prior results do not guarantee a similar outcome. Every matter depends on its own facts.</p>
+    <p class="reviewed">Last reviewed {lastReviewedDisplay}</p>
+  </Section>
 
-      <h2>No attorney-client relationship</h2>
+  <Section label="Terms" tone="white">
+    <div class="prose">
+      <h3>No attorney-client relationship</h3>
       <p>Using this site, reading its content, or contacting the firm by form, phone, or email does not create an attorney-client relationship. The firm becomes your lawyer only when both you and the firm sign a written retainer agreement. Until then, please do not send confidential information, and understand that anything you send may not be treated as privileged.</p>
-
-      <h2>Not legal advice</h2>
+      <h3>Not legal advice</h3>
       <p>The information on this site is general and educational. It is not legal advice and should not be relied on as a substitute for advice about your specific situation from a lawyer licensed in your state. Laws change; the "last reviewed" date on each page shows when its content was last checked.</p>
-
-      <h2>Jurisdiction</h2>
+      <h3>Jurisdiction</h3>
       <p>The attorneys of {firm.name} are licensed to practice in California. The firm does not seek to represent anyone in a jurisdiction where this site does not comply with applicable rules.</p>
-
-      <h2>Cannabis matters</h2>
+      <h3>Cannabis matters</h3>
       <p>Cannabis remains a controlled substance under federal law. Content on this site about California cannabis licensing and compliance describes state and local law and does not advise anyone to violate federal law.</p>
-
-      <h2>Contingency fees</h2>
+      <h3>Contingency fees</h3>
       <p>Where a matter is handled on a contingency basis, the client may still be responsible for costs and expenses as set out in the written retainer agreement.</p>
-
-      <h2>Contact</h2>
+      <h3>Contact</h3>
       <p>Questions about this disclaimer: <a href={`mailto:${firm.email}`}>{firm.email}</a>.</p>
     </div>
-  </section>
+  </Section>
 </Base>

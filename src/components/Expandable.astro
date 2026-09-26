@@ -1,0 +1,38 @@
+---
+/**
+ * "+ More" truncation. Everything stays in the HTML (crawlers and AI
+ * assistants read all of it); JavaScript collapses it visually on load.
+ * Without JavaScript the content is simply shown in full.
+ */
+interface Props { id: string; more?: string; less?: string }
+const { id, more = '+ More', less = '− Less' } = Astro.props;
+---
+
+<div class="expandable" id={id} data-more={more} data-less={less}>
+  <div class="expandable__inner" id={`${id}-inner`}>
+    <slot />
+  </div>
+  <button class="btn expandable__toggle" type="button" aria-expanded="true" aria-controls={`${id}-inner`} hidden>{less}</button>
+</div>
+
+<script>
+  document.querySelectorAll<HTMLElement>('.expandable').forEach((box) => {
+    const inner = box.querySelector<HTMLElement>('.expandable__inner')!;
+    const btn = box.querySelector<HTMLButtonElement>('.expandable__toggle')!;
+    const set = (collapsed: boolean) => {
+      box.dataset.collapsed = String(collapsed);
+      btn.setAttribute('aria-expanded', String(!collapsed));
+      btn.textContent = collapsed ? box.dataset.more! : box.dataset.less!;
+    };
+    // Only collapse if there is meaningfully more than fits.
+    if (inner.scrollHeight > 420) {
+      btn.hidden = false;
+      set(true);
+      btn.addEventListener('click', () => {
+        const collapsing = box.dataset.collapsed !== 'true';
+        set(collapsing);
+        if (collapsing) box.scrollIntoView({ block: 'nearest' });
+      });
+    }
+  });
+</script>

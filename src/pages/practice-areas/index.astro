@@ -1,42 +1,38 @@
 ---
 import Base from '../../layouts/Base.astro';
 import PageHero from '../../components/PageHero.astro';
+import Section from '../../components/Section.astro';
 import CtaBand from '../../components/CtaBand.astro';
 import { moments, areasByMoment, partners } from '../../data/firm';
 
-const title = 'Practice Areas | Hickok & Kim Inc. — Los Angeles';
+const title = 'Practice Areas | Hickok & Kim — Los Angeles';
 const description =
   "Nine practice areas for Los Angeles individuals and businesses, grouped by the moment you're in: injury, business and cannabis, estates and property.";
 const crumbs = [{ name: 'Practice areas', href: '/practice-areas/' }];
+const tones = ['white', 'mist', 'white'] as const;
 ---
 
 <Base title={title} description={description} path="/practice-areas/" breadcrumbs={crumbs}>
-  <PageHero kicker="Practice areas" breadcrumbs={crumbs} lead="Hickok & Kim, Inc. handles nine practice areas for individuals and businesses across California, grouped by the moment a client is in. Each is led by the partner who signs your engagement letter. Every matter starts with a free consultation.">
-    Nine practice areas, organized by the <em>moment</em> you're in.
-  </PageHero>
+  <PageHero breadcrumbs={crumbs} aside={{ label: 'Our lawyers', href: '/attorneys/' }}>Practice Areas</PageHero>
 
-  <section class="block tight" style="padding-top:clamp(40px,5vw,64px)">
-    <div class="wrap">
-      {moments.map((m) => (
-        <div class="group reveal">
-          <div class="group-head"><h2 style="font-size:1.55rem">{m.heading}</h2><p>{m.tagline}</p></div>
-          <ul class="ledger">
-            {areasByMoment(m.id).map((a) => (
-              <li>
-                <a class="row" href={a.path}>
-                  <span class="ref">{a.ref}</span>
-                  <h3 class="title">{a.shortName}<small>{a.partners.map((s) => partners[s].name).join(' and ')}</small></h3>
-                  <p>{a.blurb}</p>
-                  <span class="arrow" aria-hidden="true">→</span>
-                </a>
-              </li>
-            ))}
-          </ul>
-        </div>
-      ))}
-      <p class="fee-note">We do not handle criminal matters. If your situation falls outside what we do, we'll tell you and connect you with someone who can help.</p>
-    </div>
-  </section>
+  <Section label="Overview" tone="mist">
+    <p class="lead">Hickok &amp; Kim, Inc. handles nine practice areas for individuals and businesses across California, grouped by the moment a client is in. Each is led by the partner who signs your engagement letter, and every matter starts with a free consultation.</p>
+  </Section>
+
+  {moments.map((m, i) => (
+    <Section label={m.heading} tone={tones[i]} id={m.id}>
+      <p class="muted">{m.tagline}</p>
+      <ul class="linklist">
+        {areasByMoment(m.id).map((a) => (
+          <li><a href={a.path}>{a.name}</a><span class="note">{a.blurb} {a.partners.map((s) => partners[s].name).join(' and ')}.</span></li>
+        ))}
+      </ul>
+    </Section>
+  ))}
+
+  <Section label="Not handled" tone="mist">
+    <p>We do not handle criminal matters. If your situation falls outside what we do, we'll tell you and connect you with someone who can help.</p>
+  </Section>
 
   <CtaBand />
 </Base>

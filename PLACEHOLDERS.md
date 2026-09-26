@@ -9,7 +9,7 @@ Everything below is marked `TODO:REAL-DATA` in the code or rendered as a dashed 
 3. **Per-practice-area detail** for all nine areas: services offered, typical clients, and 2–3 anonymized example matters each.
 4. **Outside General Counsel pricing and engagement structure.**
 5. **Daniel Kim:** J.D. year (likely 2016; confirm), undergraduate institution (optional), LinkedIn URL, prior roles (optional), a humanizing line (optional).
-6. **Testimonials:** 2–3 with written client permission and approved wording. Sample quotes on the home page are layout placeholders only.
+6. **Testimonials:** 2–3 with written client permission and approved wording. No sample quotes are shown; add real ones to `testimonials` in `src/data/firm.ts` and the home page displays them automatically.
 7. **Domain registrar access** to point hickokkim.com at Netlify.
 8. **Named content reviewer** (a partner) and privacy-policy contact (recommend info@hickokkim.com).
 9. **Google Business Profile** access or URL, and the firm LinkedIn page URL (recommend creating one).

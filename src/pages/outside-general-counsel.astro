@@ -50,11 +50,11 @@ const faqSchema = {
   schema={[serviceSchema, faqSchema]}
 >
   <PageHero
-    kicker={`${area.ref} · Featured service · ${leads.map((p) => p.name).join(' and ')}`}
     breadcrumbs={crumbs}
-    cta
+    aside={{ label: 'Related professionals', href: '#professionals' }}
+    sub={leads.map((p) => ({ label: p.name, href: p.path }))}
   >
-    <Fragment set:html={content.h1} />
+    {area.name}
   </PageHero>
 
   <PracticePage content={content} leads={area.partners} areaName="Outside general counsel" />

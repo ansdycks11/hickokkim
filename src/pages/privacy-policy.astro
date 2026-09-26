@@ -2,34 +2,38 @@
 /** Plain-language privacy policy. Marked for attorney review before launch. */
 import Base from '../layouts/Base.astro';
 import PageHero from '../components/PageHero.astro';
-import { firm } from '../data/firm';
+import Section from '../components/Section.astro';
+import { firm, lastReviewedDisplay } from '../data/firm';
 
-const title = 'Privacy Policy | Hickok & Kim Inc. — Los Angeles';
-const description = 'How Hickok & Kim, Inc. handles information submitted through hickokkim.com, including the consultation form and any analytics.';
+const title = 'Privacy Policy | Hickok & Kim — Los Angeles';
+const description = 'How Hickok & Kim, Inc. handles information submitted through hickokkim.com, including the consultation form and analytics.';
 const crumbs = [{ name: 'Privacy policy', href: '/privacy-policy/' }];
 ---
 
 <Base title={title} description={description} path="/privacy-policy/" breadcrumbs={crumbs}>
-  <PageHero kicker="Privacy policy" breadcrumbs={crumbs} scales={false}>Privacy policy</PageHero>
-  <section class="block">
-    <div class="wrap-narrow prose">
-      <p class="meta">Effective {firm.lastReviewed}. <!-- TODO:REAL-DATA — attorney review before launch. --></p>
-      <p>This policy explains what information hickokkim.com collects, how Hickok &amp; Kim, Inc. uses it, and the choices you have. We keep it short because we collect very little.</p>
+  <PageHero breadcrumbs={crumbs}>Privacy Policy</PageHero>
 
-      <h2>Information you send us</h2>
+  <!-- TODO:REAL-DATA — attorney review before launch. -->
+  <Section label="Overview" tone="mist">
+    <p class="lead">This policy explains what information hickokkim.com collects, how Hickok &amp; Kim, Inc. uses it, and the choices you have. We keep it short because we collect very little.</p>
+    <p class="reviewed">Effective {lastReviewedDisplay}</p>
+  </Section>
+
+  <Section label="What we collect" tone="white">
+    <div class="prose">
+      <h3>Information you send us</h3>
       <p>If you use the consultation form, we receive the name, phone number, email address, and message you type, plus the optional practice-area and "how did you hear about us" selections. The form is processed by Netlify Forms and delivered to {firm.email}. We use this information only to respond to you and to evaluate whether we can take your matter. We do not sell it or share it with anyone outside the firm except service providers that help us run the site.</p>
-
-      <h2>Information collected automatically</h2>
+      <h3>Information collected automatically</h3>
       <p>Our hosting provider, Netlify, keeps standard server logs (IP address, browser type, pages requested, timestamps) for security and reliability. We use <a href="https://plausible.io/data-policy" rel="noopener">Plausible Analytics</a>, a privacy-focused service that counts page views and referral sources without cookies and without storing personal data or IP addresses. It cannot identify you, and it does not track you across other sites. We do not use advertising trackers.</p>
-
-      <h2>Cookies</h2>
+      <h3>Cookies</h3>
       <p>This site does not set cookies for tracking or advertising. Our analytics run without cookies. Embedded maps from OpenStreetMap and fonts from Google Fonts may receive your IP address when they load.</p>
+    </div>
+  </Section>
 
-      <h2>Your choices</h2>
+  <Section label="Your choices" tone="mist">
+    <div class="prose">
       <p>You may ask what information we hold about you and request that it be corrected or deleted by writing to <a href={`mailto:${firm.email}`}>{firm.email}</a>. California residents have additional rights under the California Consumer Privacy Act to the extent it applies.</p>
-
-      <h2>Contact</h2>
       <p>Questions about this policy: <a href={`mailto:${firm.email}`}>{firm.email}</a>, or {firm.name}, {firm.address.street}, {firm.address.city}, {firm.address.region} {firm.address.postal}.</p>
     </div>
-  </section>
+  </Section>
 </Base>

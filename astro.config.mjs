@@ -11,7 +11,7 @@ export default defineConfig({
   compressHTML: true,
   integrations: [
     sitemap({
-      filter: (page) => !page.includes('/contact/thanks/') && !page.endsWith('/404/'),
+      filter: (page) => !page.includes('/contact/thanks/') && !page.endsWith('/404/') && !page.includes('/vcard/'),
       changefreq: 'monthly',
       lastmod: new Date(),
     }),

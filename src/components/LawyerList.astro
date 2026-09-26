@@ -1,0 +1,28 @@
+---
+import { firm, partners, type PartnerSlug } from '../data/firm';
+interface Props { slugs: PartnerSlug[]; headingLevel?: 'h3' | 'h2' }
+const { slugs, headingLevel = 'h3' } = Astro.props;
+const H = headingLevel;
+---
+
+<ul class="lawyers">
+  {slugs.map((s) => {
+    const p = partners[s];
+    return (
+      <li class="lawyer">
+        <img class="lawyer__photo" src={p.image} width={p.imageWidth} height={p.imageHeight} alt={p.imageAlt} loading="lazy" />
+        <div>
+          <H class="lawyer__name"><a href={p.path}>{p.name}</a></H>
+          <p class="lawyer__title">{p.title}</p>
+          <p class="lawyer__focus">{p.focusSummary}</p>
+        </div>
+        <p class="lawyer__contact">
+          Los Angeles<br />
+          <a href={`tel:${firm.phoneTel}`}>{firm.phoneDisplay}</a><br />
+          <a href={p.barProfile} rel="noopener">State Bar #{p.barNumber}</a>
+          {p.languages.includes('Korean') && <Fragment><br /><span>English · 한국어</span></Fragment>}
+        </p>
+      </li>
+    );
+  })}
+</ul>

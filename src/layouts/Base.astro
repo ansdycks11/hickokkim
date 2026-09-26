@@ -155,7 +155,7 @@ const graph = {
     <meta name="description" content={description} />
     {noindex ? <meta name="robots" content="noindex, nofollow" /> : <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large" />}
     <link rel="canonical" href={canonical} />
-    <meta name="theme-color" content="#0E131B" />
+    <meta name="theme-color" content="#1c1c1c" />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <meta property="og:type" content={ogType} />
@@ -177,13 +177,13 @@ const graph = {
     <link
       rel="preload"
       as="style"
-      href="https://fonts.googleapis.com/css2?family=Libre+Caslon+Text:ital,wght@0,400;0,700;1,400&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;1,400&family=Rubik:wght@300;400;500&display=swap"
       onload="this.onload=null;this.rel='stylesheet'"
     />
     <noscript>
       <link
         rel="stylesheet"
-        href="https://fonts.googleapis.com/css2?family=Libre+Caslon+Text:ital,wght@0,400;0,700;1,400&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap"
+        href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;1,400&family=Rubik:wght@300;400;500&display=swap"
       />
     </noscript>
     <script is:inline>document.documentElement.classList.remove('no-js');</script>
@@ -194,7 +194,7 @@ const graph = {
   </head>
   <body class={bodyClass}>
     <a class="skip" href="#main">Skip to content</a>
-    {!hideHeader && <Header currentPath={path} />}
+    <Header currentPath={path} />
     <main id="main" tabindex="-1">
       <slot />
     </main>

@@ -2,6 +2,7 @@
 import { getCollection } from 'astro:content';
 import Base from '../../layouts/Base.astro';
 import PageHero from '../../components/PageHero.astro';
+import Section from '../../components/Section.astro';
 import CtaBand from '../../components/CtaBand.astro';
 import { partners } from '../../data/firm';
 
@@ -10,37 +11,42 @@ const posts = (await getCollection('insights', ({ data }) => !data.draft)).sort(
 );
 const fmt = (d: Date) => d.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
 
-const title = 'Insights | Hickok & Kim Inc. — Los Angeles';
+const title = 'Insights | Hickok & Kim — Los Angeles';
 const description =
   'Plain-language articles from the partners of Hickok & Kim, Los Angeles, on California business, cannabis, trademark, injury, and estate law.';
 const crumbs = [{ name: 'Insights', href: '/insights/' }];
 ---
 
 <Base title={title} description={description} path="/insights/" breadcrumbs={crumbs}>
-  <PageHero kicker="Insights" breadcrumbs={crumbs} lead="Articles written by the partners, cited to the statute or agency, and reviewed every quarter.">
-    Plain answers to the questions clients <em>actually</em> ask.
-  </PageHero>
+  <PageHero breadcrumbs={crumbs}>Insights</PageHero>
 
-  <section class="block">
-    <div class="wrap">
-      {posts.length === 0 ? (
-        <p class="placeholder">Three seed articles are written in Phase 5. The index lists them here automatically.</p>
-      ) : (
-        <ul class="ledger">
-          {posts.map((post) => (
-            <li>
-              <a class="row" href={`/insights/${post.id}/`}>
-                <span class="ref">{fmt(post.data.published)}</span>
-                <h2 class="title" style="font-size:1.3rem">{post.data.title}<small>{partners[post.data.author].name}</small></h2>
-                <p>{post.data.description}</p>
-                <span class="arrow" aria-hidden="true">→</span>
-              </a>
-            </li>
-          ))}
-        </ul>
-      )}
-    </div>
-  </section>
+  <Section label="Overview" tone="mist">
+    <p class="lead">Articles written by the partners, cited to the statute or agency, and reviewed every quarter.</p>
+  </Section>
+
+  <Section label="Articles" tone="white">
+    {posts.length === 0 ? (
+      <p class="placeholder">Three seed articles are written in Phase 5. The list appears here automatically.</p>
+    ) : (
+      <ul class="articles">
+        {posts.map((post) => (
+          <li>
+            <span class="eyebrow">{fmt(post.data.published)} · {partners[post.data.author].name}</span>
+            <h3><a href={`/insights/${post.id}/`}>{post.data.title}</a></h3>
+            <p>{post.data.description}</p>
+          </li>
+        ))}
+      </ul>
+    )}
+  </Section>
 
   <CtaBand />
 </Base>
+
+<style>
+  .articles { list-style: none; border-top: 1px solid var(--hair); }
+  .articles li { padding: 26px 0; border-bottom: 1px solid var(--hair); }
+  .articles h3 { font-size: 1.5rem; margin: 6px 0 8px; }
+  .articles h3 a { color: var(--accent); text-decoration: none; }
+  .articles h3 a:hover { text-decoration: underline; }
+</style>

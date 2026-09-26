@@ -1,22 +1,32 @@
 ---
+/** Feature band: angled artwork left, charcoal panel right. Used as the closing CTA. */
 import { firm } from '../data/firm';
-interface Props { heading?: string; text?: string }
+interface Props {
+  heading?: string;
+  text?: string;
+  art?: 'facade' | 'louvers' | 'contours-warm';
+  eyebrow?: string;
+  action?: { label: string; href: string };
+}
 const {
-  heading = 'The first conversation is <em>free</em>.',
+  heading = 'The first conversation is free.',
   text = `Tell us briefly what's going on. A partner, not an intake service, responds ${firm.responsePromise}.`,
+  art = 'facade',
+  eyebrow = 'Free consultation',
+  action = { label: 'Request a free consultation', href: '/contact/' },
 } = Astro.props;
 ---
 
-<section class="cta-band" aria-labelledby="cta-h">
-  <div class="wrap">
-    <div>
-      <h2 id="cta-h" set:html={heading} />
-      <p>{text}</p>
+<section class="feature" aria-labelledby="cta-h">
+  <div class="feature__art" style={`background-image:url('/assets/art/${art}.webp')`} role="presentation"></div>
+  <div class="feature__body dark">
+    <span class="eyebrow">{eyebrow}</span>
+    <h2 id="cta-h">{heading}</h2>
+    <p>{text}</p>
+    <div class="feature__actions">
+      <a class="btn btn--solid" href={action.href}>{action.label}</a>
+      <a class="btn" href={`tel:${firm.phoneTel}`}>Call {firm.phoneDisplay}</a>
     </div>
-    <div class="actions">
-      <a class="btn btn-solid" href="/contact/">Request a free consultation</a>
-      <a class="btn btn-ghost" href={`tel:${firm.phoneTel}`}>Call {firm.phoneDisplay}</a>
-      <span class="micro">Confidential · No obligation · Response within 1 business day</span>
-    </div>
+    <span class="feature__micro">Confidential · No obligation · Response within 1 business day</span>
   </div>
 </section>

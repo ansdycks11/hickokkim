@@ -1,0 +1,24 @@
+---
+/**
+ * The core layout unit: a serif label in a narrow left column (the section's
+ * H2), content on the right. Tone alternates white / mist / dark down a page.
+ */
+interface Props {
+  label: string;
+  tone?: 'white' | 'mist' | 'dark';
+  id?: string;
+  wide?: boolean;
+  class?: string;
+}
+const { label, tone = 'white', id, wide = false, class: cls = '' } = Astro.props;
+const headingId = `${id ?? label.toLowerCase().replace(/[^a-z0-9]+/g, '-')}-h`;
+---
+
+<section class={`sec sec--${tone} ${tone === 'dark' ? 'dark' : 'on-light'} ${cls}`.trim()} id={id} aria-labelledby={headingId}>
+  <div class="wrap sec__grid">
+    <h2 class="sec__label" id={headingId}>{label}</h2>
+    <div class={`sec__body ${wide ? 'sec__body--wide' : ''}`}>
+      <slot />
+    </div>
+  </div>
+</section>

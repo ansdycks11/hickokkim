@@ -1,7 +1,8 @@
 ---
-/** Attorney bio page. Phase 1: verified credentials only. Phase 4: full 300–500-word bio. */
+/** Attorney bio. Hero with name, rule, and vCard; headshot overlapping the Overview section. */
 import Base from '../../layouts/Base.astro';
 import PageHero from '../../components/PageHero.astro';
+import Section from '../../components/Section.astro';
 import CtaBand from '../../components/CtaBand.astro';
 import { partnerList, areasForPartner, firm, lastReviewedDisplay } from '../../data/firm';
 
@@ -16,7 +17,6 @@ const crumbs = [
   { name: 'Attorneys', href: '/attorneys/' },
   { name: p.name, href: p.path },
 ];
-// The Attorney node itself is already in the site-wide graph; mark this page as its ProfilePage.
 const profileSchema = {
   '@type': 'ProfilePage',
   '@id': `${p.url}#profile`,
@@ -26,53 +26,59 @@ const profileSchema = {
 ---
 
 <Base title={title} description={description} path={p.path} breadcrumbs={crumbs} schema={[profileSchema]} ogImage={`${firm.url}${p.image}`}>
-  <PageHero kicker={p.title} breadcrumbs={crumbs} lead={p.focusSummary} scales={false}>
+  <PageHero breadcrumbs={crumbs} aside={{ label: 'vCard', href: `/vcard/${p.slug}.vcf` }} sub={[{ label: p.title }, { label: 'Hickok & Kim, Inc.' }]}>
     {p.name}
   </PageHero>
 
-  <section class="block">
-    <div class="wrap bio-grid">
-      <div class="bio-photo">
-        <!-- TODO:REAL-DATA — full-resolution headshot (>=1200px short edge), 3:4 crop. -->
-        <img src={p.image} width={p.imageWidth} height={p.imageHeight} alt={p.imageAlt} />
-      </div>
-      <div class="prose">
-        <p>{p.shortBio}</p>
-        {p.humanizing && <p>{p.humanizing}</p>}
-        <p class="placeholder">Full bio (300–500 words, client-outcome oriented) is written in Phase 4 for partner review.</p>
-
-        <h2>Credentials</h2>
-        <div class="table-scroll">
-          <table>
-            <tbody>
-              <tr><th scope="row">Bar admission</th><td>State Bar of California <a href={p.barProfile} rel="noopener">#{p.barNumber}</a>, admitted {p.barAdmitted}, Active</td></tr>
-              {p.federalAdmissions.length > 0 && <tr><th scope="row">Federal courts</th><td>{p.federalAdmissions.join('; ')}</td></tr>}
-              <tr><th scope="row">Education</th><td>{p.education.join('; ')}</td></tr>
-              <tr><th scope="row">Experience</th><td>{p.experience.join('; ')}</td></tr>
-              {p.memberships.length > 0 && <tr><th scope="row">Leadership</th><td>{p.memberships.join('; ')}</td></tr>}
-              <tr><th scope="row">Languages</th><td>{p.languages.join(', ')}</td></tr>
-            </tbody>
-          </table>
-        </div>
-
-        <h2>Practice areas {p.firstName} handles</h2>
-        <ul>
-          {areas.map((a) => <li><a href={a.path}>{a.name}</a> — {a.blurb}</li>)}
-        </ul>
-
-        <h2>Contact</h2>
-        <p>Call the firm at <a href={`tel:${firm.phoneTel}`}>{firm.phoneDisplay}</a> or write to <a href={`mailto:${firm.email}`}>{firm.email}</a>. Every matter begins with a free initial consultation.</p>
-        <p class="reviewed">Last reviewed {lastReviewedDisplay}</p>
-      </div>
+  <section class="bio-top on-light" aria-label="Photo and contact">
+    <div class="wrap bio-top__grid">
+      <!-- TODO:REAL-DATA — full-resolution headshot (>=1200px short edge), 4:5 crop. -->
+      <img class="bio-photo" src={p.image} width={p.imageWidth} height={p.imageHeight} alt={p.imageAlt} />
+      <p class="bio-contact">
+        <a href={`tel:${firm.phoneTel}`}>{firm.phoneDisplay}</a><br />
+        <a href={`mailto:${firm.email}`}>{firm.email}</a><br />
+        Los Angeles · {p.languages.join(', ')}{p.languages.includes('Korean') ? ' (한국어)' : ''}
+      </p>
     </div>
   </section>
 
-  <CtaBand heading={`Talk to ${p.firstName}. The first conversation is <em>free</em>.`} />
+  <Section label="Overview" tone="mist">
+    <p class="lead">{p.shortBio}</p>
+    {p.humanizing && <p>{p.humanizing}</p>}
+    <p class="placeholder">Full biography (300–500 words, client-outcome oriented) is written in Phase 4 for partner review.</p>
+  </Section>
+
+  <Section label="Credentials" tone="white">
+    <div class="prose table-scroll">
+      <table>
+        <tbody>
+          <tr><th scope="row">Bar admission</th><td>State Bar of California <a href={p.barProfile} rel="noopener">#{p.barNumber}</a>, admitted {p.barAdmitted}, Active</td></tr>
+          {p.federalAdmissions.length > 0 && <tr><th scope="row">Federal courts</th><td>{p.federalAdmissions.join('; ')}</td></tr>}
+          <tr><th scope="row">Education</th><td>{p.education.join('; ')}</td></tr>
+          <tr><th scope="row">Experience</th><td>{p.experience.join('; ')}</td></tr>
+          {p.memberships.length > 0 && <tr><th scope="row">Leadership</th><td>{p.memberships.join('; ')}</td></tr>}
+          <tr><th scope="row">Languages</th><td>{p.languages.join(', ')}</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </Section>
+
+  <Section label="Practice areas" tone="mist">
+    <ul class="linklist">
+      {areas.map((a) => <li><a href={a.path}>{a.name}</a><span class="note">{a.blurb}</span></li>)}
+    </ul>
+    <p class="reviewed">Last reviewed {lastReviewedDisplay}</p>
+  </Section>
+
+  <CtaBand heading={`Talk to ${p.firstName}. The first conversation is free.`} />
 </Base>
 
 <style>
-  .bio-grid { display: grid; gap: clamp(28px, 5vw, 64px); grid-template-columns: 1fr; }
-  @media (min-width: 880px) { .bio-grid { grid-template-columns: 320px 1fr; align-items: start; } }
-  .bio-photo img { width: 100%; aspect-ratio: 3 / 4; object-fit: cover; border: 1px solid var(--hair); background: var(--paper-2); }
-  @media (max-width: 879px) { .bio-photo { max-width: 320px; } }
+  .bio-top { background: linear-gradient(to bottom, var(--charcoal) 0 50%, var(--mist) 50% 100%); }
+  .bio-top__grid { display: grid; grid-template-columns: auto 1fr; gap: 20px 32px; align-items: end; padding-bottom: 8px; }
+  .bio-photo { width: clamp(150px, 20vw, 220px); aspect-ratio: 4 / 5; object-fit: cover; background: var(--mist-2); }
+  .bio-contact { padding-bottom: 12px; line-height: 1.9; font-size: .95rem; }
+  .bio-contact a { color: var(--accent); text-decoration: none; }
+  .bio-contact a:hover { text-decoration: underline; }
+  @media (max-width: 560px) { .bio-top__grid { grid-template-columns: 1fr; } .bio-top { background: linear-gradient(to bottom, var(--charcoal) 0 30%, var(--mist) 30% 100%); } }
 </style>

@@ -1,24 +1,30 @@
 ---
 /**
- * Home. The "Paper in Ink" three-act scroll journey (spec §13) sits above the
- * conventional page. The opening overlay (H1 + subhead + CTAs) is plain HTML,
- * visible before any JavaScript, so it is the LCP element. Three.js loads
- * deferred after `load`; reduced-motion or no-WebGL users get a static
- * composition of the three documents inside the same stage (no layout shift).
+ * Home. A split-screen showcase (angled artwork left, charcoal panel right)
+ * cycles through the three client moments, followed by label-left sections.
+ * All slide text is in the HTML for crawlers; only one slide is shown at a time.
  */
 import Base from '../layouts/Base.astro';
-import Header from '../components/Header.astro';
+import Section from '../components/Section.astro';
+import LawyerList from '../components/LawyerList.astro';
 import IntakeForm from '../components/IntakeForm.astro';
-import { firm, moments, areasByMoment, partnerList, partners } from '../data/firm';
+import { firm, moments, areasByMoment, partnerList, partners, testimonials } from '../data/firm';
 
 const title = 'Hickok & Kim, Inc. — Los Angeles Attorneys for Individuals and Businesses';
 const description =
-  'Hickok & Kim, Inc. is a Los Angeles law firm serving individuals and businesses across California: personal injury, civil litigation, business and corporate law, outside general counsel, trademarks, cannabis law, wills and trusts, real estate. Free consultation.';
+  'Hickok & Kim is a Los Angeles law firm for individuals and businesses across California: injury, litigation, business, cannabis, trademarks, estates. Free consultation.';
 
-const chapters = [
-  { moment: moments[0], doc: 'complaint', blurb: 'Injury claims and civil disputes, handled from the first letter to resolution.', who: ['daniel-kim'] as const },
-  { moment: moments[1], doc: 'articles', blurb: 'Formation, contracts, ongoing counsel, and the brands and licenses your business runs on.', who: ['daniel-kim', 'christopher-hickok'] as const },
-  { moment: moments[2], doc: 'trust', blurb: "Wills, trusts, and the property that holds a family's work.", who: ['daniel-kim'] as const },
+const slides = [
+  { moment: moments[0], art: 'louvers', blurb: 'Injury claims and civil disputes, handled from the first letter to resolution by the partner who takes your call.', who: ['daniel-kim'] as const },
+  { moment: moments[1], art: 'facade', blurb: 'Formation, contracts, ongoing counsel, and the brands and licenses your business runs on.', who: ['daniel-kim', 'christopher-hickok'] as const },
+  { moment: moments[2], art: 'contours-warm', blurb: "Wills, trusts, and the property that holds a family's work, planned so it passes without a fight.", who: ['daniel-kim'] as const },
+];
+
+const steps = [
+  { t: 'Free consultation', d: "A call or video meeting where we listen, ask questions, and tell you plainly whether we're the right firm. If we're not, we'll point you to someone who is." },
+  { t: 'Retainer and conflict check', d: 'A written retainer agreement and conflict waiver before any work begins, with the fee structure spelled out: hourly, flat, or contingency.' },
+  { t: 'Strategy and itemized invoices', d: 'A clear plan, itemized invoices, and a partner who returns calls the same day in nearly every case.' },
+  { t: 'Resolution', d: 'Settlement, signature, filing, or judgment. We drive matters to a defined end and hand you the complete file.' },
 ];
 
 const faqs = [
@@ -33,422 +39,213 @@ const faqSchema = {
 };
 ---
 
-<Base title={title} description={description} path="/" schema={[faqSchema]} hideHeader>
-  <script slot="head" is:inline>
-    /**
-     * Show-once decision, inline and render-blocking on purpose: it must land before
-     * first paint so a returning visitor never sees the journey layout flash into the
-     * static one (which would also cost CLS). The heavier checks (reduced motion,
-     * WebGL) stay in the deferred module below.
-     *
-     * The flag is per-browser and never leaves the device: no cookie, nothing sent
-     * anywhere, so the cookie-free privacy policy still holds. Crawlers run no
-     * JavaScript, so they always receive the full markup either way.
-     */
-    (function () {
-      try {
-        // "?intro=1" (the Replay link) forces the intro regardless of history.
-        if (/[?&]intro=1(&|$)/.test(location.search)) return;
-        var KEY = 'hk:intro-seen';
-        var THIRTY_DAYS = 30 * 24 * 60 * 60 * 1000;
-        var at = Number(window.localStorage.getItem(KEY));
-        var seenRecently = isFinite(at) && at > 0 && Date.now() - at < THIRTY_DAYS;
-        // Arriving from another page on this site means mid-research: go straight to the page.
-        var internal = !!document.referrer && new URL(document.referrer).origin === location.origin;
-        if (!seenRecently && !internal) return;
-        var html = document.documentElement;
-        html.classList.add('no-journey');
-        // Offer the replay link only where replaying would actually do something.
-        if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) html.classList.add('intro-replayable');
-      } catch (e) {
-        /* private window or blocked storage: treat as a first visit */
-      }
-    })();
-  </script>
+<Base title={title} description={description} path="/" schema={[faqSchema]} bodyClass="is-home">
+  <link slot="head" rel="preload" as="image" href="/assets/art/louvers.webp" fetchpriority="high" />
 
-  <!-- ================= JOURNEY ================= -->
-  <section id="journey" class="journey" data-hero aria-label="Introduction">
-    <div class="stage" id="stage">
-      <canvas id="scene" aria-hidden="true"></canvas>
-      <div class="grain" aria-hidden="true"></div>
-
-      <div class="j-ui">
-        <a class="j-brand" href="/" aria-label="Hickok & Kim Inc., home">Hickok <em>&amp;</em> Kim <small>Inc.</small></a>
-        <button class="j-skip" id="skipBtn" type="button">Skip intro</button>
-
-        <!-- Opening overlay: LCP. Visible before JS. -->
-        <div class="ov ov-open" id="ovOpen">
-          <h1>Counsel built on <em>balance</em>, not bluster.</h1>
-          <p>Hickok &amp; Kim is a Los Angeles law firm for individuals and businesses across California. Two partners, nine practice areas, and a free initial consultation, whether something has gone wrong, you're building something, or you're planning ahead.</p>
-          <div class="hero-actions">
-            <a class="btn btn-solid" href="/contact/">Free consultation</a>
-            <a class="btn btn-ghost" href="/practice-areas/">See practice areas</a>
-          </div>
-          <div class="hint" aria-hidden="true"><span></span>Scroll to explore</div>
-          <!-- Only shown once the intro has been seen, so a returning visitor can play it again. -->
-          <p class="replay"><a href="/?intro=1">Replay the intro</a></p>
-        </div>
-
-        <!-- Chapter cards: one line of text per moment; all practice areas reachable in one tap. -->
-        {chapters.map((ch, i) => (
-          <div class="ov cap" id={`cap${i}`} data-label={ch.moment.heading}>
-            <img class="cap-thumb" src={`/assets/docs/${ch.doc}-sm.webp`} width="480" height="654" alt="" loading="lazy" decoding="async" />
-            <div class="cap-body">
-              <div class="act">{ch.moment.heading}</div>
-              <h2>{ch.moment.line}</h2>
-              <p>{ch.blurb}</p>
-              <ul>
-                {areasByMoment(ch.moment.id).map((a) => <li><a href={a.path}>{a.shortName}</a></li>)}
-              </ul>
-              <div class="who">
-                {ch.who.map((s) => <img src={partners[s].image} alt="" width="28" height="28" loading="lazy" />)}
-                {ch.who.map((s) => partners[s].name).join(' and ')}
-              </div>
-            </div>
-          </div>
+  <!-- ================= SHOWCASE ================= -->
+  <section class="showcase dark" data-hero aria-roledescription="carousel" aria-label="Hickok & Kim at a glance">
+    <div class="showcase__art" aria-hidden="true">
+      {slides.map((s, i) => (
+        <div class={`showcase__img ${i === 0 ? 'is-active' : ''}`} style={`background-image:url('/assets/art/${s.art}.webp')`}></div>
+      ))}
+    </div>
+    <div class="showcase__panel">
+      <h1 class="showcase__h1">Los Angeles attorneys for individuals and businesses</h1>
+      <div class="showcase__slides">
+        {slides.map((s, i) => (
+          <article class={`slide ${i === 0 ? 'is-active' : ''}`} id={`slide-${i}`} aria-roledescription="slide" aria-label={`${i + 1} of ${slides.length}`} aria-hidden={i === 0 ? undefined : 'true'}>
+            <p class="eyebrow">{s.moment.heading}</p>
+            <h2 class="slide__title">{s.moment.line}</h2>
+            <p class="slide__blurb">{s.blurb}</p>
+            <ul class="slide__areas">
+              {areasByMoment(s.moment.id).map((a) => <li><a href={a.path} tabindex={i === 0 ? undefined : -1}>{a.name}</a></li>)}
+            </ul>
+            <p class="slide__who">{s.who.map((w) => partners[w].name).join(' and ')}</p>
+          </article>
         ))}
-
-        <div class="ov ov-close" id="ovClose">
-          <h2>Counsel built on balance, not bluster.</h2>
-          <p>Los Angeles, since 2019.</p>
-        </div>
-
-        <div class="j-progress" aria-hidden="true"><i><b id="jBar"></b></i><span id="jLabel">Intro</span></div>
-        <a class="btn btn-solid j-cta" href="/contact/">Free consultation</a>
+      </div>
+      <div class="showcase__controls">
+        <button class="ctl" type="button" data-dir="-1" aria-label="Previous slide"><span aria-hidden="true">&#8592;</span></button>
+        <span class="counter" aria-live="polite"><b id="slideNum">01</b> / 0{slides.length}</span>
+        <button class="ctl" type="button" data-dir="1" aria-label="Next slide"><span aria-hidden="true">&#8594;</span></button>
+        <a class="btn btn--solid showcase__cta" href="/contact/">Free consultation</a>
       </div>
     </div>
   </section>
 
-  <!-- ================= CONVENTIONAL PAGE ================= -->
-  <div id="site-start">
-    <Header currentPath="/" />
+  <!-- ================= OVERVIEW ================= -->
+  <Section label="Overview" tone="white">
+    <p class="lead reveal">Hickok &amp; Kim, Inc. is a Los Angeles law firm founded in 2019 by two partners who answer their own phones. We represent individuals and businesses across California, in English and Korean, and every matter begins with a free consultation.</p>
+    <ul class="stats reveal">
+      <li><b>2019</b><span>Founded in Los Angeles</span></li>
+      <li><b>18+ years</b><span>Combined experience</span></li>
+      <li><b>9</b><span>Practice areas</span></li>
+      <li><b>California</b><span>Statewide, by video or in person</span></li>
+    </ul>
+  </Section>
 
-    <section class="block" aria-labelledby="intro-h">
-      <div class="wrap intro">
-        <div>
-          <p class="big" id="intro-h">Hickok &amp; Kim, Inc. is a Los Angeles law firm founded in 2019 by two partners who answer their own phones. We represent individuals and businesses across California, in English and Korean, and every matter begins with a free consultation.</p>
-        </div>
-        <div class="facts">
-          <div><b>2019</b><span>Founded in Los Angeles</span></div>
-          <div><b>18+ years</b><span>Combined experience</span></div>
-          <div><b>9</b><span>Practice areas</span></div>
-          <div><b>California</b><span>Statewide, by video or in person</span></div>
-        </div>
+  <!-- ================= PRACTICE AREAS ================= -->
+  <Section label="Practice areas" tone="mist" id="practice">
+    {moments.map((m) => (
+      <div class="group reveal">
+        <h3 class="group__title">{m.heading}</h3>
+        <ul class="linklist">
+          {areasByMoment(m.id).map((a) => <li><a href={a.path}>{a.name}</a><span class="note">{a.ledgerNote}</span></li>)}
+        </ul>
       </div>
-    </section>
+    ))}
+    <p class="muted">We do not handle criminal matters. If your situation falls outside what we do, we'll tell you and connect you with someone who can help.</p>
+  </Section>
 
-    <section class="block tight" id="practice" aria-labelledby="practice-h">
-      <div class="wrap">
-        <h2 id="practice-h">Nine practice areas, organized by the moment you're in.</h2>
-        {moments.map((m) => (
-          <div class="group reveal">
-            <div class="group-head"><h3>{m.heading}</h3><p>{m.tagline}</p></div>
-            <ul class="ledger">
-              {areasByMoment(m.id).map((a) => (
-                <li>
-                  <a class="row" href={a.path}>
-                    <span class="ref">{a.ref}</span>
-                    <h4>{a.shortName}<small>{a.ledgerNote}</small></h4>
-                    <p>{a.blurb}</p>
-                    <span class="arrow" aria-hidden="true">→</span>
-                  </a>
-                </li>
-              ))}
-            </ul>
-          </div>
-        ))}
-        <p class="fee-note">We do not handle criminal matters. If your situation falls outside what we do, we'll tell you and connect you with someone who can help.</p>
-      </div>
-    </section>
+  <!-- ================= FEATURED SERVICE ================= -->
+  <section class="feature" aria-labelledby="ogc-h">
+    <div class="feature__art" style="background-image:url('/assets/art/facade.webp')" role="presentation"></div>
+    <div class="feature__body dark">
+      <span class="eyebrow">Featured service</span>
+      <h2 id="ogc-h">Outside general counsel: your company's legal department, without the in-house cost.</h2>
+      <p>Ongoing contract review, advice while decisions are still open, and disputes handled by the same two partners who already know your business.</p>
+      <div class="feature__actions"><a class="btn chev" href="/outside-general-counsel/">About outside general counsel</a></div>
+    </div>
+  </section>
 
-    <!-- Testimonials: TODO:REAL-DATA — replace with client-approved quotes; add Review schema only when real. -->
-    <section class="block tight" id="testimonials" aria-labelledby="testimonials-h">
-      <div class="wrap">
-        <h2 id="testimonials-h">What clients say</h2>
-        <p class="sample">Sample quotes for layout only. To be replaced with client-approved testimonials before launch.</p>
-        <div class="quotes reveal">
-          <figure class="quote"><blockquote>Every invoice matched what we agreed, and I never wondered what my lawyer was doing.</blockquote><figcaption>Business client</figcaption></figure>
-          <figure class="quote"><blockquote>Our license application felt impossible. Chris knew the regulators' questions before they asked them.</blockquote><figcaption>Cannabis operator</figcaption></figure>
-          <figure class="quote"><blockquote>Daniel explained the whole process to my parents in Korean and handled the case himself, start to finish.</blockquote><figcaption>Injury client</figcaption></figure>
-        </div>
-      </div>
-    </section>
+  <!-- ================= LAWYERS ================= -->
+  <Section label="Lawyers" tone="white" id="attorneys">
+    <p class="reveal">Two partners and no associates. The partner who takes your consultation is the partner who does the work and signs your engagement letter.</p>
+    <LawyerList slugs={partnerList.map((p) => p.slug)} />
+  </Section>
 
-    <section class="block dark" id="attorneys" aria-labelledby="attorneys-h">
-      <div class="wrap">
-        <h2 id="attorneys-h">Two partners. You work with the one who signs your engagement letter.</h2>
-        <div class="partners">
-          {partnerList.map((p) => (
-            <article class="partner reveal">
-              <div class="portrait"><img src={p.image} width={p.imageWidth} height={p.imageHeight} alt={p.imageAlt} loading="lazy" /></div>
-              <h3>{p.name}</h3>
-              <p class="role">{p.title}. {p.focusSummary}</p>
-              <p class="bio">{p.shortBio}</p>
-              <dl>
-                <div><dt>California Bar</dt><dd><a href={p.barProfile} rel="noopener">#{p.barNumber}, admitted {p.barAdmitted.replace('June ', '')}</a></dd></div>
-                {p.federalAdmissions.length > 0 && <div><dt>Federal courts</dt><dd>U.S. District Court, C.D. Cal.</dd></div>}
-                <div><dt>Education</dt><dd>{p.education.map((e) => e.split(',')[0]).join('; ')}</dd></div>
-                <div><dt>Languages</dt><dd>{p.languages.join(', ')}{p.languages.includes('Korean') ? ' (한국어)' : ''}</dd></div>
-              </dl>
-              <p class="more"><a href={p.path}>Full profile of {p.firstName} →</a></p>
-            </article>
-          ))}
-        </div>
-      </div>
-    </section>
+  {testimonials.length > 0 && (
+    <Section label="Clients" tone="mist">
+      {testimonials.map((t) => (
+        <figure class="reveal"><blockquote class="lead">{t.quote}</blockquote><figcaption class="muted">{t.attribution}</figcaption></figure>
+      ))}
+    </Section>
+  )}
 
-    <section class="block" id="process" aria-labelledby="process-h">
-      <div class="wrap">
-        <div class="section-head">
-          <h2 id="process-h">What working with us looks like, in order.</h2>
-          <a class="more" href="/how-we-work/">How we work and what it costs →</a>
-        </div>
-        <div class="steps reveal">
-          <article><h3>Free consultation</h3><p>A call or video meeting where we listen, ask questions, and tell you plainly whether we're the right firm. If we're not, we'll point you to someone who is.</p></article>
-          <article><h3>Retainer and conflict check</h3><p>A written retainer agreement and conflict waiver before any work begins, with the fee structure spelled out: hourly, flat, or contingency.</p></article>
-          <article><h3>Strategy and itemized invoices</h3><p>A clear plan, itemized invoices, and a partner who returns calls the same day in nearly every case.</p></article>
-          <article><h3>Resolution</h3><p>Settlement, signature, filing, or judgment. We drive matters to a defined end and hand you the complete file.</p></article>
-        </div>
-        <p class="fee-note">Personal injury matters are handled on contingency: no fee unless we recover for you. Other matters are billed hourly or at a flat fee agreed in advance.</p>
-      </div>
-    </section>
+  <!-- ================= PROCESS ================= -->
+  <Section label="How we work" tone="mist" id="process">
+    <ol class="steps reveal">
+      {steps.map((s) => <li><h3>{s.t}</h3><p>{s.d}</p></li>)}
+    </ol>
+    <p><a class="textlink chev" href="/how-we-work/">Fees and process in detail</a></p>
+  </Section>
 
-    <section class="block tight" id="insights" aria-labelledby="insights-h">
-      <div class="wrap">
-        <div class="section-head">
-          <h2 id="insights-h">Insights</h2>
-          <a class="more" href="/insights/">All articles →</a>
-        </div>
-        <p class="placeholder">Latest three articles render here once the Insights collection has entries (Phase 5).</p>
-      </div>
-    </section>
+  <!-- ================= FAQ ================= -->
+  <Section label="Questions" tone="white" id="faq">
+    <div class="accordion">
+      {faqs.map((f) => (
+        <details>
+          <summary><h3>{f.q}</h3></summary>
+          <div class="answer"><p>{f.a}</p></div>
+        </details>
+      ))}
+    </div>
+    <p><a class="textlink chev" href="/faq/">All questions</a></p>
+  </Section>
 
-    <section class="block tight" id="faq" aria-labelledby="faq-h">
-      <div class="wrap">
-        <div class="section-head">
-          <h2 id="faq-h">Questions we're asked most</h2>
-          <a class="more" href="/faq/">All questions →</a>
-        </div>
-        <div class="faq">
-          {faqs.map((f) => (
-            <details>
-              <summary>{f.q}</summary>
-              <div class="answer"><p>{f.a}</p></div>
-            </details>
-          ))}
-        </div>
+  <!-- ================= CONTACT ================= -->
+  <Section label="Contact" tone="dark" id="contact">
+    <div class="contact-split">
+      <div>
+        <p class="lead">The first conversation is free.</p>
+        <address class="contact-address">
+          {firm.address.street}<br />
+          {firm.address.city}, {firm.address.region} {firm.address.postal}<br />
+          {firm.address.note}<br />
+          <a href={`tel:${firm.phoneTel}`}>{firm.phoneDisplay}</a><br />
+          <a href={`mailto:${firm.email}`}>{firm.email}</a><br />
+          {firm.hoursDisplay}<br />
+          {firm.hoursNote}
+        </address>
       </div>
-    </section>
-
-    <section class="block dark" id="contact" aria-labelledby="contact-h">
-      <div class="wrap contact-grid">
-        <div>
-          <h2 id="contact-h" style="margin-bottom:26px">The first conversation is <em>free</em>.</h2>
-          <address>
-            {firm.address.street}<br />
-            {firm.address.city}, {firm.address.region} {firm.address.postal}<br />
-            {firm.address.note}<br />
-            <a href={`tel:${firm.phoneTel}`}>{firm.phoneDisplay}</a><br />
-            <a href={`mailto:${firm.email}`}>{firm.email}</a><br />
-            {firm.hoursDisplay}<br />
-            {firm.hoursNote}
-          </address>
-        </div>
-        <IntakeForm />
-      </div>
-    </section>
-  </div>
+      <div class="on-dark"><IntakeForm /></div>
+    </div>
+  </Section>
 </Base>
 
 <style>
-  /* ---------- journey stage ---------- */
-  .journey { position: relative; background: var(--ink); color: #fff; height: 420vh; }
-  .stage { position: sticky; top: 0; height: 100vh; height: 100svh; overflow: hidden; background: var(--ink); }
-  #scene { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
-  .grain { position: absolute; inset: 0; pointer-events: none; z-index: 2; background: radial-gradient(ellipse at center, rgba(0, 0, 0, 0) 45%, rgba(0, 0, 0, .55) 100%); }
-  .grain::after {
-    content: ""; position: absolute; inset: 0; opacity: .07; mix-blend-mode: overlay;
-    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+  /* ---------- showcase ---------- */
+  .showcase { position: relative; background: var(--charcoal); color: #fff; display: grid; grid-template-columns: 1fr; min-height: 100svh; }
+  @media (min-width: 900px) { .showcase { grid-template-columns: minmax(0, 40%) minmax(0, 1fr); } }
+  .showcase__art { position: relative; min-height: 38svh; overflow: hidden; }
+  @media (min-width: 900px) { .showcase__art { clip-path: polygon(0 0, 88% 0, 100% 52%, 88% 100%, 0 100%); } }
+  /* A shade at the top keeps the header legible where it overlaps the artwork (mobile). */
+  .showcase__art::after { content: ""; position: absolute; inset: 0 0 auto 0; height: 140px; z-index: 1; background: linear-gradient(rgba(20, 20, 20, .6), rgba(20, 20, 20, 0)); }
+  @media (min-width: 900px) { .showcase__art::after { display: none; } }
+  /* Desktop: start the header content where the charcoal panel starts, so the white
+     wordmark never sits on the pale artwork. Once the header turns solid it realigns. */
+  @media (min-width: 900px) {
+    :global(.is-home .site-header:not(.is-solid) .bar) { max-width: none; padding-left: calc(40% + clamp(24px, 6vw, 96px)); }
   }
-  .j-ui { position: absolute; inset: 0; z-index: 3; pointer-events: none; }
-  .j-ui > * { pointer-events: auto; }
-  .j-brand { position: absolute; left: var(--gutter); top: 26px; font-family: var(--serif); font-size: 1.15rem; text-decoration: none; color: #fff; }
-  .j-brand em { font-style: italic; color: var(--brass-2); }
-  .j-brand small { opacity: .55; font-size: .8em; }
-  .j-skip {
-    position: absolute; right: var(--gutter); top: 22px; background: none; border: 1px solid rgba(255, 255, 255, .3); color: rgba(255, 255, 255, .85);
-    padding: 9px 16px; min-height: 44px; font: 500 .8rem var(--sans); cursor: pointer; letter-spacing: .03em;
-  }
-  .j-skip:hover { border-color: var(--brass-2); color: var(--brass-2); }
-  .j-cta { position: absolute; right: var(--gutter); bottom: clamp(20px, 4vw, 40px); }
-  .j-progress { position: absolute; left: var(--gutter); bottom: clamp(20px, 4vw, 40px); display: flex; gap: 10px; align-items: center; font-size: .78rem; color: rgba(255, 255, 255, .68); }
-  .j-progress i { display: block; width: 34px; height: 1px; background: rgba(255, 255, 255, .25); position: relative; }
-  .j-progress i b { position: absolute; left: 0; top: 0; height: 100%; width: 0; background: var(--brass-2); }
-
-  /* overlays */
-  .ov { position: absolute; opacity: 0; will-change: opacity, transform; }
-  .ov-open { opacity: 1; left: var(--gutter); right: var(--gutter); top: 50%; transform: translateY(-52%); max-width: 640px; }
-  .ov-open h1 { max-width: 12ch; }
-  .ov-open p { margin: 22px 0 30px; max-width: 44ch; font-size: 1.05rem; color: rgba(255, 255, 255, .78); }
-  .hero-actions { display: flex; gap: 12px; flex-wrap: wrap; }
-  .ov-open .hint { display: flex; align-items: center; gap: 12px; font-size: .82rem; color: rgba(255, 255, 255, .68); margin-top: 34px; }
-  .ov-open .hint span { display: inline-block; width: 1px; height: 34px; background: linear-gradient(to bottom, var(--brass-2), transparent); }
-  .cap { width: min(360px, calc(100vw - 40px)); background: rgba(14, 19, 27, .55); backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); border: 1px solid rgba(255, 255, 255, .1); padding: 22px 24px 20px; }
-  .cap-thumb { display: none; }
-  .cap .act { font-family: var(--serif); font-style: italic; color: var(--brass-2); font-size: .95rem; margin-bottom: 8px; }
-  .cap h2 { font-size: 1.5rem; margin-bottom: 12px; }
-  .cap p { font-size: .9rem; color: rgba(255, 255, 255, .72); margin-bottom: 14px; }
-  .cap ul { list-style: none; display: flex; flex-wrap: wrap; gap: 6px; }
-  .cap li a { display: inline-block; font-size: .76rem; text-decoration: none; color: rgba(255, 255, 255, .85); border: 1px solid rgba(255, 255, 255, .18); padding: 7px 10px; transition: border-color .2s, color .2s; }
-  .cap li a:hover { border-color: var(--brass-2); color: var(--brass-2); }
-  .cap .who { margin-top: 14px; font-size: .78rem; color: rgba(255, 255, 255, .7); display: flex; align-items: center; gap: 8px; }
-  .cap .who img { width: 28px; height: 28px; border-radius: 50%; object-fit: cover; border: 1px solid rgba(201, 168, 106, .6); }
-  .cap .who img + img { margin-left: -12px; }
-  .ov-close { left: 0; right: 0; top: 50%; transform: translateY(-50%); text-align: center; padding: 0 20px; }
-  .ov-close h2 { font-size: clamp(1.9rem, 4vw, 3rem); }
-  .ov-close p { color: rgba(255, 255, 255, .7); margin-top: 12px; }
-  @media (max-width: 760px) {
-    .ov-open { top: 92px; transform: none; }
-    .ov-open h1 { font-size: 2.1rem; }
-    .ov-open p { font-size: .95rem; margin: 16px 0 22px; }
-    .ov-open .hint { margin-top: 24px; }
-    .hero-actions .btn { width: 100%; text-align: center; }
-    /* card: opaque enough for 4.5:1 over a white sheet; one line + links only */
-    .cap { position: absolute; left: 16px; right: 16px; bottom: 84px; top: auto; width: auto; transform: none !important; padding: 16px 18px 14px; background: rgba(14, 19, 27, .86); max-height: calc(100svh - 170px); overflow: auto; }
-    .cap h2 { font-size: 1.2rem; margin-bottom: 10px; }
-    .cap p { display: none; }
-    .cap li a { font-size: .74rem; padding: 6px 9px; }
-    .cap .who { margin-top: 10px; }
-    .j-cta { display: none; } /* the sticky mobile bar carries the CTA */
-    .j-progress { display: none; }
-  }
-  @media (max-width: 760px) and (max-height: 640px) {
-    .ov-open h1 { font-size: 1.85rem; }
-    .ov-open .hint { display: none; }
+  .showcase__img { position: absolute; inset: 0; background-size: cover; background-position: center; opacity: 0; transform: scale(1.04); transition: opacity 1s var(--ease), transform 6s linear; }
+  .showcase__img.is-active { opacity: 1; transform: scale(1); }
+  .showcase__panel { position: relative; display: flex; flex-direction: column; justify-content: center; padding: calc(var(--header-h) + 24px) var(--gutter) 40px clamp(24px, 6vw, 96px); }
+  @media (max-width: 899px) { .showcase__panel { padding-top: 40px; } .showcase__art { margin-top: 0; } }
+  .showcase__h1 { font-family: var(--sans); font-weight: 500; font-size: .74rem; letter-spacing: .14em; text-transform: uppercase; color: var(--on-dark-muted); margin-bottom: clamp(20px, 4vh, 40px); }
+  .showcase__slides { display: grid; }
+  .slide { grid-area: 1 / 1; opacity: 0; visibility: hidden; transform: translateY(12px); transition: opacity .7s var(--ease), transform .7s var(--ease), visibility 0s linear .7s; max-width: 640px; }
+  .slide.is-active { opacity: 1; visibility: visible; transform: none; transition: opacity .7s var(--ease) .15s, transform .7s var(--ease) .15s; }
+  .slide .eyebrow { color: var(--accent-on-dark); margin-bottom: 14px; }
+  .slide__title { color: #fff; font-size: clamp(2rem, 3.6vw, 3.2rem); line-height: 1.15; }
+  .slide__blurb { margin-top: 18px; color: #cfcfcf; font-size: 1.05rem; max-width: 52ch; }
+  .slide__areas { list-style: none; display: flex; flex-wrap: wrap; gap: 4px 22px; margin-top: 22px; }
+  .slide__areas a { color: #fff; text-decoration: none; font-size: .95rem; border-bottom: 1px solid rgba(201, 168, 106, .6); padding-bottom: 2px; }
+  .slide__areas a:hover { color: var(--accent-on-dark); }
+  .slide__who { margin-top: 18px; font-size: .85rem; color: var(--on-dark-muted); }
+  .showcase__controls { display: flex; align-items: center; gap: 16px; margin-top: clamp(28px, 5vh, 56px); flex-wrap: wrap; }
+  .ctl { width: 48px; height: 48px; border: 1px solid rgba(255, 255, 255, .35); color: #fff; font-size: 1.1rem; transition: border-color .2s, color .2s; }
+  .ctl:hover { border-color: var(--accent-on-dark); color: var(--accent-on-dark); }
+  .counter { font-size: .9rem; color: var(--on-dark-muted); letter-spacing: .08em; min-width: 64px; text-align: center; }
+  .counter b { color: #fff; font-weight: 500; }
+  .showcase__cta { margin-left: auto; }
+  @media (max-width: 520px) { .showcase__cta { margin-left: 0; width: 100%; } }
+  @media (prefers-reduced-motion: reduce) {
+    .showcase__img, .slide, .slide.is-active { transition: none; transform: none; }
   }
 
-  /* ---------- static fallback (reduced motion / no WebGL / load failure): same stage, no layout shift ---------- */
-  html.no-journey .journey { height: auto; }
-  /* Sized to its content, not the viewport, so the nav is reachable without a full screen of scrolling. */
-  html.no-journey .stage { position: relative; height: auto; padding: clamp(56px, 8vw, 84px) 0 clamp(56px, 7vw, 88px); }
-  /* .ov-open .hint needs the deeper selector to outrank its own two-class rule above. */
-  html.no-journey #scene, html.no-journey .grain, html.no-journey .ov-close, html.no-journey .j-progress, html.no-journey .j-skip, html.no-journey .j-cta, html.no-journey .ov-open .hint { display: none; }
-  html.no-journey .j-ui { position: static; }
-  html.no-journey .j-ui > * { pointer-events: auto; }
-  html.no-journey .ov { opacity: 1 !important; pointer-events: auto !important; }
-  html.no-journey .ov-open { position: static; transform: none; max-width: var(--max); margin: 0 auto; padding: 0 var(--gutter); }
-  html.no-journey .ov-open h1 { max-width: 12ch; }
-  /* The card count per row follows the available width rather than a fixed breakpoint,
-     and min() keeps a single column from overflowing a narrow phone. */
-  html.no-journey .j-ui {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(min(100%, 290px), 1fr));
-    gap: clamp(16px, 2vw, 24px);
-    max-width: var(--max); margin: 0 auto; padding: 0 var(--gutter);
-  }
-  html.no-journey .j-ui .ov-open, html.no-journey .j-ui .j-brand { grid-column: 1 / -1; }
-  html.no-journey .j-ui .ov-open { padding: 0; margin: 0 0 16px; }
-  html.no-journey .j-brand { position: static; display: inline-block; margin-bottom: 24px; }
-
-  /* The document sits above the text rather than beside it. A card is 290–420px at every
-     column count, and a side-by-side thumbnail was leaving the heading only ~220px to wrap in.
-     (A container query can't help here: an element cannot query its own width.) */
-  html.no-journey .cap {
-    position: static; opacity: 1 !important; transform: none !important; width: auto;
-    backdrop-filter: none; -webkit-backdrop-filter: none; background: rgba(255, 255, 255, .03);
-    /* undo the overlay positioning the mobile media query sets for the live journey */
-    inset: auto; max-height: none; overflow: visible; padding: clamp(18px, 2vw, 24px);
-    display: flex; flex-direction: column; gap: 14px;
-  }
-  html.no-journey .cap p { display: block; }
-  html.no-journey .cap-thumb {
-    display: block; width: 96px; height: auto; flex: none;
-    border: 1px solid rgba(255, 255, 255, .15); box-shadow: 0 10px 30px rgba(0, 0, 0, .5);
-  }
-  html.no-journey .cap h2 { font-size: 1.2rem; }
-  /* The card's own children already carry bottom margins; no extra spacing needed here. */
-  html.no-journey .cap-body { min-width: 0; }
-
-  /* Replay link: hidden until the visitor has actually seen the intro. */
-  .replay { display: none; margin-top: 26px; font-size: .84rem; }
-  html.intro-replayable .replay { display: block; }
-  .replay a { color: var(--brass-2); text-decoration: none; border-bottom: 1px solid rgba(201, 168, 106, .4); padding-bottom: 2px; }
-  .replay a:hover { border-bottom-color: var(--brass-2); }
+  /* ---------- contact ---------- */
+  .contact-split { display: grid; gap: 40px; grid-template-columns: 1fr; }
+  @media (min-width: 1000px) { .contact-split { grid-template-columns: .8fr 1.2fr; gap: 64px; } }
+  .contact-address { font-style: normal; line-height: 1.9; margin-top: 18px; }
+  .contact-address a { color: var(--accent-on-dark); text-decoration: none; }
+  .contact-address a:hover { text-decoration: underline; }
 </style>
 
 <script>
-  import type { JourneyOptions } from '../scripts/journey';
-  const html = document.documentElement;
-  const journey = document.getElementById('journey')!;
-  const stage = document.getElementById('stage')!;
-  const canvas = document.getElementById('scene') as HTMLCanvasElement;
-  const bail = () => html.classList.add('no-journey');
-  const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  const hasWebGL = () => {
-    try { const c = document.createElement('canvas'); return !!(c.getContext('webgl2') || c.getContext('webgl')); } catch { return false; }
-  };
+  const root = document.querySelector<HTMLElement>('.showcase');
+  if (root) {
+    const slides = [...root.querySelectorAll<HTMLElement>('.slide')];
+    const imgs = [...root.querySelectorAll<HTMLElement>('.showcase__img')];
+    const num = document.getElementById('slideNum')!;
+    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    let i = 0, timer: number | undefined;
 
-  // The show-once decision already ran in the inline head script above, which sets
-  // `no-journey` before first paint. Here we only record that the intro was shown.
-  const markSeen = () => {
-    try { window.localStorage.setItem('hk:intro-seen', String(Date.now())); } catch { /* not fatal */ }
-  };
-
-  document.getElementById('skipBtn')?.addEventListener('click', () => {
-    markSeen(); // dismissing it counts as seeing it
-    // 'instant', not 'auto': 'auto' defers to the page's CSS smooth scrolling, which would
-    // animate the skip across several viewport heights instead of jumping (§13.6: under 300ms).
-    document.getElementById('site-start')?.scrollIntoView({ behavior: 'instant', block: 'start' });
-  });
-
-  if (reduced || !hasWebGL() || html.classList.contains('no-journey')) {
-    bail();
-  } else {
-    markSeen();
-    // Drop the ?intro=1 marker so the address bar, and anything the visitor copies, stays clean.
-    if (location.search) history.replaceState(null, '', location.pathname + location.hash);
-    // Give the first document texture a head start, but only for visitors actually getting the intro.
-    const pre = document.createElement('link');
-    pre.rel = 'preload';
-    pre.as = 'image';
-    pre.href = '/assets/docs/complaint.webp';
-    pre.setAttribute('fetchpriority', 'low');
-    document.head.appendChild(pre);
-
-    const opts: Omit<JourneyOptions, 'onFail'> = {
-      journey, stage, canvas,
-      textures: {
-        complaint: '/assets/docs/complaint.webp',
-        articles: '/assets/docs/articles.webp',
-        trademark: '/assets/docs/trademark.webp',
-        trust: '/assets/docs/trust.webp',
-      },
-      overlays: {
-        open: document.getElementById('ovOpen')!,
-        close: document.getElementById('ovClose')!,
-        caps: [0, 1, 2].map((i) => document.getElementById(`cap${i}`)!),
-        bar: document.getElementById('jBar')!,
-        label: document.getElementById('jLabel')!,
-      },
+    const show = (n: number) => {
+      i = (n + slides.length) % slides.length;
+      slides.forEach((s, k) => {
+        const on = k === i;
+        s.classList.toggle('is-active', on);
+        on ? s.removeAttribute('aria-hidden') : s.setAttribute('aria-hidden', 'true');
+        s.querySelectorAll('a').forEach((a) => (on ? a.removeAttribute('tabindex') : a.setAttribute('tabindex', '-1')));
+      });
+      imgs.forEach((im, k) => im.classList.toggle('is-active', k === i));
+      num.textContent = String(i + 1).padStart(2, '0');
     };
-    // Defer Three.js so the hero text is the LCP and the main thread is free while the page settles:
-    // start on the first scroll/pointer/touch intent, or 3.5s after `load`, whichever comes first.
-    let started = false;
-    const start = () => {
-      if (started) return;
-      started = true;
-      import('../scripts/journey').then((m) => m.initJourney({ ...opts, onFail: bail })).catch(bail);
-    };
-    const intents: Array<[string, AddEventListenerOptions]> = [
-      ['scroll', { passive: true, once: true }],
-      ['wheel', { passive: true, once: true }],
-      ['touchstart', { passive: true, once: true }],
-      ['pointermove', { passive: true, once: true }],
-      ['keydown', { once: true }],
-    ];
-    intents.forEach(([ev, o]) => window.addEventListener(ev, start, o));
-    const afterLoad = () => setTimeout(start, 3500);
-    if (document.readyState === 'complete') afterLoad();
-    else window.addEventListener('load', afterLoad, { once: true });
+    const stop = () => { if (timer) { clearInterval(timer); timer = undefined; } };
+    const start = () => { if (!reduced && !timer) timer = window.setInterval(() => show(i + 1), 8000); };
+
+    root.querySelectorAll<HTMLButtonElement>('.ctl').forEach((b) =>
+      b.addEventListener('click', () => { stop(); show(i + Number(b.dataset.dir)); })
+    );
+    root.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowRight') { stop(); show(i + 1); }
+      if (e.key === 'ArrowLeft') { stop(); show(i - 1); }
+    });
+    // Pause while the visitor is reading or interacting.
+    root.addEventListener('mouseenter', stop);
+    root.addEventListener('mouseleave', start);
+    root.addEventListener('focusin', stop);
+    document.addEventListener('visibilitychange', () => (document.hidden ? stop() : start()));
+    start();
   }
 </script>

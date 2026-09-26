@@ -1,123 +1,111 @@
 ---
-import { firm, nav, moments, areasByMoment, partnerList } from '../data/firm';
+/**
+ * Fixed header over the charcoal hero: wordmark, phone, consultation button,
+ * and a MENU button that opens a full-screen overlay holding all navigation.
+ */
+import { firm, moments, areasByMoment } from '../data/firm';
 
 interface Props { currentPath?: string }
 const { currentPath = '' } = Astro.props;
-const isCurrent = (href: string) => (href === '/' ? currentPath === '/' : currentPath.startsWith(href));
+const primary = [
+  { label: 'Practice areas', href: '/practice-areas/' },
+  { label: 'Attorneys', href: '/attorneys/' },
+  { label: 'How we work', href: '/how-we-work/' },
+  { label: 'Insights', href: '/insights/' },
+  { label: 'FAQ', href: '/faq/' },
+  { label: 'Contact', href: '/contact/' },
+];
+const isCurrent = (href: string) => currentPath.startsWith(href);
 ---
 
-<header class="site" id="site-header">
-  <div class="wrap nav">
-    <a class="brand" href="/" aria-label="Hickok & Kim Inc., home">Hickok <em>&amp;</em> Kim <small>Inc.</small></a>
-
-    <nav class="primary" aria-label="Primary">
-      <ul>
-        {nav.map((item) =>
-          item.children ? (
-            <li class="has-menu" id="pa-item">
-              <span>
-                <a href={item.href} aria-current={isCurrent(item.href) ? 'true' : undefined}>{item.label}</a>
-                <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="pa-menu" aria-label="Open practice areas menu">▾</button>
-              </span>
-              <div class="menu" id="pa-menu">
-                {moments.map((m) => (
-                  <div>
-                    <p class="menu-head">{m.heading}</p>
-                    <ul>
-                      {areasByMoment(m.id).map((a) => (
-                        <li><a href={a.path}>{a.name}</a></li>
-                      ))}
-                    </ul>
-                  </div>
-                ))}
-                <p class="menu-foot"><a href="/practice-areas/">All nine practice areas, organized by the moment you're in →</a></p>
-              </div>
-            </li>
-          ) : (
-            <li><a href={item.href} aria-current={isCurrent(item.href) ? 'true' : undefined}>{item.label}</a></li>
-          )
-        )}
-      </ul>
-    </nav>
-
-    <div class="nav-right">
-      <a class="nav-phone" href={`tel:${firm.phoneTel}`}>{firm.phoneDisplay}</a>
-      <a class="nav-cta" href="/contact/">Free consultation</a>
-      <button class="menu-btn" id="menuBtn" type="button" aria-expanded="false" aria-controls="mobileNav" aria-label="Open menu">☰</button>
+<header class="site-header" id="site-header">
+  <div class="wrap bar">
+    <a class="wordmark" href="/">Hickok <span class="amp">&amp;</span> Kim<span class="visually-hidden">, Inc. home</span></a>
+    <div class="header-right">
+      <a class="header-phone" href={`tel:${firm.phoneTel}`}>{firm.phoneDisplay}</a>
+      <a class="btn btn--on-dark header-cta" href="/contact/">Free consultation</a>
+      <button class="menu-btn" id="menuBtn" type="button" aria-expanded="false" aria-controls="menuPanel" aria-label="Open menu">
+        <span class="lines" aria-hidden="true"><i></i><i></i><i></i></span>
+        <span class="label" aria-hidden="true">Menu</span>
+      </button>
     </div>
   </div>
 </header>
 
-<!-- Outside <header>: its backdrop-filter would otherwise become this fixed panel's containing block. -->
-<nav class="mobile-nav" id="mobileNav" aria-label="Mobile">
-    <ul>
-      <li><a href="/practice-areas/">Practice areas</a></li>
-      {moments.map((m) => (
-        <li>
-          <span class="group-label">{m.heading}</span>
-          <ul class="sub">
-            {areasByMoment(m.id).map((a) => (
-              <li><a href={a.path}>{a.name}<small>{a.ledgerNote}</small></a></li>
-            ))}
-          </ul>
-        </li>
-      ))}
-      <li><span class="group-label">Firm</span>
-        <ul class="sub">
-          <li><a href="/attorneys/">Attorneys</a></li>
-          {partnerList.map((p) => <li><a href={p.path}>{p.name}<small>{p.title}</small></a></li>)}
-          <li><a href="/how-we-work/">How we work</a></li>
-          <li><a href="/insights/">Insights</a></li>
-          <li><a href="/faq/">FAQ</a></li>
-          <li><a href="/contact/">Contact</a></li>
-        </ul>
-      </li>
-    </ul>
-    <div class="panel-cta">
-      <a class="btn btn-solid" href="/contact/">Free consultation</a>
-      <a class="btn btn-outline" href={`tel:${firm.phoneTel}`}>Call {firm.phoneDisplay}</a>
+<nav class="menu-panel on-light" id="menuPanel" aria-label="Site menu">
+  <div class="wrap">
+    <div class="menu-grid">
+      <ul class="menu-primary">
+        {primary.map((l) => (
+          <li><a href={l.href} aria-current={isCurrent(l.href) ? 'page' : undefined}>{l.label}</a></li>
+        ))}
+      </ul>
+      <div>
+        {moments.map((m) => (
+          <div class="menu-group">
+            <span class="eyebrow">{m.heading}</span>
+            <ul>
+              {areasByMoment(m.id).map((a) => <li><a href={a.path}>{a.name}</a></li>)}
+            </ul>
+          </div>
+        ))}
+      </div>
+      <div class="menu-contact">
+        <span class="eyebrow">Los Angeles</span>
+        <address>
+          {firm.address.street}<br />
+          {firm.address.city}, {firm.address.region} {firm.address.postal}<br />
+          {firm.address.note}<br />
+          <a href={`tel:${firm.phoneTel}`}>{firm.phoneDisplay}</a><br />
+          <a href={`mailto:${firm.email}`}>{firm.email}</a>
+        </address>
+        <a class="btn btn--solid" href="/contact/">Free consultation</a>
+      </div>
     </div>
-    <p class="panel-phone">{firm.hoursDisplay}</p>
+    <div class="menu-utility">
+      <a href="/privacy-policy/">Privacy policy</a>
+      <a href="/disclaimer/">Disclaimer</a>
+      <span class="muted">Attorney advertising.</span>
+    </div>
+  </div>
 </nav>
 
 <script>
-  // Mobile panel: toggles aria-expanded, ☰ ↔ ✕, closes on link tap, Escape, and outside tap.
-  const btn = document.getElementById('menuBtn') as HTMLButtonElement | null;
-  const panel = document.getElementById('mobileNav');
-  if (btn && panel) {
-    const setOpen = (open: boolean) => {
-      panel.classList.toggle('open', open);
-      document.body.classList.toggle('nav-open', open);
-      btn.setAttribute('aria-expanded', String(open));
-      btn.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
-      btn.textContent = open ? '✕' : '☰';
-    };
-    btn.addEventListener('click', () => setOpen(!panel.classList.contains('open')));
-    panel.addEventListener('click', (e) => {
-      const t = e.target as HTMLElement;
-      if (t.closest('a')) setOpen(false);
-      else if (t === panel) setOpen(false); // tap on empty panel area
-    });
-    document.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape' && panel.classList.contains('open')) { setOpen(false); btn.focus(); }
-    });
-    document.addEventListener('click', (e) => {
-      const t = e.target as HTMLElement;
-      if (panel.classList.contains('open') && !panel.contains(t) && !btn.contains(t)) setOpen(false);
-    });
-    window.matchMedia('(min-width: 861px)').addEventListener('change', (m) => { if (m.matches) setOpen(false); });
-  }
+  const header = document.getElementById('site-header')!;
+  const btn = document.getElementById('menuBtn') as HTMLButtonElement;
+  const panel = document.getElementById('menuPanel')!;
 
-  // Desktop practice-areas dropdown: button toggle for touch/keyboard; hover handled in CSS.
-  const item = document.getElementById('pa-item');
-  const toggle = item?.querySelector('.menu-toggle') as HTMLButtonElement | null;
-  if (item && toggle) {
-    const set = (open: boolean) => { item.classList.toggle('open', open); toggle.setAttribute('aria-expanded', String(open)); };
-    toggle.addEventListener('click', () => set(!item.classList.contains('open')));
-    // Keyboard: opens when focus enters the item, closes when it leaves or on Escape.
-    item.addEventListener('focusin', () => set(true));
-    item.addEventListener('focusout', (e) => { if (!item.contains((e as FocusEvent).relatedTarget as Node)) set(false); });
-    document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && item.classList.contains('open')) { toggle.focus(); set(false); } });
-    document.addEventListener('click', (e) => { if (!item.contains(e.target as Node)) set(false); });
-  }
+  // Solid bar once the page scrolls off the top of the hero.
+  const onScroll = () => header.classList.toggle('is-solid', window.scrollY > 40);
+  window.addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
+
+  const focusables = () =>
+    [btn, ...panel.querySelectorAll<HTMLElement>('a, button')].filter((el) => el.offsetParent !== null || el === btn);
+
+  const setOpen = (open: boolean) => {
+    panel.classList.toggle('open', open);
+    document.body.classList.toggle('menu-open', open);
+    btn.setAttribute('aria-expanded', String(open));
+    btn.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
+    if (open) {
+      panel.querySelector<HTMLElement>('.menu-primary a')?.focus();
+    } else {
+      btn.focus();
+    }
+  };
+
+  btn.addEventListener('click', () => setOpen(!panel.classList.contains('open')));
+  panel.addEventListener('click', (e) => { if ((e.target as HTMLElement).closest('a')) setOpen(false); });
+  document.addEventListener('keydown', (e) => {
+    if (!panel.classList.contains('open')) return;
+    if (e.key === 'Escape') { e.preventDefault(); setOpen(false); return; }
+    if (e.key === 'Tab') {
+      // keep focus inside the header button + menu while open
+      const els = focusables();
+      const first = els[0], last = els[els.length - 1];
+      if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+      else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+    }
+  });
 </script>

@@ -1,12 +1,19 @@
 ---
 /**
- * Practice-area page body (docs/website-architecture.md §6.2).
- * Shared by the eight /practice-areas/<slug>/ pages and the featured
- * /outside-general-counsel/ page so the template stays in one place.
+ * Practice-area page body (docs/website-architecture.md §6.2), in the
+ * label-left section layout. Shared by the eight /practice-areas/<slug>/ pages
+ * and /outside-general-counsel/.
+ *
+ * Everything is in the HTML. The long explanatory sections sit behind "+ More",
+ * and situations and questions are accordions, so a person sees a short page
+ * while crawlers and AI assistants still read every word.
  */
+import Section from './Section.astro';
+import Expandable from './Expandable.astro';
+import LawyerList from './LawyerList.astro';
 import CtaBand from './CtaBand.astro';
 import type { PracticeContent } from '../data/practice/types';
-import { partners, practiceAreas, lastReviewedDisplay as reviewed, type PartnerSlug } from '../data/firm';
+import { practiceAreas, lastReviewedDisplay as reviewed, type PartnerSlug } from '../data/firm';
 
 interface Props {
   content: PracticeContent;
@@ -14,7 +21,6 @@ interface Props {
   areaName: string;
 }
 const { content, leads, areaName } = Astro.props;
-const leadPartners = leads.map((s) => partners[s]);
 const related = content.related
   .map((slug) => practiceAreas.find((a) => a.slug === slug))
   .filter((a): a is NonNullable<typeof a> => !!a);
@@ -24,139 +30,87 @@ const related = content.related
   <Fragment set:html={`<!-- TODO:REAL-DATA — verify before launch and at each quarterly review:\n${content.verify.map((v) => `  - ${v.replace(/--/g, '- -')}`).join('\n')}\n-->`} />
 )}
 
-<section class="block">
-  <div class="wrap-narrow prose">
-    <p class="definition">{content.definition}</p>
-
-    <div class="quick-answer">
-      <span class="mono-label">Quick answer</span>
-      {content.quickAnswer.map((p) => <p>{p}</p>)}
-    </div>
-
-    {content.compliance && (
-      <aside class="compliance" aria-label="Important notice">
-        <span class="mono-label">Please note</span>
-        <p>{content.compliance}</p>
-      </aside>
-    )}
-
-    <h2 id="how-we-help">How we help</h2>
-    {content.services.map((s) => (
-      <Fragment>
-        <h3>{s.title}</h3>
-        <p>{s.body}</p>
-      </Fragment>
-    ))}
-
-    <h2 id="common-situations">Common situations</h2>
-    <p>These are the versions of this problem that arrive most often. If yours is not here, the consultation is still free.</p>
-    {content.situations.map((s) => (
-      <Fragment>
-        <h3>{s.title}</h3>
-        <p>{s.body}</p>
-      </Fragment>
-    ))}
-
-    {content.sections.map((sec) => (
-      <Fragment>
-        <h2>{sec.heading}</h2>
-        {sec.body.map((p) => <p>{p}</p>)}
-        {sec.table && (
-          <figure class="data-table">
-            {sec.table.caption && <figcaption>{sec.table.caption}</figcaption>}
-            <div class="table-scroll">
-              <table>
-                <thead><tr><th scope="col">{sec.table.head[0]}</th><th scope="col">{sec.table.head[1]}</th></tr></thead>
-                <tbody>
-                  {sec.table.rows.map((r) => <tr><th scope="row">{r[0]}</th><td>{r[1]}</td></tr>)}
-                </tbody>
-              </table>
-            </div>
-          </figure>
-        )}
-      </Fragment>
-    ))}
-
-    <h2 id="questions">Questions we are asked about {areaName.toLowerCase()}</h2>
-    {content.questions.map((qa) => (
-      <Fragment>
-        <h3>{qa.q}</h3>
-        <p>{qa.a}</p>
-      </Fragment>
-    ))}
-
-    <h2 id="who-handles-it">Who handles this at Hickok &amp; Kim</h2>
-    <div class="lead-partners">
-      {leadPartners.map((p) => (
-        <article class="lead-partner">
-          <img src={p.image} width={p.imageWidth} height={p.imageHeight} alt={p.imageAlt} loading="lazy" />
-          <div>
-            <h3><a href={p.path}>{p.name}</a></h3>
-            <p class="role">{p.title}. {p.focusSummary}</p>
-            <p class="cred">
-              State Bar of California <a href={p.barProfile} rel="noopener">#{p.barNumber}</a>, admitted {p.barAdmitted}.
-              {p.languages.includes('Korean') ? ' Consultations available in English and Korean.' : ''}
-            </p>
-          </div>
-        </article>
-      ))}
-    </div>
-
-    <h2 id="sources">Where these rules come from</h2>
-    <p>Everything above is drawn from public California and federal sources. Follow them yourself, and tell us if you find something that has changed.</p>
-    <ul class="sources">
-      {content.citations.map((c) => (
-        <li><a href={c.url} rel="noopener">{c.label}</a><span>{c.note}</span></li>
-      ))}
-    </ul>
-
-    {related.length > 0 && (
-      <Fragment>
-        <h2 id="related">Related practice areas</h2>
-        <ul class="related">
-          {related.map((a) => (
-            <li><a href={a.path}>{a.name}</a><span>{a.blurb}</span></li>
-          ))}
-        </ul>
-      </Fragment>
-    )}
-
-    <p class="reviewed">Last reviewed {reviewed}</p>
+<Section label="Overview" tone="mist" id="overview">
+  <p class="lead">{content.definition}</p>
+  <div class="quick-answer">
+    {content.quickAnswer.map((p) => <p>{p}</p>)}
   </div>
-</section>
+  {content.compliance && (
+    <aside class="note-box" aria-label="Important notice">
+      <span class="eyebrow">Please note</span>
+      <p>{content.compliance}</p>
+    </aside>
+  )}
+  <Expandable id="overview-more">
+    <div class="prose">
+      {content.sections.map((sec) => (
+        <Fragment>
+          <h3>{sec.heading}</h3>
+          {sec.body.map((p) => <p>{p}</p>)}
+          {sec.table && (
+            <figure class="data-table">
+              {sec.table.caption && <figcaption>{sec.table.caption}</figcaption>}
+              <div class="table-scroll">
+                <table>
+                  <thead><tr><th scope="col">{sec.table.head[0]}</th><th scope="col">{sec.table.head[1]}</th></tr></thead>
+                  <tbody>{sec.table.rows.map((r) => <tr><th scope="row">{r[0]}</th><td>{r[1]}</td></tr>)}</tbody>
+                </table>
+              </div>
+            </figure>
+          )}
+        </Fragment>
+      ))}
+    </div>
+  </Expandable>
+</Section>
 
-<CtaBand heading={`Talk to a partner about your <em>${areaName.toLowerCase()}</em> matter.`} />
+<Section label="How we help" tone="white" id="how-we-help">
+  <div class="services">
+    {content.services.map((s) => <div><h3>{s.title}</h3><p>{s.body}</p></div>)}
+  </div>
+</Section>
 
-<style>
-  .definition { font-family: var(--serif); font-size: clamp(1.2rem, 2vw, 1.45rem); line-height: 1.45; color: var(--ink-3); }
-  .definition + .quick-answer { margin-top: 1.6em; }
+<Section label="Common situations" tone="mist" id="situations">
+  <p>The versions of this problem that arrive most often. If yours is not here, the consultation is still free.</p>
+  <div class="accordion">
+    {content.situations.map((s) => (
+      <details>
+        <summary><h3>{s.title}</h3></summary>
+        <div class="answer"><p>{s.body}</p></div>
+      </details>
+    ))}
+  </div>
+</Section>
 
-  .compliance { border: 1px solid var(--hair); border-left: 4px solid var(--slate); background: var(--paper-2); padding: clamp(18px, 2.5vw, 24px); }
-  /* --slate reaches only 4.49:1 against --paper-2, so this label goes darker. */
-  .compliance .mono-label { display: block; margin-bottom: 8px; color: var(--ink-3); }
-  .compliance p { font-size: .94rem; }
+<Section label="Questions" tone="white" id="questions">
+  <div class="accordion">
+    {content.questions.map((qa) => (
+      <details>
+        <summary><h3>{qa.q}</h3></summary>
+        <div class="answer"><p>{qa.a}</p></div>
+      </details>
+    ))}
+  </div>
+</Section>
 
-  .data-table figcaption { font-family: var(--mono); font-size: .7rem; letter-spacing: .12em; text-transform: uppercase; color: var(--slate); margin-bottom: 10px; }
-  .data-table table { border-top: 1px solid var(--hair); }
-  .data-table th[scope="row"] { font-family: var(--sans); font-size: .92rem; font-weight: 600; letter-spacing: 0; text-transform: none; color: var(--text); white-space: nowrap; }
+<Section label="Professionals" tone="mist" id="professionals">
+  <LawyerList slugs={leads} />
+</Section>
 
-  .lead-partners { display: grid; gap: 20px; }
-  .lead-partner { display: grid; grid-template-columns: 84px 1fr; gap: 20px; align-items: start; border-top: 1px solid var(--hair); padding-top: 20px; }
-  .lead-partner img { width: 84px; height: 84px; border-radius: 50%; object-fit: cover; border: 1px solid var(--brass); }
-  .lead-partner h3 { margin: 0 0 4px; font-size: 1.2rem; }
-  .lead-partner h3 a { text-decoration: none; }
-  .lead-partner h3 a:hover { color: var(--brass-text); text-decoration: underline; }
-  .lead-partner .role { font-size: .9rem; color: var(--slate); margin: 0 0 6px; }
-  .lead-partner .cred { font-size: .85rem; color: var(--slate); margin: 0; }
+<Section label="Sources" tone="white" id="sources">
+  <p>Everything above is drawn from public California and federal sources. Follow them yourself, and tell us if something has changed.</p>
+  <ul class="linklist">
+    {content.citations.map((c) => <li><a href={c.url} rel="noopener">{c.label}</a><span class="note">{c.note}</span></li>)}
+  </ul>
+  <p class="reviewed">Last reviewed {reviewed}</p>
+</Section>
 
-  .sources, .related { list-style: none; padding-left: 0; border-top: 1px solid var(--hair); }
-  .sources li, .related li { border-bottom: 1px solid var(--hair); padding: 12px 0; margin: 0; }
-  .sources a, .related a { display: block; font-weight: 500; text-decoration: none; color: var(--brass-text); }
-  .sources a:hover, .related a:hover { text-decoration: underline; }
-  .sources span, .related span { display: block; font-size: .87rem; color: var(--slate); margin-top: 2px; }
+{related.length > 0 && (
+  <Section label="Related" tone="mist" id="related">
+    <ul class="linklist">
+      {related.map((a) => <li><a href={a.path}>{a.name}</a><span class="note">{a.blurb}</span></li>)}
+    </ul>
+  </Section>
+)}
 
-  @media (max-width: 520px) {
-    .lead-partner { grid-template-columns: 64px 1fr; gap: 14px; }
-    .lead-partner img { width: 64px; height: 64px; }
-  }
-</style>
+<CtaBand heading={`Talk to a partner about your ${areaName.toLowerCase()} matter.`} art={leads.includes('christopher-hickok') && !leads.includes('daniel-kim') ? 'contours-warm' : 'facade'} />

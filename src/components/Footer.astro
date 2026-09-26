@@ -1,13 +1,16 @@
 ---
-import { firm, practiceAreas, partnerList, disclaimers, lastReviewedDisplay as reviewed } from '../data/firm';
+import { firm, moments, practiceAreas, partnerList, disclaimers, lastReviewedDisplay as reviewed } from '../data/firm';
 const year = new Date().getFullYear();
 ---
 
-<footer class="site">
+<footer class="site-footer">
+  <nav class="footer-strip" aria-label="Practice groups">
+    {moments.map((m) => <a href={`/practice-areas/#${m.id}`}>{m.heading}</a>)}
+  </nav>
   <div class="wrap">
-    <div class="cols">
+    <div class="footer-main">
       <div>
-        <a class="brand" href="/">Hickok <em>&amp;</em> Kim <small>Inc.</small></a>
+        <h3>Los Angeles</h3>
         <!-- NAP block: must match the Google Business Profile exactly. -->
         <address>
           {firm.address.street}<br />
@@ -20,9 +23,7 @@ const year = new Date().getFullYear();
       </div>
       <div>
         <h3>Practice areas</h3>
-        <ul>
-          {practiceAreas.map((a) => <li><a href={a.path}>{a.name}</a></li>)}
-        </ul>
+        <ul>{practiceAreas.map((a) => <li><a href={a.path}>{a.name}</a></li>)}</ul>
       </div>
       <div>
         <h3>Firm</h3>
@@ -34,8 +35,11 @@ const year = new Date().getFullYear();
           <li><a href="/contact/">Contact</a></li>
         </ul>
       </div>
+      <div>
+        <a class="wordmark" href="/">Hickok <span class="amp">&amp;</span> Kim</a>
+      </div>
     </div>
-    <div class="legal">
+    <div class="footer-legal">
       <span>© {year} {firm.name} {disclaimers.advertising}</span>
       <span>{disclaimers.licensed} {disclaimers.noRelationship} Last reviewed {reviewed}.</span>
       <span class="links">
