@@ -14,16 +14,20 @@ const title = 'Hickok & Kim, Inc. — Los Angeles Attorneys for Individuals and 
 const description =
   'Hickok & Kim is a Los Angeles law firm for individuals and businesses across California: injury, litigation, business, cannabis, trademarks, estates. Free consultation.';
 
+/** A slide image. Photos carry a srcset so phones get the small file; generated art is a single file. */
+type SlideImage = { src: string; srcset?: string; w: number; h: number; pos?: string };
+const art = (name: string): SlideImage => ({ src: `/assets/art/${name}.webp`, w: 900, h: 1125 });
+
 type Slide = {
-  art: string;
+  img: SlideImage;
   eyebrow: string;
   title: string;
   blurb: string;
   links: { label: string; href: string }[];
   who: readonly ('daniel-kim' | 'christopher-hickok')[];
 };
-const momentSlide = (i: number, art: string, blurb: string, who: Slide['who']): Slide => ({
-  art,
+const momentSlide = (i: number, img: SlideImage, blurb: string, who: Slide['who']): Slide => ({
+  img,
   eyebrow: moments[i].heading,
   title: moments[i].line,
   blurb,
@@ -32,7 +36,16 @@ const momentSlide = (i: number, art: string, blurb: string, who: Slide['who']): 
 });
 const slides: Slide[] = [
   {
-    art: 'la-skyline',
+    // Photo: Shea Rouda on Unsplash (Unsplash License), taken from the top of Los Angeles City Hall.
+    // https://unsplash.com/photos/Vtl6cOhO87Y — the skyline sits in the lower part of the frame, so
+    // object-position keeps it in view when phones crop the photo to a short, wide panel.
+    img: {
+      src: '/assets/art/la-photo.webp',
+      srcset: '/assets/art/la-photo-sm.webp 800w, /assets/art/la-photo.webp 1400w',
+      w: 1400,
+      h: 1624,
+      pos: '50% 90%',
+    },
     eyebrow: 'Los Angeles · Since 2019',
     title: 'Los Angeles counsel, from the first call to the final signature.',
     blurb: 'Two partners on South Figueroa Street representing individuals and businesses across California, in English and Korean.',
@@ -43,9 +56,9 @@ const slides: Slide[] = [
     ],
     who: ['daniel-kim', 'christopher-hickok'],
   },
-  momentSlide(0, 'louvers', 'Injury claims and civil disputes, handled from the first letter to resolution by the partner who takes your call.', ['daniel-kim']),
-  momentSlide(1, 'facade', 'Formation, contracts, ongoing counsel, and the brands and licenses your business runs on.', ['daniel-kim', 'christopher-hickok']),
-  momentSlide(2, 'contours-warm', "Wills, trusts, and the property that holds a family's work, planned so it passes without a fight.", ['daniel-kim']),
+  momentSlide(0, art('louvers'), 'Injury claims and civil disputes, handled from the first letter to resolution by the partner who takes your call.', ['daniel-kim']),
+  momentSlide(1, art('facade'), 'Formation, contracts, ongoing counsel, and the brands and licenses your business runs on.', ['daniel-kim', 'christopher-hickok']),
+  momentSlide(2, art('contours-warm'), "Wills, trusts, and the property that holds a family's work, planned so it passes without a fight.", ['daniel-kim']),
 ];
 
 const steps = [
@@ -68,13 +81,23 @@ const faqSchema = {
 ---
 
 <Base title={title} description={description} path="/" schema={[faqSchema]} bodyClass="is-home">
-  <link slot="head" rel="preload" as="image" href="/assets/art/la-skyline.webp" fetchpriority="high" />
-
   <!-- ================= SHOWCASE ================= -->
   <section class="showcase dark" data-hero aria-roledescription="carousel" aria-label="Hickok & Kim at a glance">
     <div class="showcase__art" aria-hidden="true">
       {slides.map((s, i) => (
-        <div class={`showcase__img ${i === 0 ? 'is-active' : ''}`} style={`background-image:url('/assets/art/${s.art}.webp')`}></div>
+        <img
+          class={`showcase__img ${i === 0 ? 'is-active' : ''}`}
+          src={s.img.src}
+          srcset={s.img.srcset}
+          sizes={s.img.srcset ? '(min-width: 900px) 40vw, 100vw' : undefined}
+          width={s.img.w}
+          height={s.img.h}
+          alt=""
+          style={s.img.pos ? `object-position:${s.img.pos}` : undefined}
+          fetchpriority={i === 0 ? 'high' : 'low'}
+          loading={i === 0 ? 'eager' : 'lazy'}
+          decoding={i === 0 ? undefined : 'async'}
+        />
       ))}
     </div>
     <div class="showcase__panel">
@@ -209,7 +232,7 @@ const faqSchema = {
   @media (min-width: 900px) {
     :global(.is-home .site-header:not(.is-solid) .bar) { max-width: none; padding-left: calc(40% + clamp(24px, 6vw, 96px)); }
   }
-  .showcase__img { position: absolute; inset: 0; background-size: cover; background-position: center; opacity: 0; transform: scale(1.04); transition: opacity 1s var(--ease), transform 6s linear; }
+  .showcase__img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 50% 50%; opacity: 0; transform: scale(1.04); transition: opacity 1s var(--ease), transform 6s linear; }
   .showcase__img.is-active { opacity: 1; transform: scale(1); }
   .showcase__panel { position: relative; display: flex; flex-direction: column; justify-content: center; padding: calc(var(--header-h) + 24px) var(--gutter) 40px clamp(24px, 6vw, 96px); }
   @media (max-width: 899px) { .showcase__panel { padding-top: 40px; } .showcase__art { margin-top: 0; } }
