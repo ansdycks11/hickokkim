@@ -168,22 +168,20 @@ const faqSchema = {
   .showcase { position: relative; background: var(--charcoal); color: #fff; display: grid; grid-template-columns: 1fr; min-height: 100svh; }
   @media (min-width: 900px) { .showcase { grid-template-columns: minmax(0, 40%) minmax(0, 1fr); } }
   .showcase__art { position: relative; min-height: 38svh; overflow: hidden; }
-  /* Desktop: the artwork sits inset like a framed print, with a thin brass frame
-     offset down and to the right behind it. */
-  @media (min-width: 900px) {
-    .showcase__art { overflow: visible; }
-    .showcase__art::before {
-      content: ""; position: absolute; border: 1px solid rgba(201, 168, 106, .55);
-      inset: calc(var(--header-h) + 34px) 10px 34px calc(var(--gutter) + 22px);
-    }
-  }
+  /* Desktop: one full-bleed panel whose right edge is a gentle convex curve,
+     a single continuous shape rather than a pointed chevron. The ellipse is
+     centred on the left edge and exactly as wide as the panel, so the curve
+     touches the full width at mid-height and eases back about 9% at top and bottom. */
+  @media (min-width: 900px) { .showcase__art { clip-path: ellipse(100% 120% at 0% 50%); } }
   /* A shade at the top keeps the header legible where it overlaps the artwork (mobile). */
   .showcase__art::after { content: ""; position: absolute; inset: 0 0 auto 0; height: 140px; z-index: 1; background: linear-gradient(rgba(20, 20, 20, .6), rgba(20, 20, 20, 0)); }
   @media (min-width: 900px) { .showcase__art::after { display: none; } }
+  /* Desktop: start the header content where the charcoal panel starts, so the white
+     wordmark never sits on the pale artwork. Once the header turns solid it realigns. */
+  @media (min-width: 900px) {
+    :global(.is-home .site-header:not(.is-solid) .bar) { max-width: none; padding-left: calc(40% + clamp(24px, 6vw, 96px)); }
+  }
   .showcase__img { position: absolute; inset: 0; background-size: cover; background-position: center; opacity: 0; transform: scale(1.04); transition: opacity 1s var(--ease), transform 6s linear; }
-  /* Inset below the header, so the wordmark always sits on charcoal. */
-  /* No zoom when framed: a scaled image would briefly spill past its frame. */
-  @media (min-width: 900px) { .showcase__img { inset: calc(var(--header-h) + 12px) 32px 56px var(--gutter); transform: none; } }
   .showcase__img.is-active { opacity: 1; transform: scale(1); }
   .showcase__panel { position: relative; display: flex; flex-direction: column; justify-content: center; padding: calc(var(--header-h) + 24px) var(--gutter) 40px clamp(24px, 6vw, 96px); }
   @media (max-width: 899px) { .showcase__panel { padding-top: 40px; } .showcase__art { margin-top: 0; } }
