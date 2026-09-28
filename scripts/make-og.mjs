@@ -1,5 +1,5 @@
 // Branded Open Graph image (1200x630) and apple-touch-icon (180x180).
-// Charcoal ground, curved louvers panel on the left (the home showcase art),
+// Charcoal ground, curved Los Angeles skyline panel on the left (the home showcase art),
 // uppercase serif wordmark on the right. Run after make-art.mjs:
 //   node scripts/make-og.mjs
 import sharp from 'sharp';
@@ -10,8 +10,8 @@ const brass = '#c9a86a';
 const serif = "'Playfair Display', Georgia, 'Times New Roman', serif";
 const sans = "Rubik, 'Segoe UI', Arial, sans-serif";
 
-// left panel: the louvers art, full bleed, right edge a gentle convex curve
-const art = await sharp('public/assets/art/louvers.webp').resize(470, H, { fit: 'cover' }).png().toBuffer();
+// left panel: the Los Angeles skyline art, full bleed, right edge a gentle convex curve
+const art = await sharp('public/assets/art/la-skyline.webp').resize(470, H, { fit: 'cover' }).png().toBuffer();
 const artB64 = art.toString('base64');
 
 const og = `<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="${W}" height="${H}" viewBox="0 0 ${W} ${H}">

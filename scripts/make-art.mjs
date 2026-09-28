@@ -141,6 +141,94 @@ function heroTexture(W, H) {
   <rect width="${W}" height="${H}" fill="url(#v)"/>${lines}</svg>`;
 }
 
+/* 5. Los Angeles at dusk — downtown skyline with the Wilshire Grand spire and the
+      U.S. Bank Tower crown, the San Gabriel Mountains behind, palms in front. */
+function laSkyline(W, H) {
+  const r = rng(90);
+  const base = H * 0.8; // street level
+  // distant mountains, two hazy layers
+  const ridge = (y0, amp, seed, fill, op) => {
+    const rr = rng(seed);
+    let d = `M0,${H} L0,${f(y0)}`;
+    for (let x = 0; x <= W; x += 40) d += ` L${x},${f(y0 - Math.abs(Math.sin(x * 0.004 + rr() * 0.6)) * amp - rr() * amp * 0.25)}`;
+    return `<path d="${d} L${W},${H} Z" fill="${fill}" opacity="${op}"/>`;
+  };
+  // generic towers, tallest toward the centre
+  let towers = '', windows = '';
+  const addTower = (x, w, top, fill = '#141a2b') => {
+    towers += `<rect x="${f(x)}" y="${f(top)}" width="${f(w)}" height="${f(base - top + 2)}" fill="${fill}"/>`;
+    for (let y = top + 14; y < base - 10; y += 16) for (let wx = x + 6; wx < x + w - 8; wx += 12)
+      if (r() < 0.16) windows += `<rect x="${f(wx)}" y="${f(y)}" width="5" height="7" fill="${r() < 0.7 ? '#f5c77e' : '#fde4b4'}" opacity="${f(0.55 + r() * 0.45)}"/>`;
+  };
+  const layout = [
+    [40, 70, 0.60], [100, 55, 0.66], [150, 90, 0.55], [300, 80, 0.58], [372, 62, 0.64],
+    [690, 84, 0.57], [770, 66, 0.63], [830, 96, 0.53], [920, 70, 0.61], [985, 88, 0.56], [1070, 72, 0.64], [1135, 80, 0.6],
+  ];
+  // a hazier back row first, for depth
+  const back = [[210, 70, 0.5], [620, 60, 0.47], [880, 64, 0.5], [1010, 58, 0.54], [0, 60, 0.56]];
+  for (const [x, w, t] of back) towers += `<rect x="${x}" y="${f(H * t)}" width="${w}" height="${f(base - H * t)}" fill="#2a2f4a" opacity=".85"/>`;
+  for (const [x, w, t] of layout) addTower(x, w, H * t);
+  // Wilshire Grand: slender tower with a sloped sail crown and a spire
+  const wgX = 560, wgW = 108, wgTop = H * 0.33;
+  towers += `<polygon points="${wgX},${f(base)} ${wgX},${f(wgTop + 40)} ${wgX + wgW},${f(wgTop)} ${wgX + wgW},${f(base)}" fill="#10162a"/>`;
+  towers += `<rect x="${wgX + wgW - 8}" y="${f(wgTop - 90)}" width="4" height="92" fill="#10162a"/>`;
+  towers += `<rect x="${wgX + wgW - 7}" y="${f(wgTop - 92)}" width="2" height="6" fill="#ff7a5a"/>`;
+  for (let y = wgTop + 60; y < base - 10; y += 16) for (let wx = wgX + 8; wx < wgX + wgW - 8; wx += 12)
+    if (r() < 0.2) windows += `<rect x="${wx}" y="${f(y)}" width="5" height="7" fill="#f5c77e" opacity="${f(0.6 + r() * 0.4)}"/>`;
+  // U.S. Bank Tower: rounded shaft stepping up to a glowing crown
+  const ubX = 430, ubW = 116, ubTop = H * 0.37;
+  towers += `<rect x="${ubX}" y="${f(ubTop + 36)}" width="${ubW}" height="${f(base - ubTop)}" rx="18" fill="#12182b"/>`;
+  towers += `<rect x="${ubX + 12}" y="${f(ubTop + 14)}" width="${ubW - 24}" height="30" rx="10" fill="#12182b"/>`;
+  towers += `<rect x="${ubX + 26}" y="${f(ubTop)}" width="${ubW - 52}" height="20" rx="8" fill="#12182b"/>`;
+  towers += `<rect x="${ubX + 26}" y="${f(ubTop + 2)}" width="${ubW - 52}" height="5" rx="2" fill="#ffd28a" opacity=".85"/>`;
+  for (let y = ubTop + 60; y < base - 10; y += 16) for (let wx = ubX + 10; wx < ubX + ubW - 10; wx += 12)
+    if (r() < 0.2) windows += `<rect x="${wx}" y="${f(y)}" width="5" height="7" fill="#fde4b4" opacity="${f(0.6 + r() * 0.4)}"/>`;
+  // palms in the foreground: tapered curved trunks, full crowns of drooping leaf-shaped fronds
+  const palm = (x, top, lean, scale = 1) => {
+    const cx = x + lean * 0.5, tx = x + lean;
+    const ink = '#090c16';
+    // trunk as a filled taper: wider at the ground than at the crown
+    let g = `<path d="M${x - 7},${H + 10} Q${f(cx - 5)},${f((H + top) / 2)} ${f(tx - 3)},${f(top + 8)} L${f(tx + 3)},${f(top + 8)} Q${f(cx + 5)},${f((H + top) / 2)} ${x + 7},${H + 10} Z" fill="${ink}"/>`;
+    // Fan-palm crown: fronds spray outward and upward in a half-circle, arching
+    // so each tip dips below its midpoint; a few lower ones hang as a short skirt.
+    const angles = [];
+    for (let k = 0; k <= 12; k++) angles.push(Math.PI + 0.12 + (k / 12) * (Math.PI - 0.24)); // upper fan
+    angles.push(Math.PI * 0.86, Math.PI * 0.14, Math.PI * 0.72, Math.PI * 0.28);            // drooping skirt
+    for (const a of angles) {
+      const L = (62 + r() * 26) * scale;
+      const dx = Math.cos(a), dy = Math.sin(a);
+      const ctrlX = tx + dx * L * 0.55, ctrlY = top + dy * L * 0.55 - L * 0.12;
+      const tipX = tx + dx * L, tipY = top + dy * L + L * 0.38;
+      const w = 5.5 * scale;
+      // leaf with a little width at its middle, tapering to both ends
+      const nx = -dy * w, ny = dx * w;
+      g += `<path d="M${f(tx)},${f(top)} Q${f(ctrlX + nx)},${f(ctrlY + ny)} ${f(tipX)},${f(tipY)} Q${f(ctrlX - nx)},${f(ctrlY - ny)} ${f(tx)},${f(top)} Z" fill="${ink}"/>`;
+    }
+    g += `<circle cx="${f(tx)}" cy="${f(top + 4)}" r="${f(7 * scale)}" fill="${ink}"/>`;
+    return g;
+  };
+  return `<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}" viewBox="0 0 ${W} ${H}">
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#141b35"/><stop offset=".3" stop-color="#3b3160"/>
+      <stop offset=".5" stop-color="#8a4f6a"/><stop offset=".64" stop-color="#e0875a"/><stop offset=".74" stop-color="#f5c07a"/>
+    </linearGradient>
+    <radialGradient id="sun" cx="0.62" cy="0.73" r="0.45"><stop offset="0" stop-color="#ffd89a" stop-opacity=".7"/><stop offset="1" stop-color="#ffd89a" stop-opacity="0"/></radialGradient>
+    <linearGradient id="street" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#1a1f33"/><stop offset="1" stop-color="#090b14"/></linearGradient>
+  </defs>
+  <rect width="${W}" height="${H}" fill="url(#sky)"/>
+  <rect width="${W}" height="${H}" fill="url(#sun)"/>
+  ${ridge(H * 0.62, 110, 3, '#5b4468', 0.55)}
+  ${ridge(H * 0.67, 70, 8, '#3d2f4e', 0.7)}
+  ${towers}${windows}
+  <rect x="0" y="${f(base)}" width="${W}" height="${f(H - base)}" fill="url(#street)"/>
+  <rect x="0" y="${f(base)}" width="${W}" height="3" fill="#f5c07a" opacity=".35"/>
+  ${Array.from({ length: 40 }, (_, i) => `<circle cx="${f(i * 31 + 8)}" cy="${f(base + 10 + (i % 3) * 3)}" r="1.8" fill="${i % 4 ? '#ffd9a0' : '#ff8a6a'}" opacity=".8"/>`).join('')}
+  ${palm(150, H * 0.3, 40, 1.1)}${palm(265, H * 0.44, -25, 0.85)}${palm(985, H * 0.26, -45, 1.15)}${palm(1095, H * 0.42, 20, 0.9)}
+</svg>`;
+}
+
+await render('la-skyline', laSkyline(1200, 1500), { w: 900, h: 1125, q: 76 });
 await render('louvers', louvers(1200, 1500), { w: 900, h: 1125, q: 72 });
 await render('facade', facade(1200, 1500), { w: 900, h: 1125, q: 72 });
 await render('contours-warm', contours(1200, 1500, { bg: '#2c2926', stroke: '#d4b47a', seed: 5, lines: 80, opacity: [0.4, 0.95], width: 1.7 }), { w: 900, h: 1125, q: 72 });

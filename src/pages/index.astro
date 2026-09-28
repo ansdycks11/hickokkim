@@ -14,10 +14,38 @@ const title = 'Hickok & Kim, Inc. — Los Angeles Attorneys for Individuals and 
 const description =
   'Hickok & Kim is a Los Angeles law firm for individuals and businesses across California: injury, litigation, business, cannabis, trademarks, estates. Free consultation.';
 
-const slides = [
-  { moment: moments[0], art: 'louvers', blurb: 'Injury claims and civil disputes, handled from the first letter to resolution by the partner who takes your call.', who: ['daniel-kim'] as const },
-  { moment: moments[1], art: 'facade', blurb: 'Formation, contracts, ongoing counsel, and the brands and licenses your business runs on.', who: ['daniel-kim', 'christopher-hickok'] as const },
-  { moment: moments[2], art: 'contours-warm', blurb: "Wills, trusts, and the property that holds a family's work, planned so it passes without a fight.", who: ['daniel-kim'] as const },
+type Slide = {
+  art: string;
+  eyebrow: string;
+  title: string;
+  blurb: string;
+  links: { label: string; href: string }[];
+  who: readonly ('daniel-kim' | 'christopher-hickok')[];
+};
+const momentSlide = (i: number, art: string, blurb: string, who: Slide['who']): Slide => ({
+  art,
+  eyebrow: moments[i].heading,
+  title: moments[i].line,
+  blurb,
+  links: areasByMoment(moments[i].id).map((a) => ({ label: a.name, href: a.path })),
+  who,
+});
+const slides: Slide[] = [
+  {
+    art: 'la-skyline',
+    eyebrow: 'Los Angeles · Since 2019',
+    title: 'Los Angeles counsel, from the first call to the final signature.',
+    blurb: 'Two partners on South Figueroa Street representing individuals and businesses across California, in English and Korean.',
+    links: [
+      { label: 'Practice areas', href: '/practice-areas/' },
+      { label: 'Our lawyers', href: '/attorneys/' },
+      { label: 'Visit or call', href: '/contact/' },
+    ],
+    who: ['daniel-kim', 'christopher-hickok'],
+  },
+  momentSlide(0, 'louvers', 'Injury claims and civil disputes, handled from the first letter to resolution by the partner who takes your call.', ['daniel-kim']),
+  momentSlide(1, 'facade', 'Formation, contracts, ongoing counsel, and the brands and licenses your business runs on.', ['daniel-kim', 'christopher-hickok']),
+  momentSlide(2, 'contours-warm', "Wills, trusts, and the property that holds a family's work, planned so it passes without a fight.", ['daniel-kim']),
 ];
 
 const steps = [
@@ -40,7 +68,7 @@ const faqSchema = {
 ---
 
 <Base title={title} description={description} path="/" schema={[faqSchema]} bodyClass="is-home">
-  <link slot="head" rel="preload" as="image" href="/assets/art/louvers.webp" fetchpriority="high" />
+  <link slot="head" rel="preload" as="image" href="/assets/art/la-skyline.webp" fetchpriority="high" />
 
   <!-- ================= SHOWCASE ================= -->
   <section class="showcase dark" data-hero aria-roledescription="carousel" aria-label="Hickok & Kim at a glance">
@@ -54,11 +82,11 @@ const faqSchema = {
       <div class="showcase__slides">
         {slides.map((s, i) => (
           <article class={`slide ${i === 0 ? 'is-active' : ''}`} id={`slide-${i}`} aria-roledescription="slide" aria-label={`${i + 1} of ${slides.length}`} aria-hidden={i === 0 ? undefined : 'true'}>
-            <p class="eyebrow">{s.moment.heading}</p>
-            <h2 class="slide__title">{s.moment.line}</h2>
+            <p class="eyebrow">{s.eyebrow}</p>
+            <h2 class="slide__title">{s.title}</h2>
             <p class="slide__blurb">{s.blurb}</p>
             <ul class="slide__areas">
-              {areasByMoment(s.moment.id).map((a) => <li><a href={a.path} tabindex={i === 0 ? undefined : -1}>{a.name}</a></li>)}
+              {s.links.map((l) => <li><a href={l.href} tabindex={i === 0 ? undefined : -1}>{l.label}</a></li>)}
             </ul>
             <p class="slide__who">{s.who.map((w) => partners[w].name).join(' and ')}</p>
           </article>
