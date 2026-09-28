@@ -318,8 +318,12 @@ figure.data-table figcaption { font-size: .72rem; letter-spacing: .12em; text-tr
 /* ---------- feature band (angled image + charcoal panel) ---------- */
 .feature { background: var(--charcoal); color: #d4d4d4; display: grid; grid-template-columns: 1fr; }
 @media (min-width: 900px) { .feature { grid-template-columns: minmax(0, 38%) minmax(0, 1fr); min-height: 380px; } }
-.feature__art { min-height: 220px; background-size: cover; background-position: center; }
-@media (min-width: 900px) { .feature__art { clip-path: polygon(0 0, 100% 0, 86% 100%, 0 100%); } }
+/* Framed print: the image (::after) sits over a brass frame (::before) offset
+   down and to the right. The image URL arrives as --art on the element. */
+.feature__art { position: relative; min-height: 220px; margin: 28px 46px 46px var(--gutter); }
+.feature__art::before { content: ""; position: absolute; inset: 18px -18px -18px 18px; border: 1px solid rgba(201, 168, 106, .55); }
+.feature__art::after { content: ""; position: absolute; inset: 0; background: var(--art) center / cover no-repeat; }
+@media (min-width: 900px) { .feature__art { margin: clamp(40px, 5vw, 64px) 18px clamp(52px, 6vw, 80px) var(--gutter); } }
 .feature__body { padding: clamp(40px, 6vw, 80px) var(--gutter); display: flex; flex-direction: column; justify-content: center; gap: 18px; max-width: 760px; }
 .feature__body h2 { color: #fff; font-size: clamp(1.7rem, 3vw, 2.4rem); }
 .feature__actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 6px; }

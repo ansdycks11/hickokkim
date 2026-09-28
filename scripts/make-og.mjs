@@ -1,5 +1,5 @@
 // Branded Open Graph image (1200x630) and apple-touch-icon (180x180).
-// Charcoal ground, angled louvers panel on the left (the home showcase art),
+// Charcoal ground, framed louvers print on the left (the home showcase art),
 // uppercase serif wordmark on the right. Run after make-art.mjs:
 //   node scripts/make-og.mjs
 import sharp from 'sharp';
@@ -10,14 +10,14 @@ const brass = '#c9a86a';
 const serif = "'Playfair Display', Georgia, 'Times New Roman', serif";
 const sans = "Rubik, 'Segoe UI', Arial, sans-serif";
 
-// left panel: the louvers art, cropped and clipped to the chevron edge
-const art = await sharp('public/assets/art/louvers.webp').resize(470, H, { fit: 'cover' }).png().toBuffer();
+// left panel: the louvers art as an inset framed print, brass frame offset behind it
+const art = await sharp('public/assets/art/louvers.webp').resize(360, 470, { fit: 'cover' }).png().toBuffer();
 const artB64 = art.toString('base64');
 
 const og = `<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="${W}" height="${H}" viewBox="0 0 ${W} ${H}">
-  <defs><clipPath id="chev"><polygon points="0,0 410,0 470,${H / 2} 410,${H} 0,${H}"/></clipPath></defs>
   <rect width="${W}" height="${H}" fill="#1c1c1c"/>
-  <image href="data:image/png;base64,${artB64}" x="0" y="0" width="470" height="${H}" clip-path="url(#chev)"/>
+  <rect x="96" y="96" width="360" height="470" fill="none" stroke="${brass}" stroke-opacity=".6" stroke-width="1.5"/>
+  <image href="data:image/png;base64,${artB64}" x="76" y="76" width="360" height="470"/>
   <text x="560" y="250" font-family="${sans}" font-size="17" letter-spacing="3" fill="#b3b3b3">LOS ANGELES · SINCE 2019</text>
   <text x="556" y="330" font-family="${serif}" font-size="64" letter-spacing="4" fill="#ffffff">HICKOK <tspan font-style="italic" fill="${brass}" letter-spacing="0">&amp;</tspan> KIM</text>
   <rect x="560" y="366" width="60" height="1.5" fill="${brass}"/>
