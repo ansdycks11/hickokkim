@@ -126,7 +126,7 @@ for (const p of pages) {
 }
 
 // --- root files ---
-for (const f of ['robots.txt', 'llms.txt', 'sitemap-index.xml', 'sitemap-0.xml', 'favicon-32.png', 'favicon-96.png', 'apple-touch-icon.png', 'assets/og-default.png'])
+for (const f of ['robots.txt', 'llms.txt', 'sitemap-index.xml', 'sitemap-0.xml', 'favicon.ico', 'favicon-32.png', 'favicon-96.png', 'apple-touch-icon.png', 'assets/og-default.png'])
   if (!fs.existsSync(path.join(dist, f))) fail('/', `missing ${f}`);
 const sitemap = fs.readFileSync(path.join(dist, 'sitemap-0.xml'), 'utf8');
 const inSitemap = [...sitemap.matchAll(/<loc>https:\/\/hickokkim\.com([^<]*)<\/loc>/g)].map((m) => m[1]);

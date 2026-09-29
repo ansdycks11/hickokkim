@@ -84,4 +84,20 @@ await (await square(32, 0, clear)).toFile('public/favicon-32.png');
 await (await square(96, 2, clear)).toFile('public/favicon-96.png');
 // iOS fills transparency with black, so the home-screen icon sits on white.
 await (await square(180, 18, { r: 255, g: 255, b: 255, alpha: 1 })).toFile('public/apple-touch-icon.png');
-console.log('wrote og-default.png, apple-touch-icon.png, favicon-96.png, favicon-32.png');
+
+// favicon.ico for browsers, bookmark bars, and tools that only ask for /favicon.ico.
+// An ICO file can hold PNG images directly: a 6-byte header, a 16-byte entry per image, then the PNGs.
+const icoSizes = [16, 32, 48];
+const pngs = await Promise.all(icoSizes.map(async (n) => (await square(n, 0, clear)).toBuffer()));
+const head = Buffer.alloc(6 + 16 * pngs.length);
+head.writeUInt16LE(0, 0); head.writeUInt16LE(1, 2); head.writeUInt16LE(pngs.length, 4);
+let offset = head.length;
+pngs.forEach((png, k) => {
+  const e = 6 + 16 * k;
+  head.writeUInt8(icoSizes[k], e); head.writeUInt8(icoSizes[k], e + 1);
+  head.writeUInt16LE(1, e + 4); head.writeUInt16LE(32, e + 6);
+  head.writeUInt32LE(png.length, e + 8); head.writeUInt32LE(offset, e + 12);
+  offset += png.length;
+});
+fs.writeFileSync('public/favicon.ico', Buffer.concat([head, ...pngs]));
+console.log('wrote og-default.png, apple-touch-icon.png, favicon-96.png, favicon-32.png, favicon.ico');
