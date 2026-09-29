@@ -156,7 +156,8 @@ const graph = {
     {noindex ? <meta name="robots" content="noindex, nofollow" /> : <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large" />}
     <link rel="canonical" href={canonical} />
     <meta name="theme-color" content="#1c1c1c" />
-    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="icon" href="/favicon-32.png" type="image/png" sizes="32x32" />
+    <link rel="icon" href="/favicon-96.png" type="image/png" sizes="96x96" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <meta property="og:type" content={ogType} />
     <meta property="og:site_name" content={firm.name} />
@@ -180,11 +181,19 @@ const graph = {
       href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;1,400&family=Rubik:wght@300;400;500&display=swap"
       onload="this.onload=null;this.rel='stylesheet'"
     />
+    <!-- Wordmark face, subset by Google to the letters of "Hickok & Kim" (a few KB). -->
+    <link
+      rel="preload"
+      as="style"
+      href="https://fonts.googleapis.com/css2?family=EB+Garamond:wght@500&text=HICKOMhickom%26%20&display=swap"
+      onload="this.onload=null;this.rel='stylesheet'"
+    />
     <noscript>
       <link
         rel="stylesheet"
         href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;1,400&family=Rubik:wght@300;400;500&display=swap"
       />
+      <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=EB+Garamond:wght@500&text=HICKOMhickom%26%20&display=swap" />
     </noscript>
     <script is:inline>document.documentElement.classList.remove('no-js');</script>
     <script type="application/ld+json" set:html={JSON.stringify(graph)} />

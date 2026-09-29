@@ -28,11 +28,12 @@ After the first deploy: point `hickokkim.com` DNS at Netlify, enable HTTPS, and 
 ```
 src/data/firm.ts          Firm facts: NAP, partners, practice areas, disclaimers. Edit here first.
 src/layouts/Base.astro    <head>, JSON-LD @graph, header/footer, sticky CTA.
-src/components/           Header, Footer, PageHero, CtaBand, IntakeForm, Breadcrumbs, ScalesMark.
+src/components/           Header, Footer, PageHero, Section, CtaBand, IntakeForm, and the rest.
 src/pages/                One file (or folder) per URL.
 src/content/insights/     Blog articles as Markdown with frontmatter (see content.config.ts).
 src/styles/global.css     Design tokens and shared components.
-public/                   robots.txt, llms.txt, favicon, headshots, OG image.
+public/                   robots.txt, llms.txt, favicons, headshots, OG image.
+scripts/                  Artwork, share image and icons, and the check scripts.
 docs/                     Spec, firm content, the approved single-page prototype.
 ```
 
@@ -59,14 +60,16 @@ The site follows the structure and feel of large-firm editorial sites such as ki
 
 - **Tokens** live at the top of `src/styles/global.css`. To change the accent colour, edit `--accent`, `--accent-on-dark`, and `--accent-fill` only. Each was chosen to pass 4.5:1 contrast on its background.
 - **Type** is Playfair Display for headings and Rubik for body text, loaded asynchronously. Metric-matched fallbacks (`Playfair Fallback`, `Rubik Fallback`) keep layout shift at zero; the size-adjust values were measured in the browser. Re-measure if either family changes.
+- **Wordmark** is "Hickok & Kim" in spaced EB Garamond capitals, one colour throughout (white on dark, charcoal on the open menu), ampersand included. Only the letters of the name are downloaded, using Google Fonts' `text=` subset in `src/layouts/Base.astro`; if the name ever changes, update that list of letters. Georgia sets the name at the same width, so the font swap does not move anything.
 - **Building blocks** in `src/components/`: `PageHero` (dark title band with rule and an optional link), `Section` (label-left layout; tones white, mist, dark), `Expandable` ("+ More" truncation that keeps every word in the HTML), `LawyerList`, `CtaBand` (curved art panel plus charcoal panel), `IntakeForm`, `Header` (with the menu overlay), `Footer`, `StickyCta`.
-- **Home page** opens with a split-screen showcase: curved-edge artwork on the left, charcoal panel on the right, opening on a Los Angeles skyline slide, then cycling through the three client moments. It auto-advances every eight seconds, pauses on hover or focus, supports arrow keys, and stays still for visitors who prefer reduced motion. All slide text is in the HTML for crawlers.
-- **Artwork** is generated, not photographed: `node scripts/make-art.mjs` renders the louvers, tower facade, contour lines, menu texture, and hero texture into `public/assets/art/`. Then `node scripts/make-og.mjs` rebuilds the share image and icons from that art.
-- **Photography.** The opening Los Angeles slide and the share image use a photograph of downtown at sunset, taken from the top of City Hall by Shea Rouda (https://unsplash.com/photos/Vtl6cOhO87Y), under the Unsplash License, which permits commercial use without attribution; we credit it here anyway. Files: `public/assets/art/la-photo.webp` (1400 px) and `la-photo-sm.webp` (800 px, served to phones). These are not generated, so `make-art.mjs` leaves them alone. To use a different photo, replace both files at the same aspect ratio and adjust `pos` on the first slide in `src/pages/index.astro` so the skyline stays in view on phones.
+- **Home page** opens with a single split screen: the Los Angeles photograph with its curved edge on the left, and on the right a charcoal panel with the headline, a two-line introduction, links, the partners' names, and the consultation button. It does not rotate and needs no JavaScript.
+- **Artwork** in the feature and closing bands is generated, not photographed: `node scripts/make-art.mjs` renders the louvers, tower facade, contour lines, menu texture, and hero texture into `public/assets/art/`.
+- **Share image and icons** (`og-default.png`, `apple-touch-icon.png`, `favicon-96.png`, `favicon-32.png`) are drawn in `scripts/brand/sheet.html` and rendered by `node scripts/make-og.mjs`, which screenshots that page with headless Chrome or Edge so they use the site's own fonts. Set `CHROME_PATH` if the browser is not in its usual place. The icons are a white ampersand from the wordmark on charcoal.
+- **Photography.** The home page opening and the share image use a photograph of downtown at sunset, taken from the top of City Hall by Shea Rouda (https://unsplash.com/photos/Vtl6cOhO87Y), under the Unsplash License, which permits commercial use without attribution; we credit it here anyway. Files: `public/assets/art/la-photo.webp` (1400 px) and `la-photo-sm.webp` (800 px, served to phones). These are not generated, so `make-art.mjs` leaves them alone. To use a different photo, replace both files at the same aspect ratio and adjust `pos` on `heroImg` in `src/pages/index.astro` so the skyline stays in view on phones, then rerun `node scripts/make-og.mjs`.
 - **Testimonials** appear on the home page automatically once real, permitted quotes are added to `testimonials` in `src/data/firm.ts`.
 - **vCards** for each partner are generated at `/vcard/<slug>.vcf` from the firm's published phone and email.
 
-Lighthouse (mobile, built site): home 96 performance and 100 accessibility, SEO, and best practices; inner pages 99 to 100 across the board; layout shift 0.000 to 0.01.
+Lighthouse (mobile, built site): home 99 performance and 100 accessibility, SEO, and best practices; inner pages 99 to 100 across the board; layout shift 0.
 
 ## Practice-area pages
 

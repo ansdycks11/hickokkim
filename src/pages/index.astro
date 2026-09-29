@@ -1,8 +1,7 @@
 ---
 /**
- * Home. A split-screen showcase (angled artwork left, charcoal panel right)
- * cycles through the three client moments, followed by label-left sections.
- * All slide text is in the HTML for crawlers; only one slide is shown at a time.
+ * Home. A split-screen opening (Los Angeles photograph left, charcoal panel right),
+ * followed by label-left sections.
  */
 import Base from '../layouts/Base.astro';
 import Section from '../components/Section.astro';
@@ -14,51 +13,20 @@ const title = 'Hickok & Kim, Inc. — Los Angeles Attorneys for Individuals and 
 const description =
   'Hickok & Kim is a Los Angeles law firm for individuals and businesses across California: injury, litigation, business, cannabis, trademarks, estates. Free consultation.';
 
-/** A slide image. Photos carry a srcset so phones get the small file; generated art is a single file. */
-type SlideImage = { src: string; srcset?: string; w: number; h: number; pos?: string };
-const art = (name: string): SlideImage => ({ src: `/assets/art/${name}.webp`, w: 900, h: 1125 });
-
-type Slide = {
-  img: SlideImage;
-  eyebrow: string;
-  title: string;
-  blurb: string;
-  links: { label: string; href: string }[];
-  who: readonly ('daniel-kim' | 'christopher-hickok')[];
+// Photo: Shea Rouda on Unsplash (Unsplash License), taken from the top of Los Angeles City Hall.
+// https://unsplash.com/photos/Vtl6cOhO87Y — the skyline sits in the lower part of the frame, so
+// object-position keeps it in view when phones crop the photo to a short, wide panel.
+const heroImg = {
+  src: '/assets/art/la-photo.webp',
+  srcset: '/assets/art/la-photo-sm.webp 800w, /assets/art/la-photo.webp 1400w',
+  w: 1400,
+  h: 1624,
+  pos: '50% 90%',
 };
-const momentSlide = (i: number, img: SlideImage, blurb: string, who: Slide['who']): Slide => ({
-  img,
-  eyebrow: moments[i].heading,
-  title: moments[i].line,
-  blurb,
-  links: areasByMoment(moments[i].id).map((a) => ({ label: a.name, href: a.path })),
-  who,
-});
-const slides: Slide[] = [
-  {
-    // Photo: Shea Rouda on Unsplash (Unsplash License), taken from the top of Los Angeles City Hall.
-    // https://unsplash.com/photos/Vtl6cOhO87Y — the skyline sits in the lower part of the frame, so
-    // object-position keeps it in view when phones crop the photo to a short, wide panel.
-    img: {
-      src: '/assets/art/la-photo.webp',
-      srcset: '/assets/art/la-photo-sm.webp 800w, /assets/art/la-photo.webp 1400w',
-      w: 1400,
-      h: 1624,
-      pos: '50% 90%',
-    },
-    eyebrow: 'Los Angeles · Since 2019',
-    title: 'Los Angeles counsel, from the first call to the final signature.',
-    blurb: 'Two partners on South Figueroa Street representing individuals and businesses across California, in English and Korean.',
-    links: [
-      { label: 'Practice areas', href: '/practice-areas/' },
-      { label: 'Our lawyers', href: '/attorneys/' },
-      { label: 'Visit or call', href: '/contact/' },
-    ],
-    who: ['daniel-kim', 'christopher-hickok'],
-  },
-  momentSlide(0, art('louvers'), 'Injury claims and civil disputes, handled from the first letter to resolution by the partner who takes your call.', ['daniel-kim']),
-  momentSlide(1, art('facade'), 'Formation, contracts, ongoing counsel, and the brands and licenses your business runs on.', ['daniel-kim', 'christopher-hickok']),
-  momentSlide(2, art('contours-warm'), "Wills, trusts, and the property that holds a family's work, planned so it passes without a fight.", ['daniel-kim']),
+const heroLinks = [
+  { label: 'Practice areas', href: '/practice-areas/' },
+  { label: 'Our lawyers', href: '/attorneys/' },
+  { label: 'Visit or call', href: '/contact/' },
 ];
 
 const steps = [
@@ -81,45 +49,31 @@ const faqSchema = {
 ---
 
 <Base title={title} description={description} path="/" schema={[faqSchema]} bodyClass="is-home">
-  <!-- ================= SHOWCASE ================= -->
-  <section class="showcase dark" data-hero aria-roledescription="carousel" aria-label="Hickok & Kim at a glance">
+  <!-- ================= OPENING ================= -->
+  <section class="showcase dark" data-hero aria-labelledby="showcase-h">
     <div class="showcase__art" aria-hidden="true">
-      {slides.map((s, i) => (
-        <img
-          class={`showcase__img ${i === 0 ? 'is-active' : ''}`}
-          src={s.img.src}
-          srcset={s.img.srcset}
-          sizes={s.img.srcset ? '(min-width: 900px) 40vw, 100vw' : undefined}
-          width={s.img.w}
-          height={s.img.h}
-          alt=""
-          style={s.img.pos ? `object-position:${s.img.pos}` : undefined}
-          fetchpriority={i === 0 ? 'high' : 'low'}
-          loading={i === 0 ? 'eager' : 'lazy'}
-          decoding={i === 0 ? undefined : 'async'}
-        />
-      ))}
+      <img
+        class="showcase__img"
+        src={heroImg.src}
+        srcset={heroImg.srcset}
+        sizes="(min-width: 900px) 40vw, 100vw"
+        width={heroImg.w}
+        height={heroImg.h}
+        alt=""
+        style={`object-position:${heroImg.pos}`}
+        fetchpriority="high"
+      />
     </div>
     <div class="showcase__panel">
-      <h1 class="showcase__h1">Los Angeles attorneys for individuals and businesses</h1>
-      <div class="showcase__slides">
-        {slides.map((s, i) => (
-          <article class={`slide ${i === 0 ? 'is-active' : ''}`} id={`slide-${i}`} aria-roledescription="slide" aria-label={`${i + 1} of ${slides.length}`} aria-hidden={i === 0 ? undefined : 'true'}>
-            <p class="eyebrow">{s.eyebrow}</p>
-            <h2 class="slide__title">{s.title}</h2>
-            <p class="slide__blurb">{s.blurb}</p>
-            <ul class="slide__areas">
-              {s.links.map((l) => <li><a href={l.href} tabindex={i === 0 ? undefined : -1}>{l.label}</a></li>)}
-            </ul>
-            <p class="slide__who">{s.who.map((w) => partners[w].name).join(' and ')}</p>
-          </article>
-        ))}
-      </div>
-      <div class="showcase__controls">
-        <button class="ctl" type="button" data-dir="-1" aria-label="Previous slide"><span aria-hidden="true">&#8592;</span></button>
-        <span class="counter" aria-live="polite"><b id="slideNum">01</b> / 0{slides.length}</span>
-        <button class="ctl" type="button" data-dir="1" aria-label="Next slide"><span aria-hidden="true">&#8594;</span></button>
-        <a class="btn btn--solid showcase__cta" href="/contact/">Free consultation</a>
+      <h1 class="showcase__h1" id="showcase-h">Los Angeles attorneys for individuals and businesses</h1>
+      <p class="showcase__title">Los Angeles counsel, from the first call to the final signature.</p>
+      <p class="showcase__blurb">Two partners on South Figueroa Street representing individuals and businesses across California, in English and Korean.</p>
+      <ul class="showcase__links">
+        {heroLinks.map((l) => <li><a href={l.href}>{l.label}</a></li>)}
+      </ul>
+      <p class="showcase__who">{partners['daniel-kim'].name} and {partners['christopher-hickok'].name}</p>
+      <div class="showcase__actions">
+        <a class="btn btn--solid" href="/contact/">Free consultation</a>
       </div>
     </div>
   </section>
@@ -232,31 +186,19 @@ const faqSchema = {
   @media (min-width: 900px) {
     :global(.is-home .site-header:not(.is-solid) .bar) { max-width: none; padding-left: calc(40% + clamp(24px, 6vw, 96px)); }
   }
-  .showcase__img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 50% 50%; opacity: 0; transform: scale(1.04); transition: opacity 1s var(--ease), transform 6s linear; }
-  .showcase__img.is-active { opacity: 1; transform: scale(1); }
+  .showcase__img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
   .showcase__panel { position: relative; display: flex; flex-direction: column; justify-content: center; padding: calc(var(--header-h) + 24px) var(--gutter) 40px clamp(24px, 6vw, 96px); }
-  @media (max-width: 899px) { .showcase__panel { padding-top: 40px; } .showcase__art { margin-top: 0; } }
-  .showcase__h1 { font-family: var(--sans); font-weight: 500; font-size: .74rem; letter-spacing: .14em; text-transform: uppercase; color: var(--on-dark-muted); margin-bottom: clamp(20px, 4vh, 40px); }
-  .showcase__slides { display: grid; }
-  .slide { grid-area: 1 / 1; opacity: 0; visibility: hidden; transform: translateY(12px); transition: opacity .7s var(--ease), transform .7s var(--ease), visibility 0s linear .7s; max-width: 640px; }
-  .slide.is-active { opacity: 1; visibility: visible; transform: none; transition: opacity .7s var(--ease) .15s, transform .7s var(--ease) .15s; }
-  .slide .eyebrow { color: var(--accent-on-dark); margin-bottom: 14px; }
-  .slide__title { color: #fff; font-size: clamp(2rem, 3.6vw, 3.2rem); line-height: 1.15; }
-  .slide__blurb { margin-top: 18px; color: #cfcfcf; font-size: 1.05rem; max-width: 52ch; }
-  .slide__areas { list-style: none; display: flex; flex-wrap: wrap; gap: 4px 22px; margin-top: 22px; }
-  .slide__areas a { color: #fff; text-decoration: none; font-size: .95rem; border-bottom: 1px solid rgba(201, 168, 106, .6); padding-bottom: 2px; }
-  .slide__areas a:hover { color: var(--accent-on-dark); }
-  .slide__who { margin-top: 18px; font-size: .85rem; color: var(--on-dark-muted); }
-  .showcase__controls { display: flex; align-items: center; gap: 16px; margin-top: clamp(28px, 5vh, 56px); flex-wrap: wrap; }
-  .ctl { width: 48px; height: 48px; border: 1px solid rgba(255, 255, 255, .35); color: #fff; font-size: 1.1rem; transition: border-color .2s, color .2s; }
-  .ctl:hover { border-color: var(--accent-on-dark); color: var(--accent-on-dark); }
-  .counter { font-size: .9rem; color: var(--on-dark-muted); letter-spacing: .08em; min-width: 64px; text-align: center; }
-  .counter b { color: #fff; font-weight: 500; }
-  .showcase__cta { margin-left: auto; }
-  @media (max-width: 520px) { .showcase__cta { margin-left: 0; width: 100%; } }
-  @media (prefers-reduced-motion: reduce) {
-    .showcase__img, .slide, .slide.is-active { transition: none; transform: none; }
-  }
+  .showcase__panel > * { max-width: 640px; }
+  @media (max-width: 899px) { .showcase__panel { padding-top: 40px; } }
+  .showcase__h1 { font-family: var(--sans); font-weight: 500; font-size: .74rem; letter-spacing: .14em; text-transform: uppercase; color: var(--on-dark-muted); margin-bottom: clamp(18px, 3.5vh, 32px); }
+  .showcase__title { font-family: var(--serif); font-weight: 400; color: #fff; font-size: clamp(2rem, 3.6vw, 3.2rem); line-height: 1.15; text-wrap: balance; }
+  .showcase__blurb { margin-top: 18px; color: #cfcfcf; font-size: 1.05rem; max-width: 52ch; }
+  .showcase__links { list-style: none; display: flex; flex-wrap: wrap; gap: 4px 22px; margin-top: 22px; }
+  .showcase__links a { color: #fff; text-decoration: none; font-size: .95rem; border-bottom: 1px solid rgba(201, 168, 106, .6); padding-bottom: 2px; }
+  .showcase__links a:hover { color: var(--accent-on-dark); }
+  .showcase__who { margin-top: 18px; font-size: .85rem; color: var(--on-dark-muted); }
+  .showcase__actions { margin-top: clamp(28px, 5vh, 48px); }
+  @media (max-width: 520px) { .showcase__actions .btn { width: 100%; } }
 
   /* ---------- contact ---------- */
   .contact-split { display: grid; gap: 40px; grid-template-columns: 1fr; }
@@ -265,42 +207,3 @@ const faqSchema = {
   .contact-address a { color: var(--accent-on-dark); text-decoration: none; }
   .contact-address a:hover { text-decoration: underline; }
 </style>
-
-<script>
-  const root = document.querySelector<HTMLElement>('.showcase');
-  if (root) {
-    const slides = [...root.querySelectorAll<HTMLElement>('.slide')];
-    const imgs = [...root.querySelectorAll<HTMLElement>('.showcase__img')];
-    const num = document.getElementById('slideNum')!;
-    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    let i = 0, timer: number | undefined;
-
-    const show = (n: number) => {
-      i = (n + slides.length) % slides.length;
-      slides.forEach((s, k) => {
-        const on = k === i;
-        s.classList.toggle('is-active', on);
-        on ? s.removeAttribute('aria-hidden') : s.setAttribute('aria-hidden', 'true');
-        s.querySelectorAll('a').forEach((a) => (on ? a.removeAttribute('tabindex') : a.setAttribute('tabindex', '-1')));
-      });
-      imgs.forEach((im, k) => im.classList.toggle('is-active', k === i));
-      num.textContent = String(i + 1).padStart(2, '0');
-    };
-    const stop = () => { if (timer) { clearInterval(timer); timer = undefined; } };
-    const start = () => { if (!reduced && !timer) timer = window.setInterval(() => show(i + 1), 8000); };
-
-    root.querySelectorAll<HTMLButtonElement>('.ctl').forEach((b) =>
-      b.addEventListener('click', () => { stop(); show(i + Number(b.dataset.dir)); })
-    );
-    root.addEventListener('keydown', (e) => {
-      if (e.key === 'ArrowRight') { stop(); show(i + 1); }
-      if (e.key === 'ArrowLeft') { stop(); show(i - 1); }
-    });
-    // Pause while the visitor is reading or interacting.
-    root.addEventListener('mouseenter', stop);
-    root.addEventListener('mouseleave', start);
-    root.addEventListener('focusin', stop);
-    document.addEventListener('visibilitychange', () => (document.hidden ? stop() : start()));
-    start();
-  }
-</script>

@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Hickok &amp; Kim brand images</title>
+<!--
+  Source for the share image and icons. scripts/make-og.mjs screenshots this page with
+  headless Chrome and cuts out each image, so they are set in the site's own web fonts:
+  EB Garamond for the wordmark and ampersand, Rubik for text.
+    Share image     0,0      1200 x 630
+    Apple icon      0,650    180 x 180
+    Favicon 96      200,650  96 x 96
+    Favicon 32      316,650  32 x 32
+-->
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=EB+Garamond:wght@500;600&family=Rubik:wght@400&display=block">
+<style>
+  html, body { margin: 0; background: #fff; }
+  svg { position: absolute; display: block; }
+  .wm { font-family: 'EB Garamond', serif; font-weight: 500; }
+  .sans { font-family: Rubik, sans-serif; }
+</style>
+</head>
+<body>
+<svg style="left:0;top:0" width="1200" height="630" viewBox="0 0 1200 630">
+  <!-- Left: the Los Angeles photograph (Shea Rouda, Unsplash License) with the home page's curved edge. -->
+  <defs><clipPath id="curve"><ellipse cx="0" cy="315" rx="470" ry="756"/></clipPath></defs>
+  <rect width="1200" height="630" fill="#1c1c1c"/>
+  <image href="../../public/assets/art/la-photo.webp" x="0" y="0" width="470" height="630" preserveAspectRatio="xMidYMid slice" clip-path="url(#curve)"/>
+  <text class="sans" x="560" y="250" font-size="17" letter-spacing="3" fill="#b3b3b3">LOS ANGELES · SINCE 2019</text>
+  <text class="wm" x="558" y="330" font-size="60" letter-spacing="8.4" fill="#fff">HICKOK &amp; KIM</text>
+  <rect x="560" y="366" width="60" height="1.5" fill="#c9a86a"/>
+  <text class="sans" x="560" y="414" font-size="24" fill="#d4d4d4">Attorneys for individuals and businesses</text>
+  <text class="sans" x="560" y="452" font-size="20" fill="#c9a86a">Free initial consultation · hickokkim.com</text>
+</svg>
+
+<!-- Icons: a white ampersand in the wordmark's face on charcoal. glyph = ink height as a share of the square. -->
+<svg class="icon" style="left:0;top:650" width="180" height="180" data-glyph=".54" data-weight="500"></svg>
+<svg class="icon" style="left:200px;top:650px" width="96" height="96" data-glyph=".64" data-weight="500"></svg>
+<svg class="icon" style="left:316px;top:650px" width="32" height="32" data-glyph=".72" data-weight="600"></svg>
+
+<script>
+  // Centre the ampersand's ink (not its text box) in each square.
+  document.fonts.load("500 100px 'EB Garamond'", '&').then(() => document.fonts.load("600 100px 'EB Garamond'", '&')).then(() => {
+    const ctx = document.createElement('canvas').getContext('2d');
+    for (const svg of document.querySelectorAll('svg.icon')) {
+      const size = +svg.getAttribute('width');
+      const weight = svg.dataset.weight;
+      ctx.font = `${weight} 100px 'EB Garamond'`;
+      const m = ctx.measureText('&');
+      const inkH = m.actualBoundingBoxAscent + m.actualBoundingBoxDescent;
+      const fs = (size * +svg.dataset.glyph) / inkH * 100;
+      const k = fs / 100;
+      const inkW = (m.actualBoundingBoxLeft + m.actualBoundingBoxRight) * k;
+      const x = (size - inkW) / 2 + m.actualBoundingBoxLeft * k;
+      const y = (size - inkH * k) / 2 + m.actualBoundingBoxAscent * k;
+      svg.innerHTML = `<rect width="${size}" height="${size}" fill="#1c1c1c"/>` +
+        `<text x="${x.toFixed(2)}" y="${y.toFixed(2)}" font-family="'EB Garamond'" font-weight="${weight}" font-size="${fs.toFixed(2)}" fill="#fff">&amp;</text>`;
+    }
+    document.body.dataset.ready = '1';
+  });
+</script>
+</body>
+</html>

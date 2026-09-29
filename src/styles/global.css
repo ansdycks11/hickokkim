@@ -47,6 +47,9 @@
 
   --serif: 'Playfair Display', 'Playfair Fallback', Georgia, serif;
   --sans: 'Rubik', 'Rubik Fallback', 'Segoe UI', Arial, sans-serif;
+  /* Wordmark only. Georgia capitals set "HICKOK & KIM" within 0.2% of EB Garamond's width,
+     so the async swap does not move anything; no metric override needed. */
+  --wordmark: 'EB Garamond', Georgia, 'Times New Roman', serif;
 
   --max: 1240px;
   --gutter: clamp(20px, 5vw, 72px);
@@ -120,11 +123,11 @@ button { font: inherit; color: inherit; background: none; border: 0; cursor: poi
 }
 .site-header.is-solid { background: rgba(28, 28, 28, .97); height: 72px; box-shadow: 0 1px 0 rgba(255, 255, 255, .08); }
 .site-header .bar { height: 100%; display: flex; align-items: center; justify-content: space-between; gap: 24px; }
+/* One typeface, one colour: spaced Garamond capitals, ampersand included. */
 .wordmark {
-  font-family: var(--serif); font-weight: 400; font-size: clamp(1.1rem, 1.6vw, 1.4rem); letter-spacing: .06em;
+  font-family: var(--wordmark); font-weight: 500; font-size: clamp(1.15rem, 1.6vw, 1.4rem); line-height: 1; letter-spacing: .14em;
   text-transform: uppercase; text-decoration: none; white-space: nowrap; color: inherit;
 }
-.wordmark .amp { font-style: italic; text-transform: none; color: var(--accent-on-dark); margin: 0 .04em; }
 .header-right { display: flex; align-items: center; gap: clamp(14px, 2vw, 28px); }
 .header-phone { display: none; font-size: .9rem; text-decoration: none; opacity: .85; white-space: nowrap; }
 .header-phone:hover { opacity: 1; color: var(--accent-on-dark); }
