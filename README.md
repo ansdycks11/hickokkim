@@ -32,14 +32,15 @@ src/components/           Header, Footer, PageHero, Section, CtaBand, IntakeForm
 src/pages/                One file (or folder) per URL.
 src/content/insights/     Blog articles as Markdown with frontmatter (see content.config.ts).
 src/styles/global.css     Design tokens and shared components.
-public/                   robots.txt, llms.txt, favicons, headshots, OG image.
+src/pages/llms.txt.ts    Generates /llms.txt (the AI-assistant guide) from firm.ts and the articles.
+public/                   robots.txt, favicons, headshots, OG image.
 scripts/                  Artwork, share image and icons, and the check scripts.
 docs/                     Spec, firm content, the approved single-page prototype.
 ```
 
 ## Editing content
 
-- **A fact changed (phone, address, bar detail, practice list):** edit `src/data/firm.ts`. It feeds the header, footer, schema, llms.txt text, and every page.
+- **A fact changed (phone, address, bar detail, practice list):** edit `src/data/firm.ts`. It feeds the header, footer, schema, `/llms.txt`, and every page.
 - **A page's copy:** edit the matching file under `src/pages/`. Practice-area copy lives in `src/data/practice/` once Phase 3 lands.
 - **A new article:** add `src/content/insights/<slug>.md` with the frontmatter fields in `src/content.config.ts`. Byline the correct partner. Link to at least two practice pages. Cite at least three authoritative sources (leginfo.legislature.ca.gov, USPTO, California agencies).
 - **Placeholders:** anything marked `TODO:REAL-DATA` or rendered with the dashed "Placeholder" box must be replaced before launch. `PLACEHOLDERS.md` lists them.
@@ -49,7 +50,7 @@ docs/                     Spec, firm content, the approved single-page prototype
 Stale pages lose AI citations. Every quarter:
 
 1. Re-read each practice page and article. Update facts, statutes, fees, and dates that changed.
-2. If a change is substantive, update the visible "Last reviewed" date (`lastReviewed` in `firm.ts` for site-wide, or the page's own date) and the `updated` frontmatter on articles. Do not bump dates for cosmetic edits.
+2. If a change is substantive, update the visible "Last reviewed" date (`lastReviewed` in `firm.ts` for site-wide, or the page's own date) and the `updated` frontmatter on articles. The same date is the `lastmod` of every page in the sitemap (set in `astro.config.mjs`), so search engines see one consistent date. Do not bump dates for cosmetic edits.
 3. Confirm NAP in the footer still matches the Google Business Profile exactly.
 4. Run the monthly citation audit from `docs/website-architecture.md` §12.4 and correct any inaccuracies at their source.
 5. Rebuild and deploy.
@@ -88,6 +89,10 @@ Each page carries a standalone definition sentence, a quick-answer block naming 
 - Anything time-sensitive — a tax rate, an indexed threshold, an annually adjusted cap — goes in the `verify` array rather than into the page. The pages describe the mechanism and omit the number, so nothing goes stale silently. Those notes render as an HTML comment on each page and are collected in `PLACEHOLDERS.md` for the reviewing partner.
 
 **Checking a page after editing.** The acceptance script used during the build checks word count, heading structure, schema presence, FAQ mirroring, meta lengths, outbound citations, and internal links. It reads `dist/`, so run `npm run build` first.
+
+## llms.txt (for AI assistants)
+
+`/llms.txt` follows the llmstxt.org format: the firm in one paragraph, then Markdown links to the contact page, every practice area (with its description and partners), both attorney bios (bar numbers, education, languages, memberships), fees and process, and, once published, every Insights article. It is generated at build time by `src/pages/llms.txt.ts` from `src/data/firm.ts` and the Insights collection, so it can never disagree with the pages; do not edit a static copy. Lighthouse's `llms-txt` audit passes.
 
 ## Analytics
 
