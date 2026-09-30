@@ -84,7 +84,7 @@ Organized by the moment a client is in. [All practice areas](${url('/practice-ar
 
 ${practiceSections}
 
-## Attorneys
+## Attorneys (lawyers)
 
 ${list(attorneyLines)}
 
