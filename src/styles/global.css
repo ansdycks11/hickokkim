@@ -161,7 +161,7 @@ body.menu-open { overflow: hidden; }
 /* ---------- menu overlay ---------- */
 .menu-panel {
   position: fixed; inset: 0; z-index: 55; overflow-y: auto; color: var(--text-strong);
-  background: var(--mist-2) url('/assets/art/menu-contours.webp') center / cover no-repeat;
+  background: var(--mist-2) url('/assets/art/menu-contours.svg') center / cover no-repeat;
   padding: calc(var(--header-h) + clamp(24px, 5vh, 56px)) 0 48px;
   opacity: 0; visibility: hidden; transition: opacity .3s var(--ease), visibility 0s linear .3s;
 }
