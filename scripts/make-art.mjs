@@ -1,9 +1,12 @@
 // Generates the site's abstract artwork from code (no stock photography, no
-// borrowed imagery). Each image is an SVG composition rendered to WebP.
+// borrowed imagery). Each image is an SVG composition rendered to WebP, except the
+// inner-page hero texture, which ships as the SVG itself: its faint lines and dark
+// gradient band and blur badly under WebP compression, and as a vector they stay
+// sharp on every screen for a few KB.
 //   node scripts/make-art.mjs
 // Outputs to public/assets/art/.
 import sharp from 'sharp';
-import { mkdir } from 'node:fs/promises';
+import { mkdir, writeFile } from 'node:fs/promises';
 
 const OUT = 'public/assets/art';
 await mkdir(OUT, { recursive: true });
@@ -145,4 +148,5 @@ await render('louvers', louvers(1200, 1500), { w: 900, h: 1125, q: 72 });
 await render('facade', facade(1200, 1500), { w: 900, h: 1125, q: 72 });
 await render('contours-warm', contours(1200, 1500, { bg: '#2c2926', stroke: '#d4b47a', seed: 5, lines: 80, opacity: [0.4, 0.95], width: 1.7 }), { w: 900, h: 1125, q: 72 });
 await render('menu-contours', contours(2000, 1300, { bg: '#f1f1f1', stroke: '#c9c9c9', seed: 9, lines: 90, opacity: [0.35, 0.8] }), { w: 2000, h: 1300, q: 70 });
-await render('hero-texture', heroTexture(2400, 800), { w: 2400, h: 800, q: 70 });
+await writeFile(`${OUT}/hero-texture.svg`, heroTexture(2400, 800) + '\n');
+console.log('wrote hero-texture.svg');

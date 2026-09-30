@@ -183,7 +183,7 @@ body.menu-open { overflow: hidden; }
 
 /* ---------- inner page hero ---------- */
 .page-hero {
-  position: relative; background: var(--charcoal) url('/assets/art/hero-texture.webp') center / cover no-repeat; color: #fff;
+  position: relative; background: var(--charcoal) url('/assets/art/hero-texture.svg') center / cover no-repeat; color: #fff;
   padding: calc(var(--header-h) + clamp(40px, 7vw, 96px)) 0 clamp(40px, 5vw, 64px);
 }
 .page-hero .crumbs { margin-bottom: 18px; }
