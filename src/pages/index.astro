@@ -13,15 +13,19 @@ const title = 'Hickok & Kim, Inc. — Los Angeles Attorneys for Individuals and 
 const description =
   'Hickok & Kim is a Los Angeles law firm for individuals and businesses across California: injury, litigation, business, cannabis, trademarks, estates. Free consultation.';
 
-// Photo: curved white architectural ribs, by Erik Eastman on Unsplash (Unsplash License).
-// https://unsplash.com/photos/-6zFVL4YuaM — cropped to 2000 x 2320; light noise reduction
-// (median filter) before WebP, which removes the grain and cuts the file size by two thirds.
+// Photo: glass tower seen from below, by Panos Katsigiannis on Unsplash (Unsplash License).
+// https://unsplash.com/photos/dj5Po8lyc-M — cropped to 2000 x 2320, WebP quality 65 (the fine
+// glass grid looks the same as at 78 and the files are about a fifth smaller).
 // On desktop the panel is taller than the photo's shape, so the photo fills its height and
 // renders about 0.86 x the viewport height wide; sizes says so, so high-resolution screens
 // get a large enough file (see README, Photography).
 const heroImg = {
   src: '/assets/art/hero.webp',
   srcset: '/assets/art/hero-sm.webp 800w, /assets/art/hero-md.webp 1200w, /assets/art/hero-lg.webp 1600w, /assets/art/hero.webp 2000w',
+  // Wide crop (about 1.22:1) for phones and small tablets; WebP quality 55.
+  phoneSrcset: '/assets/art/hero-phone.webp 800w, /assets/art/hero-phone-md.webp 1200w, /assets/art/hero-phone-lg.webp 1600w',
+  phoneW: 1600,
+  phoneH: 1311,
   w: 2000,
   h: 2320,
   pos: '50% 50%',
@@ -55,17 +59,22 @@ const faqSchema = {
   <!-- ================= OPENING ================= -->
   <section class="showcase" data-hero aria-labelledby="showcase-h">
     <div class="showcase__art" aria-hidden="true">
-      <img
-        class="showcase__img"
-        src={heroImg.src}
-        srcset={heroImg.srcset}
-        sizes="(min-width: 900px) max(40vw, 86vh), 100vw"
-        width={heroImg.w}
-        height={heroImg.h}
-        alt=""
-        style={`object-position:${heroImg.pos}`}
-        fetchpriority="high"
-      />
+      <picture>
+        <!-- Below 900px the panel is a short, wide strip (full width x 38% of the screen), so
+             phones get a wide crop instead of downloading the tall portrait and hiding a third. -->
+        <source media="(max-width: 899px)" srcset={heroImg.phoneSrcset} sizes="100vw" width={heroImg.phoneW} height={heroImg.phoneH} />
+        <img
+          class="showcase__img"
+          src={heroImg.src}
+          srcset={heroImg.srcset}
+          sizes="max(40vw, 86vh)"
+          width={heroImg.w}
+          height={heroImg.h}
+          alt=""
+          style={`object-position:${heroImg.pos}`}
+          fetchpriority="high"
+        />
+      </picture>
     </div>
     <div class="showcase__panel">
       <h1 class="showcase__h1" id="showcase-h">Los Angeles attorneys for individuals and businesses</h1>
