@@ -94,14 +94,9 @@ const faqSchema = {
 
   <!-- ================= PRACTICE AREAS ================= -->
   <Section label="Practice areas" tone="mist" id="practice">
-    {moments.map((m) => (
-      <div class="group reveal">
-        <h3 class="group__title">{m.heading}</h3>
-        <ul class="linklist">
-          {areasByMoment(m.id).map((a) => <li><a href={a.path}>{a.name}</a></li>)}
-        </ul>
-      </div>
-    ))}
+    <ul class="practice-cols reveal">
+      {moments.flatMap((m) => areasByMoment(m.id)).map((a) => <li><a href={a.path}>{a.name}</a></li>)}
+    </ul>
     <p class="muted">We do not handle criminal matters. If your situation falls outside what we do, we'll tell you and connect you with someone who can help.</p>
   </Section>
 
@@ -201,6 +196,13 @@ const faqSchema = {
   .showcase__who { margin-top: 18px; font-size: .85rem; color: var(--on-dark-muted); }
   .showcase__actions { margin-top: clamp(28px, 5vh, 48px); }
   @media (max-width: 520px) { .showcase__actions .btn { width: 100%; } }
+
+  /* ---------- practice areas ---------- */
+  /* One plain list, filled down each column so related areas stay together. */
+  .practice-cols { list-style: none; columns: 3 200px; column-gap: 40px; margin-bottom: clamp(24px, 3vw, 36px); }
+  .practice-cols li { break-inside: avoid; }
+  .practice-cols a { color: var(--accent); text-decoration: none; font-size: 1.02rem; line-height: 1.5; display: inline-block; padding: 6px 0; }
+  .practice-cols a:hover { text-decoration: underline; }
 
   /* ---------- contact ---------- */
   .contact-split { display: grid; gap: 40px; grid-template-columns: 1fr; }
