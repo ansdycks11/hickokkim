@@ -1,6 +1,6 @@
 ---
 /**
- * Home. A split-screen opening (Los Angeles photograph left, charcoal panel right),
+ * Home. A split-screen opening (Walt Disney Concert Hall photograph left, charcoal panel right),
  * followed by label-left sections.
  */
 import Base from '../layouts/Base.astro';
@@ -13,19 +13,24 @@ const title = 'Hickok & Kim, Inc. — Los Angeles Attorneys for Individuals and 
 const description =
   'Hickok & Kim is a Los Angeles law firm for individuals and businesses across California: injury, litigation, business, cannabis, trademarks, estates. Free consultation.';
 
-// Photo: Shea Rouda on Unsplash (Unsplash License), taken from the top of Los Angeles City Hall.
-// https://unsplash.com/photos/Vtl6cOhO87Y — the skyline sits in the lower part of the frame, so
-// object-position keeps it in view when phones crop the photo to a short, wide panel.
+// Photo: Walt Disney Concert Hall, Los Angeles, by Alexandr Voronsky on Unsplash (Unsplash License).
+// https://unsplash.com/photos/LDjmmF8xD2M — cropped to 2000 x 2320 around the steel curves.
 // On desktop the panel is taller than the photo's shape, so the photo fills its height and
 // renders about 0.86 x the viewport height wide; sizes says so, so high-resolution screens
-// get a large enough file. Files come from the 2000 px original (see README, Photography).
+// get a large enough file (see README, Photography).
 const heroImg = {
   src: '/assets/art/la-photo.webp',
   srcset: '/assets/art/la-photo-sm.webp 800w, /assets/art/la-photo-md.webp 1200w, /assets/art/la-photo-lg.webp 1600w, /assets/art/la-photo.webp 2000w',
   w: 2000,
   h: 2320,
-  pos: '50% 90%',
+  pos: '50% 50%',
 };
+
+const heroLinks = [
+  { label: 'Practice areas', href: '/practice-areas/' },
+  { label: 'Our lawyers', href: '/attorneys/' },
+  { label: 'Visit or call', href: '/contact/' },
+];
 
 const steps = [
   { t: 'Free consultation', d: "A call or video meeting where we listen, ask questions, and tell you plainly whether we're the right firm. If we're not, we'll point you to someone who is." },
@@ -66,6 +71,9 @@ const faqSchema = {
       <h1 class="showcase__h1" id="showcase-h">Los Angeles attorneys for individuals and businesses</h1>
       <p class="showcase__title">From the first call to the final signature.</p>
       <p class="showcase__blurb">Serving clients across California, in English and Korean.</p>
+      <ul class="showcase__links">
+        {heroLinks.map((l) => <li><a href={l.href}>{l.label}</a></li>)}
+      </ul>
       <div class="showcase__actions">
         <a class="btn btn--solid" href="/contact/">Free consultation</a>
       </div>
@@ -187,6 +195,9 @@ const faqSchema = {
   .showcase__h1 { font-family: var(--sans); font-weight: 500; font-size: .74rem; letter-spacing: .14em; text-transform: uppercase; color: var(--on-dark-muted); margin-bottom: clamp(18px, 3.5vh, 32px); }
   .showcase__title { font-family: var(--serif); font-weight: 400; color: #fff; font-size: clamp(2rem, 3.6vw, 3.2rem); line-height: 1.15; text-wrap: balance; }
   .showcase__blurb { margin-top: 18px; color: #cfcfcf; font-size: 1.05rem; max-width: 52ch; }
+  .showcase__links { list-style: none; display: flex; flex-wrap: wrap; gap: 4px 22px; margin-top: 22px; }
+  .showcase__links a { color: #fff; text-decoration: none; font-size: .95rem; border-bottom: 1px solid rgba(201, 168, 106, .6); padding-bottom: 2px; }
+  .showcase__links a:hover { color: var(--accent-on-dark); }
   .showcase__actions { margin-top: clamp(28px, 5vh, 48px); }
   @media (max-width: 520px) { .showcase__actions .btn { width: 100%; } }
   /* One "Free consultation" at a time: the header's button stays hidden while the
