@@ -16,11 +16,14 @@ const description =
 // Photo: Shea Rouda on Unsplash (Unsplash License), taken from the top of Los Angeles City Hall.
 // https://unsplash.com/photos/Vtl6cOhO87Y — the skyline sits in the lower part of the frame, so
 // object-position keeps it in view when phones crop the photo to a short, wide panel.
+// On desktop the panel is taller than the photo's shape, so the photo fills its height and
+// renders about 0.86 x the viewport height wide; sizes says so, so high-resolution screens
+// get a large enough file. Files come from the 2000 px original (see README, Photography).
 const heroImg = {
   src: '/assets/art/la-photo.webp',
-  srcset: '/assets/art/la-photo-sm.webp 800w, /assets/art/la-photo.webp 1400w',
-  w: 1400,
-  h: 1624,
+  srcset: '/assets/art/la-photo-sm.webp 800w, /assets/art/la-photo-md.webp 1200w, /assets/art/la-photo-lg.webp 1600w, /assets/art/la-photo.webp 2000w',
+  w: 2000,
+  h: 2320,
   pos: '50% 90%',
 };
 const heroLinks = [
@@ -56,7 +59,7 @@ const faqSchema = {
         class="showcase__img"
         src={heroImg.src}
         srcset={heroImg.srcset}
-        sizes="(min-width: 900px) 40vw, 100vw"
+        sizes="(min-width: 900px) max(40vw, 86vh), 100vw"
         width={heroImg.w}
         height={heroImg.h}
         alt=""
