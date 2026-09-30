@@ -8,7 +8,7 @@
 import Base from '../../layouts/Base.astro';
 import PageHero from '../../components/PageHero.astro';
 import PracticePage from '../../components/PracticePage.astro';
-import { practiceAreas, SITE_URL, FIRM_ID } from '../../data/firm';
+import { practiceAreas, partners, SITE_URL, FIRM_ID } from '../../data/firm';
 import { contentFor } from '../../data/practice';
 
 export function getStaticPaths() {
@@ -36,7 +36,8 @@ const serviceSchema = {
   name: `${area.name} — Los Angeles`,
   serviceType: area.schemaName,
   description: content.definition,
-  provider: { '@id': FIRM_ID },
+  // The firm, plus the partner(s) shown in the page's visible Professionals section.
+  provider: [{ '@id': FIRM_ID }, ...area.partners.map((s) => ({ '@id': partners[s].id }))],
   areaServed: { '@type': 'State', name: 'California' },
   url: `${SITE_URL}${area.path}`,
   offers: { '@type': 'Offer', description: 'Free initial consultation', price: '0', priceCurrency: 'USD' },
