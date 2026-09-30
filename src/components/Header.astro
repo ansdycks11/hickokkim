@@ -1,6 +1,6 @@
 ---
 /**
- * Fixed header over the charcoal hero: wordmark, phone, consultation button,
+ * Fixed header over the charcoal hero: wordmark, consultation button,
  * and a MENU button that opens a full-screen overlay holding all navigation.
  */
 import { firm, moments, areasByMoment } from '../data/firm';
@@ -22,7 +22,6 @@ const isCurrent = (href: string) => currentPath.startsWith(href);
   <div class="wrap bar">
     <a class="wordmark" href="/">Hickok &amp; Kim<span class="visually-hidden">, Inc. home</span></a>
     <div class="header-right">
-      <a class="header-phone" href={`tel:${firm.phoneTel}`}>{firm.phoneDisplay}</a>
       <a class="btn btn--on-dark header-cta" href="/contact/">Free consultation</a>
       <button class="menu-btn" id="menuBtn" type="button" aria-expanded="false" aria-controls="menuPanel" aria-label="Open menu">
         <span class="lines" aria-hidden="true"><i></i><i></i><i></i></span>
