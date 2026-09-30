@@ -1,6 +1,6 @@
 ---
 /**
- * Home. A split-screen opening (Walt Disney Concert Hall photograph left, charcoal panel right),
+ * Home. A split-screen opening (architectural photograph left, charcoal panel right),
  * followed by label-left sections.
  */
 import Base from '../layouts/Base.astro';
@@ -13,14 +13,15 @@ const title = 'Hickok & Kim, Inc. — Los Angeles Attorneys for Individuals and 
 const description =
   'Hickok & Kim is a Los Angeles law firm for individuals and businesses across California: injury, litigation, business, cannabis, trademarks, estates. Free consultation.';
 
-// Photo: Walt Disney Concert Hall, Los Angeles, by Alexandr Voronsky on Unsplash (Unsplash License).
-// https://unsplash.com/photos/LDjmmF8xD2M — cropped to 2000 x 2320 around the steel curves.
+// Photo: curved white architectural ribs, by Erik Eastman on Unsplash (Unsplash License).
+// https://unsplash.com/photos/-6zFVL4YuaM — cropped to 2000 x 2320; light noise reduction
+// (median filter) before WebP, which removes the grain and cuts the file size by two thirds.
 // On desktop the panel is taller than the photo's shape, so the photo fills its height and
 // renders about 0.86 x the viewport height wide; sizes says so, so high-resolution screens
 // get a large enough file (see README, Photography).
 const heroImg = {
-  src: '/assets/art/la-photo.webp',
-  srcset: '/assets/art/la-photo-sm.webp 800w, /assets/art/la-photo-md.webp 1200w, /assets/art/la-photo-lg.webp 1600w, /assets/art/la-photo.webp 2000w',
+  src: '/assets/art/hero.webp',
+  srcset: '/assets/art/hero-sm.webp 800w, /assets/art/hero-md.webp 1200w, /assets/art/hero-lg.webp 1600w, /assets/art/hero.webp 2000w',
   w: 2000,
   h: 2320,
   pos: '50% 50%',
@@ -100,12 +101,12 @@ const faqSchema = {
 
   <!-- ================= FEATURED SERVICE ================= -->
   <section class="feature" aria-labelledby="ogc-h">
-    <!-- Photo: The Broad, Los Angeles (next door to the Disney Hall), by Venti Views on Unsplash (Unsplash License).
-         https://unsplash.com/photos/i5KFD-_2dd4 — square crop around the opening in the facade. -->
+    <!-- Image: abstract metallic waves, a 3D render by Zac Ong on Unsplash (Unsplash License).
+         https://unsplash.com/photos/V3j7yy3CzqU — square crop. -->
     <div class="feature__art feature__art--photo" aria-hidden="true">
       <img
-        src="/assets/art/the-broad.webp"
-        srcset="/assets/art/the-broad-sm.webp 700w, /assets/art/the-broad.webp 1200w"
+        src="/assets/art/feature.webp"
+        srcset="/assets/art/feature-sm.webp 700w, /assets/art/feature.webp 1200w"
         sizes="(min-width: 900px) 38vw, 100vw"
         width="1200"
         height="1200"
@@ -189,7 +190,7 @@ const faqSchema = {
   /* A shade at the top keeps the header legible where it overlaps the artwork (mobile). */
   /* A shade at the top keeps the white wordmark legible over the photograph's sky, so the
      header can stay in the same place from the first screen onward (no jump on scroll). */
-  .showcase__art::after { content: ""; position: absolute; inset: 0 0 auto 0; height: 160px; z-index: 1; background: linear-gradient(rgba(20, 20, 20, .6), rgba(20, 20, 20, 0)); }
+  .showcase__art::after { content: ""; position: absolute; inset: 0 0 auto 0; height: 170px; z-index: 1; background: linear-gradient(rgba(20, 20, 20, .78), rgba(20, 20, 20, .35) 55%, rgba(20, 20, 20, 0)); }
   /* Desktop: at the top of the page the header starts where the charcoal panel starts,
      next to the curve. Once the visitor scrolls and the header turns solid, it glides
      out to the full screen width (and back on returning to the top). */
@@ -224,10 +225,6 @@ const faqSchema = {
   .practice-cols li { break-inside: avoid; }
   .practice-cols a { color: var(--accent); text-decoration: none; font-size: 1.02rem; line-height: 1.5; display: inline-block; padding: 6px 0; }
   .practice-cols a:hover { text-decoration: underline; }
-
-  /* ---------- featured service photo ---------- */
-  .feature__art--photo { position: relative; overflow: hidden; }
-  .feature__art--photo img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
 
   /* ---------- contact ---------- */
   .contact-split { display: grid; gap: 40px; grid-template-columns: 1fr; }

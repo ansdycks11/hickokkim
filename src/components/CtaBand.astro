@@ -1,24 +1,37 @@
 ---
-/** Feature band: angled artwork left, charcoal panel right. Used as the closing CTA. */
+/**
+ * Closing band on inner pages: curved photo panel left, charcoal panel right.
+ * Photo: Walt Disney Concert Hall, Los Angeles, by Salvatore Favata on Unsplash
+ * (Unsplash License), https://unsplash.com/photos/R1PkInr54KU — square crop.
+ */
 import { firm } from '../data/firm';
 interface Props {
   heading?: string;
   text?: string;
-  art?: 'facade' | 'louvers' | 'contours-warm';
   eyebrow?: string;
   action?: { label: string; href: string };
 }
 const {
   heading = 'The first conversation is free.',
   text = `Tell us briefly what's going on. A partner, not an intake service, responds ${firm.responsePromise}.`,
-  art = 'facade',
   eyebrow = 'Free consultation',
   action = { label: 'Request a free consultation', href: '/contact/' },
 } = Astro.props;
 ---
 
 <section class="feature" aria-labelledby="cta-h">
-  <div class="feature__art" style={`--art:url('/assets/art/${art}.webp')`} role="presentation"></div>
+  <div class="feature__art feature__art--photo" aria-hidden="true">
+    <img
+      src="/assets/art/closing.webp"
+      srcset="/assets/art/closing-sm.webp 700w, /assets/art/closing.webp 1200w"
+      sizes="(min-width: 900px) 38vw, 100vw"
+      width="1200"
+      height="1200"
+      alt=""
+      loading="lazy"
+      decoding="async"
+    />
+  </div>
   <div class="feature__body dark">
     <span class="eyebrow">{eyebrow}</span>
     <h2 id="cta-h">{heading}</h2>
