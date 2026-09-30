@@ -122,7 +122,10 @@ button { font: inherit; color: inherit; background: none; border: 0; cursor: poi
   color: #fff; transition: background .3s, height .3s, box-shadow .3s;
 }
 .site-header.is-solid { background: rgba(28, 28, 28, .97); height: 72px; box-shadow: 0 1px 0 rgba(255, 255, 255, .08); }
-.site-header .bar { height: 100%; display: flex; align-items: center; justify-content: space-between; gap: 24px; }
+/* The header (and the menu overlay under it) spans the full screen with fluid side margins,
+   rather than the 1240px reading width used for page content. */
+.site-header .bar { max-width: none; height: 100%; display: flex; align-items: center; justify-content: space-between; gap: 24px; }
+.menu-panel > .wrap { max-width: none; }
 /* One typeface, one colour: spaced Garamond capitals, ampersand included. */
 .wordmark {
   font-family: var(--wordmark); font-weight: 500; font-size: clamp(1.15rem, 1.6vw, 1.4rem); line-height: 1; letter-spacing: .14em;
