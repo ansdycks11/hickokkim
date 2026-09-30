@@ -46,7 +46,7 @@ const faqSchema = {
 };
 ---
 
-<Base title={title} description={description} path="/" schema={[faqSchema]} bodyClass="is-home">
+<Base title={title} description={description} path="/" schema={[faqSchema]} bodyClass="is-home hero-cta-in-view">
   <!-- ================= OPENING ================= -->
   <section class="showcase dark" data-hero aria-labelledby="showcase-h">
     <div class="showcase__art" aria-hidden="true">
@@ -183,6 +183,11 @@ const faqSchema = {
   .showcase__blurb { margin-top: 18px; color: #cfcfcf; font-size: 1.05rem; max-width: 52ch; }
   .showcase__actions { margin-top: clamp(28px, 5vh, 48px); }
   @media (max-width: 520px) { .showcase__actions .btn { width: 100%; } }
+  /* One "Free consultation" at a time: the header's button stays hidden while the
+     opening's button is on screen, then fades in once the visitor scrolls past it.
+     Without JavaScript both stay visible. */
+  :global(.site-header .header-cta) { transition: opacity .3s, visibility .3s; }
+  :global(html:not(.no-js) body.hero-cta-in-view .site-header .header-cta) { opacity: 0; visibility: hidden; }
 
   /* ---------- practice areas ---------- */
   /* One plain list, filled down each column so related areas stay together. */
@@ -198,3 +203,15 @@ const faqSchema = {
   .contact-address a { color: var(--accent-on-dark); text-decoration: none; }
   .contact-address a:hover { text-decoration: underline; }
 </style>
+
+<script>
+  // Tracks whether the opening's button is visible below the fixed header.
+  const heroCta = document.querySelector('.showcase__actions .btn');
+  if (heroCta && 'IntersectionObserver' in window) {
+    new IntersectionObserver(([e]) => document.body.classList.toggle('hero-cta-in-view', e.isIntersecting), {
+      rootMargin: '-72px 0px 0px 0px',
+    }).observe(heroCta);
+  } else {
+    document.body.classList.remove('hero-cta-in-view');
+  }
+</script>
