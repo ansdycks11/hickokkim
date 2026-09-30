@@ -170,6 +170,16 @@ const faqSchema = {
   /* A shade at the top keeps the white wordmark legible over the photograph's sky, so the
      header can stay in the same place from the first screen onward (no jump on scroll). */
   .showcase__art::after { content: ""; position: absolute; inset: 0 0 auto 0; height: 160px; z-index: 1; background: linear-gradient(rgba(20, 20, 20, .6), rgba(20, 20, 20, 0)); }
+  /* Desktop: at the top of the page the header starts where the charcoal panel starts,
+     next to the curve. Once the visitor scrolls and the header turns solid, it glides
+     out to the full screen width (and back on returning to the top). */
+  @media (min-width: 900px) {
+    :global(.is-home .site-header .bar) { transition: padding-left .6s var(--ease); }
+    :global(.is-home .site-header:not(.is-solid) .bar) { padding-left: calc(40% + clamp(24px, 6vw, 96px)); }
+  }
+  @media (min-width: 900px) and (prefers-reduced-motion: reduce) {
+    :global(.is-home .site-header .bar) { transition: none; }
+  }
   .showcase__img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
   .showcase__panel { position: relative; display: flex; flex-direction: column; justify-content: center; padding: calc(var(--header-h) + 24px) var(--gutter) 40px clamp(24px, 6vw, 96px); }
   .showcase__panel > * { max-width: 640px; }
