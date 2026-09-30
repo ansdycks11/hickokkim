@@ -1,6 +1,6 @@
 // Generates the site's abstract artwork from code (no stock photography, no
 // borrowed imagery). Each image is an SVG composition rendered to WebP, except the
-// inner-page hero texture, which ships as the SVG itself: its faint lines and dark
+// inner-page hero texture, which ships as the SVG itself: its faint lines and soft
 // gradient band and blur badly under WebP compression, and as a vector they stay
 // sharp on every screen for a few KB.
 //   node scripts/make-art.mjs
@@ -27,7 +27,7 @@ async function render(name, svg, { w, h, q = 80 }) {
 }
 
 /* 1. Contours — topographic lines displaced by hidden hills, used pale behind
-      the menu overlay. */
+      the menu overlay (cool grey on the site's off-white). */
 function contours(W, H, { bg, stroke, lines = 70, seed = 5, opacity = [0.25, 0.7], width = 1.2 }) {
   const r = rng(seed);
   // a handful of hills and hollows; each line bends around them
@@ -54,20 +54,21 @@ function contours(W, H, { bg, stroke, lines = 70, seed = 5, opacity = [0.25, 0.7
   return `<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}" viewBox="0 0 ${W} ${H}"><rect width="${W}" height="${H}" fill="${bg}"/>${paths}</svg>`;
 }
 
-/* 2. Hero texture — faint fanned folds on charcoal, behind every inner-page title. */
+/* 2. Hero texture — faint fanned lines on white fading to a cool off-white, behind
+      every inner-page title. */
 function heroTexture(W, H) {
   const r = rng(11);
   let lines = '';
   for (let i = 0; i < 90; i++) {
     const a = -0.9 + (i / 90) * 1.5;
     const x2 = W * 0.25 + Math.cos(a) * W * 1.4, y2 = H * 1.1 + Math.sin(a) * W * 1.4;
-    lines += `<line x1="${f(W * 0.25)}" y1="${f(H * 1.1)}" x2="${f(x2)}" y2="${f(y2)}" stroke="#ffffff" stroke-width="${f(0.6 + r() * 1.6)}" opacity="${f(0.02 + r() * 0.05)}"/>`;
+    lines += `<line x1="${f(W * 0.25)}" y1="${f(H * 1.1)}" x2="${f(x2)}" y2="${f(y2)}" stroke="#0b1f33" stroke-width="${f(0.6 + r() * 1.6)}" opacity="${(0.03 + r() * 0.06).toFixed(3)}"/>`;
   }
   return `<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}" viewBox="0 0 ${W} ${H}">
-  <defs><radialGradient id="v" cx="0.65" cy="0.2" r="1"><stop offset="0" stop-color="#2e2e2e"/><stop offset="1" stop-color="#161616"/></radialGradient></defs>
+  <defs><radialGradient id="v" cx="0.65" cy="0.2" r="1"><stop offset="0" stop-color="#ffffff"/><stop offset="1" stop-color="#eef2f7"/></radialGradient></defs>
   <rect width="${W}" height="${H}" fill="url(#v)"/>${lines}</svg>`;
 }
 
-await render('menu-contours', contours(2000, 1300, { bg: '#f1f1f1', stroke: '#c9c9c9', seed: 9, lines: 90, opacity: [0.35, 0.8] }), { w: 2000, h: 1300, q: 70 });
+await render('menu-contours', contours(2000, 1300, { bg: '#f5f7fa', stroke: '#c9d2dd', seed: 9, lines: 90, opacity: [0.35, 0.8] }), { w: 2000, h: 1300, q: 70 });
 await writeFile(`${OUT}/hero-texture.svg`, heroTexture(2400, 800) + '\n');
 console.log('wrote hero-texture.svg');

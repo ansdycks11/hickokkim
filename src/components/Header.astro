@@ -1,7 +1,8 @@
 ---
 /**
- * Fixed header over the charcoal hero: wordmark, consultation button,
- * and a MENU button that opens a full-screen overlay holding all navigation.
+ * Fixed header: transparent over the white page top, solid white once the page scrolls.
+ * Wordmark, consultation button, and a MENU button that opens a full-screen overlay
+ * holding all navigation.
  */
 import { firm, moments, areasByMoment } from '../data/firm';
 
@@ -22,7 +23,7 @@ const isCurrent = (href: string) => currentPath.startsWith(href);
   <div class="wrap bar">
     <a class="wordmark" href="/">Hickok &amp; Kim<span class="visually-hidden">, Inc. home</span></a>
     <div class="header-right">
-      <a class="btn btn--on-dark header-cta" href="/contact/">Free consultation</a>
+      <a class="btn header-cta" href="/contact/">Free consultation</a>
       <button class="menu-btn" id="menuBtn" type="button" aria-expanded="false" aria-controls="menuPanel" aria-label="Open menu">
         <span class="lines" aria-hidden="true"><i></i><i></i><i></i></span>
         <span class="label" aria-hidden="true">Menu</span>
@@ -31,7 +32,7 @@ const isCurrent = (href: string) => currentPath.startsWith(href);
   </div>
 </header>
 
-<nav class="menu-panel on-light" id="menuPanel" aria-label="Site menu">
+<nav class="menu-panel" id="menuPanel" aria-label="Site menu">
   <div class="wrap">
     <div class="menu-grid">
       <ul class="menu-primary">

@@ -54,7 +54,7 @@ export interface PracticeContent {
   title: string;
   /** ≤155 chars, includes practice + city. */
   description: string;
-  /** May contain a single <em> for one word of brass italic emphasis. */
+  /** May contain a single <em> for one word of italic emphasis. */
   h1: string;
   /** Standalone, quotable definition. The first sentence of the page body. */
   definition: string;

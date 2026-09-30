@@ -40,7 +40,7 @@ export const firm = {
     'Hickok & Kim, Inc. is a Los Angeles law firm serving individuals and businesses across California: personal injury, civil litigation, business and corporate law, outside general counsel, trademarks, cannabis law, wills and trusts, and real estate. Free initial consultation.',
   // TODO:REAL-DATA — Google Business Profile URL, firm LinkedIn page.
   sameAs: [] as string[],
-  // Generated branded OG image (ink background, brass scales mark, firm name).
+  // Share image built by scripts/make-og.mjs from scripts/brand/sheet.html (white ground, home photo, navy wordmark, blue accents).
   ogImage: `${SITE_URL}/assets/og-default.png`,
   /** ISO date for schema dateModified. Bump only when content changes substantively (README, quarterly refresh). */
   lastReviewed: '2026-09-15',

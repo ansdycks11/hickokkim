@@ -30,7 +30,7 @@ const profileSchema = {
     {p.name}
   </PageHero>
 
-  <section class="bio-top on-light" aria-label="Photo and contact">
+  <section class="bio-top" aria-label="Photo and contact">
     <div class="wrap bio-top__grid">
       <!-- TODO:REAL-DATA — full-resolution headshot (>=1200px short edge), 4:5 crop. -->
       <img class="bio-photo" src={p.image} width={p.imageWidth} height={p.imageHeight} alt={p.imageAlt} />
@@ -74,11 +74,11 @@ const profileSchema = {
 </Base>
 
 <style>
-  .bio-top { background: linear-gradient(to bottom, var(--charcoal) 0 50%, var(--mist) 50% 100%); }
+  .bio-top { background: var(--mist); padding-top: clamp(32px, 4vw, 48px); }
   .bio-top__grid { display: grid; grid-template-columns: auto 1fr; gap: 20px 32px; align-items: end; padding-bottom: 8px; }
   .bio-photo { width: clamp(150px, 20vw, 220px); aspect-ratio: 4 / 5; object-fit: cover; background: var(--mist-2); }
   .bio-contact { padding-bottom: 12px; line-height: 1.9; font-size: .95rem; }
   .bio-contact a { color: var(--accent); text-decoration: none; }
   .bio-contact a:hover { text-decoration: underline; }
-  @media (max-width: 560px) { .bio-top__grid { grid-template-columns: 1fr; } .bio-top { background: linear-gradient(to bottom, var(--charcoal) 0 30%, var(--mist) 30% 100%); } }
+  @media (max-width: 560px) { .bio-top__grid { grid-template-columns: 1fr; } }
 </style>

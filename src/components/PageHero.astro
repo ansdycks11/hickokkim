@@ -1,6 +1,6 @@
 ---
 /**
- * Inner-page hero: charcoal with texture, breadcrumbs, a large serif title
+ * Inner-page hero: white with a faint line texture, breadcrumbs, a large serif title
  * followed by a hairline rule, and an optional link at the right end of it.
  */
 import Breadcrumbs from './Breadcrumbs.astro';
@@ -16,7 +16,7 @@ interface Props {
 const { breadcrumbs, aside, lead, sub } = Astro.props;
 ---
 
-<section class="page-hero dark" data-hero>
+<section class="page-hero" data-hero>
   <div class="wrap">
     {breadcrumbs && <Breadcrumbs items={breadcrumbs} />}
     <div class="hero-title-row">
