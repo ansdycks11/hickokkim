@@ -98,7 +98,7 @@ const faqSchema = {
       <div class="group reveal">
         <h3 class="group__title">{m.heading}</h3>
         <ul class="linklist">
-          {areasByMoment(m.id).map((a) => <li><a href={a.path}>{a.name}</a><span class="note">{a.ledgerNote}</span></li>)}
+          {areasByMoment(m.id).map((a) => <li><a href={a.path}>{a.name}</a></li>)}
         </ul>
       </div>
     ))}

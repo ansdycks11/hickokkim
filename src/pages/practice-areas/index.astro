@@ -3,7 +3,7 @@ import Base from '../../layouts/Base.astro';
 import PageHero from '../../components/PageHero.astro';
 import Section from '../../components/Section.astro';
 import CtaBand from '../../components/CtaBand.astro';
-import { moments, areasByMoment, partners } from '../../data/firm';
+import { moments, areasByMoment } from '../../data/firm';
 
 const title = 'Practice Areas | Hickok & Kim — Los Angeles';
 const description =
@@ -24,7 +24,7 @@ const tones = ['white', 'mist', 'white'] as const;
       <p class="muted">{m.tagline}</p>
       <ul class="linklist">
         {areasByMoment(m.id).map((a) => (
-          <li><a href={a.path}>{a.name}</a><span class="note">{a.blurb} {a.partners.map((s) => partners[s].name).join(' and ')}.</span></li>
+          <li><a href={a.path}>{a.name}</a><span class="note">{a.blurb}</span></li>
         ))}
       </ul>
     </Section>

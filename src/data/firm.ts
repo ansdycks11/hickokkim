@@ -200,7 +200,6 @@ export interface PracticeArea {
   moment: MomentId;
   partners: PartnerSlug[];
   blurb: string;
-  ledgerNote?: string; // small line under the title in the ledger
   featured?: boolean;
   schemaName: string; // knowsAbout / serviceType label
 }
@@ -214,7 +213,6 @@ export const practiceAreas: PracticeArea[] = [
     ref: 'PI-01',
     moment: 'wrong',
     partners: ['daniel-kim'],
-    ledgerNote: 'Daniel J. Kim, contingency fee',
     blurb:
       'Car and pedestrian accidents, premises injuries, and insurance disputes. You pay nothing unless we recover for you.',
     schemaName: 'Personal Injury Law',
@@ -227,7 +225,6 @@ export const practiceAreas: PracticeArea[] = [
     ref: 'CL-02',
     moment: 'wrong',
     partners: ['daniel-kim'],
-    ledgerNote: 'Daniel J. Kim',
     blurb:
       'Contract and business disputes, partnership breakups, and property claims in California state and federal courts.',
     schemaName: 'Civil Litigation',
@@ -240,7 +237,6 @@ export const practiceAreas: PracticeArea[] = [
     ref: 'BL-03',
     moment: 'building',
     partners: ['daniel-kim', 'christopher-hickok'],
-    ledgerNote: 'Daniel J. Kim and Christopher D. Hickok',
     blurb:
       'Day-to-day counsel for owners: contracts, vendor and customer agreements, employment questions, and disputes before they become lawsuits.',
     schemaName: 'Business Law',
@@ -253,7 +249,6 @@ export const practiceAreas: PracticeArea[] = [
     ref: 'CO-04',
     moment: 'building',
     partners: ['daniel-kim', 'christopher-hickok'],
-    ledgerNote: 'Daniel J. Kim and Christopher D. Hickok',
     blurb:
       'Entity formation, operating and shareholder agreements, governance, financing, and the paperwork of buying or selling a company.',
     schemaName: 'Corporate Law',
@@ -266,7 +261,6 @@ export const practiceAreas: PracticeArea[] = [
     ref: 'GC-05',
     moment: 'building',
     partners: ['daniel-kim', 'christopher-hickok'],
-    ledgerNote: 'Daniel J. Kim and Christopher D. Hickok',
     blurb:
       "Your company's legal department, without the in-house cost: ongoing contract review, advice on decisions, and disputes handled as they arise.",
     featured: true,
@@ -280,7 +274,6 @@ export const practiceAreas: PracticeArea[] = [
     ref: 'TM-06',
     moment: 'building',
     partners: ['christopher-hickok'],
-    ledgerNote: 'Christopher D. Hickok',
     blurb:
       'Clearance, federal and California registration, licensing, and enforcement for the names and marks your business runs on.',
     schemaName: 'Trademark Law',
@@ -293,7 +286,6 @@ export const practiceAreas: PracticeArea[] = [
     ref: 'CB-07',
     moment: 'building',
     partners: ['christopher-hickok'],
-    ledgerNote: 'Christopher D. Hickok, LACBA Cannabis Section board member',
     blurb:
       'Licensing, regulatory compliance, and transactions for California cannabis operators, from first application to ongoing counsel.',
     schemaName: 'Cannabis Law',
@@ -306,7 +298,6 @@ export const practiceAreas: PracticeArea[] = [
     ref: 'WT-08',
     moment: 'ahead',
     partners: ['daniel-kim'],
-    ledgerNote: 'Daniel J. Kim',
     blurb:
       'Wills, revocable living trusts, powers of attorney, and health-care directives, written to hold up when a family needs them.',
     schemaName: 'Wills and Trusts',
@@ -319,7 +310,6 @@ export const practiceAreas: PracticeArea[] = [
     ref: 'RE-09',
     moment: 'ahead',
     partners: ['daniel-kim'],
-    ledgerNote: 'Daniel J. Kim',
     blurb:
       'Purchase and lease agreements, title and boundary issues, and landlord-tenant and property disputes.',
     schemaName: 'Real Estate Law',

@@ -8,7 +8,7 @@
 import Base from '../../layouts/Base.astro';
 import PageHero from '../../components/PageHero.astro';
 import PracticePage from '../../components/PracticePage.astro';
-import { practiceAreas, partners, SITE_URL, FIRM_ID } from '../../data/firm';
+import { practiceAreas, SITE_URL, FIRM_ID } from '../../data/firm';
 import { contentFor } from '../../data/practice';
 
 export function getStaticPaths() {
@@ -25,7 +25,6 @@ if (!content) {
   );
 }
 
-const leads = area.partners.map((s) => partners[s]);
 const crumbs = [
   { name: 'Practice areas', href: '/practice-areas/' },
   { name: area.name, href: area.path },
@@ -65,7 +64,6 @@ const faqSchema = {
   <PageHero
     breadcrumbs={crumbs}
     aside={{ label: 'Related professionals', href: '#professionals' }}
-    sub={leads.map((p) => ({ label: p.name, href: p.path }))}
   >
     {area.name}
   </PageHero>
