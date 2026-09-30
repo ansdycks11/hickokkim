@@ -10,7 +10,7 @@ export const content: PracticeContent = {
     'Outside general counsel is an ongoing arrangement in which a law firm serves as a company\'s legal department, handling day-to-day questions, contracts, and problems on a continuing basis rather than matter by matter.',
   quickAnswer: [
     'There is a stage most growing companies pass through where legal work is constant but not large enough to justify hiring a lawyer. Contracts arrive weekly, an employee question comes up, a customer disputes an invoice. Handled matter by matter, each of those becomes a new engagement with a new orientation. Handled by ongoing counsel, they become routine.',
-    'Hickok & Kim provides outside general counsel to businesses in Los Angeles and across California. Both partners, Daniel J. Kim and Christopher D. Hickok, work on these engagements, which means a company gets litigation and transactional coverage from the same firm rather than two. The arrangement suits companies with recurring contracts, employees, or regulated operations. Every engagement begins with a free consultation and a written agreement setting out scope and fees before any work starts.',
+    'Hickok & Kim provides outside general counsel to businesses in Los Angeles and across California. Both partners, Daniel Kim and Christopher Hickok, work on these engagements, which means a company gets litigation and transactional coverage from the same firm rather than two. The arrangement suits companies with recurring contracts, employees, or regulated operations. Every engagement begins with a free consultation and a written agreement setting out scope and fees before any work starts.',
   ],
   services: [
     {

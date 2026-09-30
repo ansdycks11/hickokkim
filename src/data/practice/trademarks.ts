@@ -10,7 +10,7 @@ export const content: PracticeContent = {
     'A trademark is any word, phrase, symbol, or design that identifies the source of goods or services and distinguishes them from someone else\'s.',
   quickAnswer: [
     'In the United States, trademark rights come from using a mark in commerce, not from registering it. Registration is what makes those rights practical to enforce: a federal registration with the United States Patent and Trademark Office gives nationwide notice, a legal presumption that you own a valid mark, and access to federal court.',
-    'Hickok & Kim handles trademark clearance, federal and California registration, licensing, and enforcement for businesses in Los Angeles and throughout California. Trademark matters are led by partner Christopher D. Hickok. The firm works with founders naming a company for the first time, established businesses expanding into new product lines, and owners who have discovered someone else using their name. Every matter begins with a free initial consultation.',
+    'Hickok & Kim handles trademark clearance, federal and California registration, licensing, and enforcement for businesses in Los Angeles and throughout California. Trademark matters are led by partner Christopher Hickok. The firm works with founders naming a company for the first time, established businesses expanding into new product lines, and owners who have discovered someone else using their name. Every matter begins with a free initial consultation.',
   ],
   services: [
     {

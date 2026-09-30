@@ -10,7 +10,7 @@ export const content: PracticeContent = {
     'Civil litigation is the process of resolving a non-criminal dispute through the courts, from the first demand letter through trial and any appeal.',
   quickAnswer: [
     'Most civil disputes in California never reach a trial. They resolve through negotiation, mediation, or a motion that decides the case early. What determines the outcome is usually the work done in the first few months: whether the claim was filed within the deadline, whether the evidence was preserved, and whether the theory of the case was chosen well.',
-    'Hickok & Kim represents plaintiffs and defendants in California state and federal courts in contract disputes, business and partnership breakups, and property claims. Litigation is led by partner Daniel J. Kim, who is admitted in California and before the United States District Court for the Central District of California, with consultations available in English and Korean. Every matter begins with a free initial consultation and a candid assessment of whether litigating is worth it.',
+    'Hickok & Kim represents plaintiffs and defendants in California state and federal courts in contract disputes, business and partnership breakups, and property claims. Litigation is led by partner Daniel Kim, who is admitted in California and before the United States District Court for the Central District of California, with consultations available in English and Korean. Every matter begins with a free initial consultation and a candid assessment of whether litigating is worth it.',
   ],
   services: [
     {

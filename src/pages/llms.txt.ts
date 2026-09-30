@@ -38,7 +38,7 @@ const attorneyLines = partnerList.map((p) => {
   const own = areas.filter((a) => a.partners.length === 1).map((a) => a.shortName.toLowerCase());
   const shared = areas.filter((a) => a.partners.length > 1).map((a) => a.shortName.toLowerCase());
   const facts = [
-    `${p.title}. California State Bar #${p.barNumber} (admitted ${p.barAdmitted})`,
+    `${p.title}. Also written ${p.alternateName}. California State Bar #${p.barNumber} (admitted ${p.barAdmitted})`,
     ...p.federalAdmissions,
     ...p.education,
     `Handles ${own.join(', ')}${shared.length ? `; shares ${shared.join(', ')}` : ''}`,

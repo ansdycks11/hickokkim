@@ -10,7 +10,7 @@ export const content: PracticeContent = {
     'Real estate law governs the ownership, transfer, use, and occupancy of land and buildings, including who holds title, what a seller must disclose, and what a landlord and tenant owe each other.',
   quickAnswer: [
     'California real estate disputes usually trace back to a document: a purchase agreement whose contingencies were misunderstood, a disclosure that was incomplete, a lease clause nobody read, or a deed that did not say what the parties meant. Because California treats each parcel as unique, courts here will order a party to complete a property sale rather than simply pay damages, which gives these disputes leverage that ordinary contract cases lack.',
-    'Hickok & Kim advises buyers, sellers, owners, landlords, and tenants in Los Angeles and throughout California. Real estate matters are handled by partner Daniel J. Kim, with consultations available in English and Korean. The firm handles purchase and lease agreements, disclosure and title problems, boundary and easement disputes, and landlord-tenant matters. Every matter begins with a free initial consultation.',
+    'Hickok & Kim advises buyers, sellers, owners, landlords, and tenants in Los Angeles and throughout California. Real estate matters are handled by partner Daniel Kim, with consultations available in English and Korean. The firm handles purchase and lease agreements, disclosure and title problems, boundary and easement disputes, and landlord-tenant matters. Every matter begins with a free initial consultation.',
   ],
   services: [
     {

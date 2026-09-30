@@ -10,7 +10,7 @@ export const content: PracticeContent = {
     'Cannabis law governs who may cultivate, manufacture, test, distribute, and sell cannabis, and on what terms.',
   quickAnswer: [
     'California runs a dual licensing system: a commercial cannabis business needs an annual license from the state Department of Cannabis Control and separate authorization from the city or county where it physically operates. Neither one substitutes for the other, and a majority of California jurisdictions still prohibit some or all commercial cannabis activity outright.',
-    'At Hickok & Kim, cannabis matters are handled by partner Christopher D. Hickok, who has advised California operators since the first year of adult-use licensing and serves on the board of the Los Angeles County Bar Association Cannabis Section. The firm works with cultivators, manufacturers, distributors, retailers, and investors across California on licensing, regulatory compliance, ownership structure, and transactions. Every matter begins with a free initial consultation.',
+    'At Hickok & Kim, cannabis matters are handled by partner Christopher Hickok, who has advised California operators since the first year of adult-use licensing and serves on the board of the Los Angeles County Bar Association Cannabis Section. The firm works with cultivators, manufacturers, distributors, retailers, and investors across California on licensing, regulatory compliance, ownership structure, and transactions. Every matter begins with a free initial consultation.',
   ],
   services: [
     {

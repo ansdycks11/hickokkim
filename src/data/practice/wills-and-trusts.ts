@@ -10,7 +10,7 @@ export const content: PracticeContent = {
     'An estate plan is the set of documents that decides who receives your property when you die, who makes decisions for you if you cannot, and how much of that process your family has to take through court.',
   quickAnswer: [
     'In California the central question is usually probate. A will does not avoid probate; it gives the court instructions during it. A properly funded revocable living trust does avoid it, and because California sets attorney and executor compensation in probate as a percentage of the gross value of the estate, that difference is measured in real money for anyone who owns a home here.',
-    'Hickok & Kim prepares wills, revocable living trusts, powers of attorney, and health care directives for individuals and families in Los Angeles and throughout California. Estate matters are handled by partner Daniel J. Kim, with consultations available in English and Korean. The firm works with first-time planners, parents naming guardians, and families who have discovered a problem after a death. Every matter begins with a free initial consultation.',
+    'Hickok & Kim prepares wills, revocable living trusts, powers of attorney, and health care directives for individuals and families in Los Angeles and throughout California. Estate matters are handled by partner Daniel Kim, with consultations available in English and Korean. The firm works with first-time planners, parents naming guardians, and families who have discovered a problem after a death. Every matter begins with a free initial consultation.',
   ],
   services: [
     {

@@ -10,7 +10,7 @@ export const content: PracticeContent = {
     'Corporate law governs how a business is formed, who owns and controls it, what the owners owe each other, and what happens when it is sold, financed, or wound down.',
   quickAnswer: [
     'Choosing an entity is the smallest part of forming a company. The decisions that matter are the ones inside it: how ownership is split, what happens when a founder leaves, who can bind the company, and how a deadlock gets broken. Those live in an operating agreement or shareholder agreement, and a business without one is governed by whatever default rules the California Corporations Code supplies.',
-    'Hickok & Kim handles formation, governance, ownership agreements, financings, and transactions for businesses in Los Angeles and across California. Corporate matters are handled by both partners, Daniel J. Kim and Christopher D. Hickok. The firm works with founders forming a first entity, partners restructuring ownership, and owners preparing to buy or sell. Every matter begins with a free initial consultation.',
+    'Hickok & Kim handles formation, governance, ownership agreements, financings, and transactions for businesses in Los Angeles and across California. Corporate matters are handled by both partners, Daniel Kim and Christopher Hickok. The firm works with founders forming a first entity, partners restructuring ownership, and owners preparing to buy or sell. Every matter begins with a free initial consultation.',
   ],
   services: [
     {

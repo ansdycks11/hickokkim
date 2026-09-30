@@ -10,7 +10,7 @@ export const content: PracticeContent = {
     'Business law covers the agreements, obligations, and day-to-day legal decisions that keep a company operating: what it signs, who it hires, and how it handles a problem before it becomes a lawsuit.',
   quickAnswer: [
     'Most legal problems a small or mid-sized business encounters were decided months earlier by a document nobody read closely. The contract that lacked a payment term, the contractor who should have been an employee, the handshake that never became a written agreement. Business law is mostly the practice of getting those decisions right the first time, which is far cheaper than litigating them later.',
-    'Hickok & Kim advises businesses in Los Angeles and throughout California on contracts, vendor and customer agreements, employment questions, regulatory obligations, and disputes. Business matters are handled by both partners, Daniel J. Kim and Christopher D. Hickok, and consultations are available in English and Korean. The firm works with owners at every stage, from a first contract template to an established company that needs ongoing counsel. Every matter begins with a free consultation.',
+    'Hickok & Kim advises businesses in Los Angeles and throughout California on contracts, vendor and customer agreements, employment questions, regulatory obligations, and disputes. Business matters are handled by both partners, Daniel Kim and Christopher Hickok, and consultations are available in English and Korean. The firm works with owners at every stage, from a first contract template to an established company that needs ongoing counsel. Every matter begins with a free consultation.',
   ],
   services: [
     {

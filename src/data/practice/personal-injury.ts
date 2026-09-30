@@ -10,7 +10,7 @@ export const content: PracticeContent = {
     'A personal injury claim is a civil demand for compensation by someone who was hurt because another person or business failed to use reasonable care.',
   quickAnswer: [
     'In California you generally have two years from the date of an injury to file a personal injury lawsuit, and far less time when the party at fault is a government entity. Missing the deadline ends the claim regardless of how strong it is, which is why the date of the injury is the first thing any lawyer will ask you.',
-    'At Hickok & Kim, personal injury matters are handled by partner Daniel J. Kim on a contingency fee, meaning there is no fee unless there is a recovery. The firm represents injured people in Los Angeles and across California in vehicle collisions, pedestrian and bicycle injuries, premises injuries, and disputes with insurers, and consultations are available in English and Korean. Every matter begins with a free consultation, and the fee is set by written agreement before any work starts.',
+    'At Hickok & Kim, personal injury matters are handled by partner Daniel Kim on a contingency fee, meaning there is no fee unless there is a recovery. The firm represents injured people in Los Angeles and across California in vehicle collisions, pedestrian and bicycle injuries, premises injuries, and disputes with insurers, and consultations are available in English and Korean. Every matter begins with a free consultation, and the fee is set by written agreement before any work starts.',
   ],
   services: [
     {

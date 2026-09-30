@@ -58,6 +58,8 @@ export interface Partner {
   slug: PartnerSlug;
   name: string;
   shortName: string;
+  /** Name with middle initial, as on professional records. Schema alternateName only; the site displays `name`. */
+  alternateName: string;
   firstName: string;
   title: 'Partner';
   path: string;
@@ -86,7 +88,8 @@ export interface Partner {
 export const partners: Record<PartnerSlug, Partner> = {
   'daniel-kim': {
     slug: 'daniel-kim',
-    name: 'Daniel J. Kim',
+    name: 'Daniel Kim',
+    alternateName: 'Daniel J. Kim',
     shortName: 'Daniel Kim',
     firstName: 'Daniel',
     title: 'Partner',
@@ -97,7 +100,7 @@ export const partners: Record<PartnerSlug, Partner> = {
     image: '/assets/daniel-kim.jpg',
     imageWidth: 600,
     imageHeight: 600,
-    imageAlt: 'Daniel J. Kim, Partner at Hickok & Kim',
+    imageAlt: 'Daniel Kim, Partner at Hickok & Kim',
     barNumber: '314971',
     barAdmitted: '2017',
     barProfile: 'https://apps.calbar.ca.gov/attorney/Licensee/Detail/314971',
@@ -119,7 +122,8 @@ export const partners: Record<PartnerSlug, Partner> = {
   },
   'christopher-hickok': {
     slug: 'christopher-hickok',
-    name: 'Christopher D. Hickok',
+    name: 'Christopher Hickok',
+    alternateName: 'Christopher D. Hickok',
     shortName: 'Chris Hickok',
     firstName: 'Chris',
     title: 'Partner',
@@ -130,7 +134,7 @@ export const partners: Record<PartnerSlug, Partner> = {
     image: '/assets/christopher-hickok.png',
     imageWidth: 340,
     imageHeight: 340,
-    imageAlt: 'Christopher D. Hickok, Partner at Hickok & Kim',
+    imageAlt: 'Christopher Hickok, Partner at Hickok & Kim',
     barNumber: '315726',
     barAdmitted: 'June 2017',
     barProfile: 'https://apps.calbar.ca.gov/attorney/Licensee/Detail/315726',
