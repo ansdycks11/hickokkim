@@ -45,7 +45,8 @@
   --accent-on-dark: #9db7ff; /* blue for links on navy, 8.5:1 */
   --accent-fill: #1f4fd8;    /* solid button fill; white text 6.6:1 */
   --hair: #dde3ea;           /* decorative hairlines */
-  --field-border: #7d8a9b;   /* form field outline: 3.5:1 on white, 3.2:1 on mist (WCAG non-text 3:1) */
+  --field-border: #7d8a9b;   /* form field bottom edge: 3.5:1 on white, 3.2:1 on mist (WCAG non-text 3:1) */
+  --field-border-soft: #ccd4de; /* form field top and sides: a light hairline */
   --hair-d: rgba(255, 255, 255, .18);
   --error: #b4432f;
 
@@ -346,7 +347,9 @@ figure.data-table figcaption { font-size: .72rem; letter-spacing: .12em; text-tr
 .field label { display: block; font-size: .82rem; font-weight: 500; margin-bottom: 6px; color: var(--text-strong); }
 .field input, .field select, .field textarea {
   width: 100%; min-height: 50px; font: inherit; font-size: 16px; padding: 12px 14px; color: var(--text-strong);
-  background: #fff; border: 1px solid var(--field-border); border-radius: 0; transition: border-color .2s, box-shadow .2s;
+  /* Light hairline box; the darker bottom edge is what marks out the field (and meets
+     the 3:1 contrast WCAG asks of form controls). Focus turns the whole box blue. */
+  background: #fff; border: 1px solid var(--field-border-soft); border-bottom-color: var(--field-border); border-radius: 0; transition: border-color .2s, box-shadow .2s;
 }
 .field textarea { min-height: 120px; resize: vertical; }
 .field input:focus, .field select:focus, .field textarea:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 2px rgba(31, 79, 216, .22); }
