@@ -80,19 +80,23 @@ const isCurrent = (href: string) => currentPath.startsWith(href);
   const focusables = () =>
     [btn, ...panel.querySelectorAll<HTMLElement>('a, button')].filter((el) => el.offsetParent !== null || el === btn);
 
-  const setOpen = (open: boolean) => {
+  // Opened with the keyboard, focus moves to the first menu link (with its focus ring) so
+  // keyboard and screen-reader users land inside the menu. Opened with a mouse or a tap,
+  // focus stays on the menu button, which is now the close button, so no ring appears.
+  const setOpen = (open: boolean, fromKeyboard = false) => {
     panel.classList.toggle('open', open);
     document.body.classList.toggle('menu-open', open);
     btn.setAttribute('aria-expanded', String(open));
     btn.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
     if (open) {
-      panel.querySelector<HTMLElement>('.menu-primary a')?.focus();
+      if (fromKeyboard) panel.querySelector<HTMLElement>('.menu-primary a')?.focus();
     } else {
       btn.focus();
     }
   };
 
-  btn.addEventListener('click', () => setOpen(!panel.classList.contains('open')));
+  // A click fired by Enter or Space has detail 0; a mouse click or tap has detail 1 or more.
+  btn.addEventListener('click', (e) => setOpen(!panel.classList.contains('open'), e.detail === 0));
   panel.addEventListener('click', (e) => { if ((e.target as HTMLElement).closest('a')) setOpen(false); });
   document.addEventListener('keydown', (e) => {
     if (!panel.classList.contains('open')) return;
