@@ -129,6 +129,14 @@ button { font: inherit; color: inherit; background: none; border: 0; cursor: poi
   color: var(--text-strong); transition: background .3s, height .3s, box-shadow .3s;
 }
 .site-header.is-solid { background: var(--white); height: 72px; box-shadow: 0 1px 0 var(--hair); }
+/* Phones, tablets and narrow windows: the header is a plain white bar that never changes
+   size, colour or position while scrolling. Animating a fixed bar during touch and momentum
+   scrolling (and iOS's bounce at the top) reads as jitter; the shrink-on-scroll and the home
+   page's sliding wordmark are kept for mouse-and-keyboard desktops only. */
+@media (max-width: 899px) { :root { --header-h: 64px; } }
+@media (max-width: 899px), (hover: none), (pointer: coarse) {
+  .site-header, .site-header.is-solid { height: var(--header-h); background: var(--white); box-shadow: 0 1px 0 var(--hair); transition: none; }
+}
 /* The header (and the menu overlay under it) spans the full screen with fluid side margins,
    rather than the 1240px reading width used for page content. */
 .site-header .bar { max-width: none; height: 100%; display: flex; align-items: center; justify-content: space-between; gap: 24px; }

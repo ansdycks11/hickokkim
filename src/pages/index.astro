@@ -13,22 +13,23 @@ const title = 'Hickok & Kim, Inc. — Los Angeles Attorneys for Individuals and 
 const description =
   'Hickok & Kim is a Los Angeles law firm for individuals and businesses across California: injury, litigation, business, cannabis, trademarks, estates. Free consultation.';
 
-// Photo: glass tower seen from below, by Panos Katsigiannis on Unsplash (Unsplash License).
-// https://unsplash.com/photos/dj5Po8lyc-M — cropped to 2000 x 2320, WebP quality 65 (the fine
-// glass grid looks the same as at 78 and the files are about a fifth smaller).
+// Photo: Los Angeles City Hall framed by palms, by Christopher Stark on Unsplash (Unsplash
+// License). https://unsplash.com/photos/_yq0xYS1_VY — cropped to 2000 x 2320, WebP quality 78.
+// City Hall rather than a generic tower: the firm is not in a downtown high-rise, and this
+// is unmistakably Los Angeles civic architecture.
 // On desktop the panel is taller than the photo's shape, so the photo fills its height and
 // renders about 0.86 x the viewport height wide; sizes says so, so high-resolution screens
 // get a large enough file (see README, Photography).
 const heroImg = {
   src: '/assets/art/hero.webp',
   srcset: '/assets/art/hero-sm.webp 800w, /assets/art/hero-md.webp 1200w, /assets/art/hero-lg.webp 1600w, /assets/art/hero.webp 2000w',
-  // Wide crop (about 1.22:1) for phones and small tablets; WebP quality 55.
+  // Wide crop (about 1.22:1, tower and palms in frame) for phones and small tablets; quality 72.
   phoneSrcset: '/assets/art/hero-phone.webp 800w, /assets/art/hero-phone-md.webp 1200w, /assets/art/hero-phone-lg.webp 1600w',
   phoneW: 1600,
   phoneH: 1311,
   w: 2000,
   h: 2320,
-  pos: '50% 50%',
+  pos: '50% 40%',
 };
 
 const heroLinks = [
@@ -189,11 +190,10 @@ const faqSchema = {
 <style>
   /* ---------- showcase ---------- */
   .showcase { position: relative; background: var(--white); color: var(--text-strong); display: grid; grid-template-columns: 1fr; min-height: 100svh; }
-  /* Phones: the photo starts below the header, and the header stays white from the first
-     pixel of scroll (not only after 40px), so the navy wordmark never sits on the photo. */
-  @media (max-width: 899px) {
+  /* Phones and touch tablets: the header is a fixed white bar (see global.css), so the
+     photo starts below it instead of being covered. */
+  @media (max-width: 899px), (hover: none), (pointer: coarse) {
     .showcase { padding-top: var(--header-h); }
-    :global(.is-home .site-header) { background: var(--white); }
   }
   @media (min-width: 900px) { .showcase { grid-template-columns: minmax(0, 40%) minmax(0, 1fr); } }
   .showcase__art { position: relative; min-height: 38svh; overflow: hidden; }
@@ -202,15 +202,20 @@ const faqSchema = {
      centred on the left edge and exactly as wide as the panel, so the curve
      touches the full width at mid-height and eases back about 9% at top and bottom. */
   @media (min-width: 900px) { .showcase__art { clip-path: ellipse(100% 120% at 0% 50%); } }
-  /* Desktop: at the top of the page the header starts where the white panel starts,
-     next to the curve. Once the visitor scrolls and the header turns solid, it glides
-     out to the full screen width (and back on returning to the top). */
-  @media (min-width: 900px) {
+  /* Desktop with a mouse: at the top of the page the header starts where the white panel
+     starts, next to the curve. Once the visitor scrolls and the header turns solid, it
+     glides out to the full screen width (and back on returning to the top). Touch screens,
+     including tablets and phones held sideways, keep the header still. */
+  @media (min-width: 900px) and (hover: hover) and (pointer: fine) {
     :global(.is-home .site-header .bar) { transition: padding-left .6s var(--ease); }
     :global(.is-home .site-header:not(.is-solid) .bar) { padding-left: calc(40% + clamp(24px, 6vw, 96px)); }
   }
-  @media (min-width: 900px) and (prefers-reduced-motion: reduce) {
+  @media (min-width: 900px) and (hover: hover) and (pointer: fine) and (prefers-reduced-motion: reduce) {
     :global(.is-home .site-header .bar) { transition: none; }
+  }
+  /* Touch tablets keep the side-by-side layout; the photo already starts below the bar. */
+  @media (min-width: 900px) and (hover: none), (min-width: 900px) and (pointer: coarse) {
+    .showcase__panel { padding-top: 24px; }
   }
   .showcase__img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
   .showcase__panel { position: relative; display: flex; flex-direction: column; justify-content: center; padding: calc(var(--header-h) + 24px) var(--gutter) 40px clamp(24px, 6vw, 96px); }

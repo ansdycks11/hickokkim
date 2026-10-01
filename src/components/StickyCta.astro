@@ -8,19 +8,22 @@ import { firm } from '../data/firm';
 </div>
 
 <script>
-  // Appears after the hero, hides on downward scroll, reappears on upward scroll,
-  // and stays out of the way of the footer and any form.
+  // Appears after the hero, hides on downward scroll, reappears on upward scroll, and
+  // stays out of the way of the footer and any form. Direction changes count only after
+  // 32px of travel, so momentum scrolling and small finger movements do not make it flicker.
   const bar = document.getElementById('stickyCta');
   if (bar) {
     const hero = document.querySelector('[data-hero]') as HTMLElement | null;
     const blockers = document.querySelectorAll('footer, form');
-    let blocked = false, lastY = window.scrollY, ticking = false;
+    let blocked = false, lastY = window.scrollY, anchorY = lastY, dir = 0, ticking = false;
     const threshold = () => (hero ? hero.offsetTop + hero.offsetHeight - 80 : 360);
     const update = () => {
       const y = window.scrollY;
+      const d = Math.sign(y - lastY);
+      if (d !== 0 && d !== dir) { dir = d; anchorY = lastY; } // direction changed: start measuring
       if (y <= threshold() || blocked) bar.classList.remove('show');
-      else if (y < lastY - 2) bar.classList.add('show');
-      else if (y > lastY + 2) bar.classList.remove('show');
+      else if (dir < 0 && anchorY - y > 32) bar.classList.add('show');
+      else if (dir > 0 && y - anchorY > 32) bar.classList.remove('show');
       lastY = y; ticking = false;
     };
     window.addEventListener('scroll', () => { if (!ticking) { ticking = true; requestAnimationFrame(update); } }, { passive: true });

@@ -65,8 +65,15 @@ const isCurrent = (href: string) => currentPath.startsWith(href);
   const btn = document.getElementById('menuBtn') as HTMLButtonElement;
   const panel = document.getElementById('menuPanel')!;
 
-  // Solid bar once the page scrolls off the top of the hero.
-  const onScroll = () => header.classList.toggle('is-solid', window.scrollY > 40);
+  // Solid bar once the page scrolls off the top of the hero. Two thresholds (on past 48px,
+  // off only back above 16px) so a scroll that hovers near one point, such as iOS's bounce
+  // at the top of the page, cannot flip the bar back and forth.
+  let solid = false;
+  const onScroll = () => {
+    const y = window.scrollY;
+    const next = solid ? y > 16 : y > 48;
+    if (next !== solid) { solid = next; header.classList.toggle('is-solid', solid); }
+  };
   window.addEventListener('scroll', onScroll, { passive: true });
   onScroll();
 
