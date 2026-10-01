@@ -163,32 +163,32 @@ body.menu-open { overflow: hidden; }
   position: fixed; inset: 0; z-index: 55; overflow-y: auto; color: var(--text-strong);
   background: var(--mist-2) url('/assets/art/menu-contours.svg') center / cover no-repeat;
   padding: calc(var(--header-h) + clamp(24px, 5vh, 56px)) 0 48px;
-  opacity: 0; visibility: hidden; transition: opacity .3s var(--ease), visibility 0s linear .3s;
+  opacity: 0; visibility: hidden; transition: opacity .35s var(--ease), visibility 0s linear .35s;
 }
-.menu-panel.open { opacity: 1; visibility: visible; transition: opacity .3s var(--ease); }
+/* Opening is unhurried (fade over ~0.6s, links rising one by one); closing stays quick. */
+.menu-panel.open { opacity: 1; visibility: visible; transition: opacity .6s var(--ease); }
+/* Two columns: the main links, and the contact block. Practice areas are one click away
+   on their own page (and listed in the footer), so the menu stays short. */
 .menu-grid { display: grid; gap: 40px; grid-template-columns: 1fr; }
-@media (min-width: 900px) { .menu-grid { grid-template-columns: 1.1fr 1.2fr .9fr; gap: clamp(32px, 4vw, 64px); } }
+@media (min-width: 900px) { .menu-grid { grid-template-columns: minmax(0, 1fr) minmax(260px, 360px); gap: clamp(32px, 6vw, 96px); align-items: start; } }
 .menu-primary { list-style: none; }
 .menu-primary a { display: inline-block; font-family: var(--sans); font-weight: 400; font-size: clamp(1.7rem, 3.2vw, 2.5rem); line-height: 1.25; padding: 6px 0; text-decoration: none; color: var(--text-strong); transition: color .2s; }
 .menu-primary a:hover, .menu-primary a[aria-current="page"] { color: var(--accent); }
-.menu-group + .menu-group { margin-top: 22px; }
-.menu-group .eyebrow { display: block; margin-bottom: 6px; }
-.menu-group ul { list-style: none; }
-.menu-group a { display: inline-block; padding: 4px 0; font-size: 1rem; text-decoration: none; color: var(--text); }
-.menu-group a:hover { color: var(--accent); text-decoration: underline; }
 .menu-contact address { font-style: normal; line-height: 1.8; margin: 10px 0 20px; }
 .menu-contact address a { color: var(--accent); }
 .menu-utility { margin-top: 48px; padding-top: 18px; border-top: 1px solid var(--hair); display: flex; flex-wrap: wrap; gap: 8px 24px; font-size: .8rem; }
 .menu-utility a { color: var(--accent); text-decoration: none; }
 .menu-utility a:hover { text-decoration: underline; }
 @media (prefers-reduced-motion: no-preference) {
-  .menu-panel .menu-primary li { opacity: 0; transform: translateY(10px); transition: opacity .45s var(--ease), transform .45s var(--ease); }
-  .menu-panel.open .menu-primary li { opacity: 1; transform: none; }
-  .menu-panel.open .menu-primary li:nth-child(2) { transition-delay: .04s; }
-  .menu-panel.open .menu-primary li:nth-child(3) { transition-delay: .08s; }
-  .menu-panel.open .menu-primary li:nth-child(4) { transition-delay: .12s; }
-  .menu-panel.open .menu-primary li:nth-child(5) { transition-delay: .16s; }
-  .menu-panel.open .menu-primary li:nth-child(6) { transition-delay: .2s; }
+  .menu-panel .menu-primary li, .menu-panel .menu-contact { opacity: 0; transform: translateY(18px); transition: opacity .3s var(--ease), transform .3s var(--ease); }
+  .menu-panel.open .menu-primary li, .menu-panel.open .menu-contact { opacity: 1; transform: none; transition-duration: .9s; }
+  .menu-panel.open .menu-primary li:nth-child(1) { transition-delay: .1s; }
+  .menu-panel.open .menu-primary li:nth-child(2) { transition-delay: .18s; }
+  .menu-panel.open .menu-primary li:nth-child(3) { transition-delay: .26s; }
+  .menu-panel.open .menu-primary li:nth-child(4) { transition-delay: .34s; }
+  .menu-panel.open .menu-primary li:nth-child(5) { transition-delay: .42s; }
+  .menu-panel.open .menu-primary li:nth-child(6) { transition-delay: .5s; }
+  .menu-panel.open .menu-contact { transition-delay: .4s; }
 }
 
 /* ---------- inner page hero (white, with the faint fanned-line texture) ---------- */

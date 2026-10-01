@@ -4,7 +4,7 @@
  * Wordmark, consultation button, and a MENU button that opens a full-screen overlay
  * holding all navigation.
  */
-import { firm, moments, areasByMoment } from '../data/firm';
+import { firm } from '../data/firm';
 
 interface Props { currentPath?: string }
 const { currentPath = '' } = Astro.props;
@@ -40,16 +40,6 @@ const isCurrent = (href: string) => currentPath.startsWith(href);
           <li><a href={l.href} aria-current={isCurrent(l.href) ? 'page' : undefined}>{l.label}</a></li>
         ))}
       </ul>
-      <div>
-        {moments.map((m) => (
-          <div class="menu-group">
-            <span class="eyebrow">{m.heading}</span>
-            <ul>
-              {areasByMoment(m.id).map((a) => <li><a href={a.path}>{a.name}</a></li>)}
-            </ul>
-          </div>
-        ))}
-      </div>
       <div class="menu-contact">
         <span class="eyebrow">Los Angeles</span>
         <address>
