@@ -206,6 +206,8 @@ export interface PracticeArea {
   blurb: string;
   featured?: boolean;
   schemaName: string; // knowsAbout / serviceType label
+  /** Closing band on the practice page: "Talk to a partner about {ctaTopic}." */
+  ctaTopic: string;
 }
 
 export const practiceAreas: PracticeArea[] = [
@@ -220,6 +222,7 @@ export const practiceAreas: PracticeArea[] = [
     blurb:
       'Car and pedestrian accidents, premises injuries, and insurance disputes. You pay nothing unless we recover for you.',
     schemaName: 'Personal Injury Law',
+    ctaTopic: 'your injury claim',
   },
   {
     slug: 'civil-litigation',
@@ -232,6 +235,7 @@ export const practiceAreas: PracticeArea[] = [
     blurb:
       'Contract and business disputes, partnership breakups, and property claims in California state and federal courts.',
     schemaName: 'Civil Litigation',
+    ctaTopic: 'your dispute',
   },
   {
     slug: 'business-law',
@@ -244,6 +248,7 @@ export const practiceAreas: PracticeArea[] = [
     blurb:
       'Day-to-day counsel for owners: contracts, vendor and customer agreements, employment questions, and disputes before they become lawsuits.',
     schemaName: 'Business Law',
+    ctaTopic: 'your business',
   },
   {
     slug: 'corporate-law',
@@ -256,6 +261,7 @@ export const practiceAreas: PracticeArea[] = [
     blurb:
       'Entity formation, operating and shareholder agreements, governance, financing, and the paperwork of buying or selling a company.',
     schemaName: 'Corporate Law',
+    ctaTopic: 'your company\'s structure',
   },
   {
     slug: 'outside-general-counsel',
@@ -269,6 +275,7 @@ export const practiceAreas: PracticeArea[] = [
       "Your company's legal department, without the in-house cost: ongoing contract review, advice on decisions, and disputes handled as they arise.",
     featured: true,
     schemaName: 'Outside General Counsel',
+    ctaTopic: 'outside counsel for your company',
   },
   {
     slug: 'trademarks',
@@ -281,6 +288,7 @@ export const practiceAreas: PracticeArea[] = [
     blurb:
       'Clearance, federal and California registration, licensing, and enforcement for the names and marks your business runs on.',
     schemaName: 'Trademark Law',
+    ctaTopic: 'your trademark',
   },
   {
     slug: 'cannabis-law',
@@ -293,6 +301,7 @@ export const practiceAreas: PracticeArea[] = [
     blurb:
       'Licensing, regulatory compliance, and transactions for California cannabis operators, from first application to ongoing counsel.',
     schemaName: 'Cannabis Law',
+    ctaTopic: 'your cannabis business',
   },
   {
     slug: 'wills-and-trusts',
@@ -305,6 +314,7 @@ export const practiceAreas: PracticeArea[] = [
     blurb:
       'Wills, revocable living trusts, powers of attorney, and health-care directives, written to hold up when a family needs them.',
     schemaName: 'Wills and Trusts',
+    ctaTopic: 'your estate plan',
   },
   {
     slug: 'real-estate-law',
@@ -317,6 +327,7 @@ export const practiceAreas: PracticeArea[] = [
     blurb:
       'Purchase and lease agreements, title and boundary issues, and landlord-tenant and property disputes.',
     schemaName: 'Real Estate Law',
+    ctaTopic: 'your property matter',
   },
 ];
 

@@ -18,9 +18,10 @@ import { practiceAreas, lastReviewedDisplay as reviewed, type PartnerSlug } from
 interface Props {
   content: PracticeContent;
   leads: PartnerSlug[];
-  areaName: string;
+  /** Closing band topic, e.g. "your trademark" (from firm.ts practiceAreas). */
+  ctaTopic: string;
 }
-const { content, leads, areaName } = Astro.props;
+const { content, leads, ctaTopic } = Astro.props;
 const related = content.related
   .map((slug) => practiceAreas.find((a) => a.slug === slug))
   .filter((a): a is NonNullable<typeof a> => !!a);
@@ -113,4 +114,4 @@ const related = content.related
   </Section>
 )}
 
-<CtaBand heading={`Talk to a partner about your ${areaName.toLowerCase()} matter.`} />
+<CtaBand heading={`Talk to a partner about ${ctaTopic}.`} />
