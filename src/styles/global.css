@@ -82,9 +82,19 @@ img, svg { max-width: 100%; height: auto; display: block; }
 button { font: inherit; color: inherit; background: none; border: 0; cursor: pointer; }
 ::selection { background: rgba(31, 79, 216, .18); }
 .dark ::selection, .sec--dark ::selection, .site-footer ::selection { background: rgba(157, 183, 255, .35); }
-/* Focus rings: blue on light grounds (the default), light blue inside navy bands. */
-:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
-.dark :focus-visible, .sec--dark :focus-visible, .site-footer :focus-visible { outline-color: var(--accent-on-dark); }
+/* Keyboard focus without boxes. Nothing is drawn around anything: links get a thick
+   underline, buttons take their hover look with an underlined label, the menu button
+   underlines "Menu", accordion questions underline, and form fields use their own blue
+   border. Still clearly visible to keyboard users (WCAG 2.4.7); mouse and touch users
+   never see any of it, since :focus-visible only applies to keyboard focus. */
+:focus-visible { outline: none; }
+/* !important: many links set text-decoration: none in more specific (often scoped)
+   rules, and the keyboard-focus underline must win over all of them. */
+a:focus-visible, .accordion summary:focus-visible h3, .accordion summary:focus-visible .q {
+  text-decoration: underline !important; text-decoration-thickness: 2px !important; text-underline-offset: 5px !important; text-decoration-color: var(--accent) !important;
+}
+.dark a:focus-visible, .sec--dark a:focus-visible, .site-footer a:focus-visible { text-decoration-color: var(--accent-on-dark) !important; }
+.menu-btn:focus-visible .label { text-decoration: underline; text-decoration-thickness: 2px; text-underline-offset: 4px; text-decoration-color: var(--accent); }
 
 .wrap { max-width: var(--max); margin: 0 auto; padding: 0 var(--gutter); }
 .skip {
@@ -111,13 +121,14 @@ button { font: inherit; color: inherit; background: none; border: 0; cursor: poi
   font-size: .95rem; font-weight: 400; line-height: 1.2; border: 1px solid var(--accent); color: var(--accent);
   background: transparent; transition: background .25s, color .25s, border-color .25s;
 }
-.btn:hover { background: var(--accent); color: #fff; }
+.btn:hover, .btn:focus-visible { background: var(--accent); color: #fff; }
+.btn:focus-visible { text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 4px; }
 .btn--solid { background: var(--accent-fill); border-color: var(--accent-fill); color: #fff; }
-.btn--solid:hover { background: var(--accent-deep); border-color: var(--accent-deep); color: #fff; }
+.btn--solid:hover, .btn--solid:focus-visible { background: var(--accent-deep); border-color: var(--accent-deep); color: #fff; }
 .dark .btn, .sec--dark .btn { border-color: rgba(255, 255, 255, .55); color: #fff; }
-.dark .btn:hover, .sec--dark .btn:hover { border-color: var(--accent-on-dark); color: var(--accent-on-dark); background: transparent; }
+.dark .btn:hover, .sec--dark .btn:hover, .dark .btn:focus-visible, .sec--dark .btn:focus-visible { border-color: var(--accent-on-dark); color: var(--accent-on-dark); background: transparent; }
 .dark .btn--solid, .sec--dark .btn--solid { background: var(--accent-fill); border-color: var(--accent-fill); color: #fff; }
-.dark .btn--solid:hover, .sec--dark .btn--solid:hover { background: #fff; border-color: #fff; color: var(--navy); }
+.dark .btn--solid:hover, .sec--dark .btn--solid:hover, .dark .btn--solid:focus-visible, .sec--dark .btn--solid:focus-visible { background: #fff; border-color: #fff; color: var(--navy); }
 .chev::after { content: ""; display: inline-block; width: 7px; height: 7px; border-right: 1.5px solid currentColor; border-top: 1.5px solid currentColor; transform: rotate(45deg); margin-left: 8px; position: relative; top: -1px; }
 .textlink { color: var(--accent); text-decoration: none; font-size: .9rem; }
 .textlink:hover { text-decoration: underline; }
